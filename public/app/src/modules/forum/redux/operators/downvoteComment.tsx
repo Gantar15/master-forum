@@ -1,0 +1,22 @@
+import * as actionCreators from '../actionCreators';
+
+import { commentService } from '../../services';
+import { getComments } from './getComments';
+
+function downvoteComment(commentId: string, slug: string) {
+  return async (dispatch: any) => {
+    dispatch(actionCreators.downvotingComment());
+
+    const result = await commentService.downvoteComment(commentId);
+
+    if (result.isLeft()) {
+      const error: string = result.value;
+      dispatch(actionCreators.downvotingCommentFailure(error));
+    } else {
+      dispatch(actionCreators.downvotingCommentSuccess(commentId));
+      await getComments(slug)(dispatch);
+    }
+  };
+}
+
+export { downvoteComment };
