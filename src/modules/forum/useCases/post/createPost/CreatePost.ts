@@ -1,46 +1,50 @@
-
-import { UseCase } from "../../../../../shared/core/UseCase"; 
-import { IPostRepo } from "../../../repos/postRepo";
 import { Either, Result, left, right } from "../../../../../shared/core/Result";
-import { AppError } from "../../../../../shared/core/AppError";
-import { CreatePostDTO } from "./CreatePostDTO";
-import { IMemberRepo } from "../../../repos/memberRepo";
-import { Member } from "../../../domain/member";
-import { CreatePostErrors } from "./CreatePostErrors";
 import { Post, PostProps } from "../../../domain/post";
-import { PostTitle } from "../../../domain/postTitle";
-import { PostText } from "../../../domain/postText";
-import { PostSlug } from "../../../domain/postSlug";
+
+import { AppError } from "../../../../../shared/core/AppError";
+import { Category } from "../../../domain/category";
+import { CategoryTitle } from "../../../domain/categoryTitle";
+import { CreatePostDTO } from "./CreatePostDTO";
+import { CreatePostErrors } from "./CreatePostErrors";
+import { IMemberRepo } from "../../../repos/memberRepo";
+import { IPostRepo } from "../../../repos/postRepo";
+import { Member } from "../../../domain/member";
 import { PostLink } from "../../../domain/postLink";
+import { PostSlug } from "../../../domain/postSlug";
+import { PostText } from "../../../domain/postText";
+import { PostTitle } from "../../../domain/postTitle";
+import { Tags } from "../../../domain/tags";
+import { UseCase } from "../../../../../shared/core/UseCase";
 
 type Response = Either<
-  CreatePostErrors.MemberDoesntExistError |
-  AppError.UnexpectedError |
-  Result<any>,
+  | CreatePostErrors.MemberDoesntExistError
+  | AppError.UnexpectedError
+  | Result<any>,
   Result<void>
->
+>;
 
 export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
   private postRepo: IPostRepo;
   private memberRepo: IMemberRepo;
 
-  constructor (postRepo: IPostRepo, memberRepo: IMemberRepo) {
+  constructor(postRepo: IPostRepo, memberRepo: IMemberRepo) {
     this.postRepo = postRepo;
     this.memberRepo = memberRepo;
   }
-  
-  public async execute (request: CreatePostDTO): Promise<Response> {
+
+  public async execute(request: CreatePostDTO): Promise<Response> {
     let member: Member;
     let title: PostTitle;
     let text: PostText;
     let link: PostLink;
     let slug: PostSlug;
     let post: Post;
+    let category: Category;
+    let tags: Tags;
 
     const { userId } = request;
 
     try {
-
       try {
         member = await this.memberRepo.getMemberByUserId(userId);
       } catch (err) {
@@ -48,18 +52,31 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
       }
 
       const titleOrError = PostTitle.create({ value: request.title });
-
       if (titleOrError.isFailure) {
         return left(titleOrError);
       }
 
-      if (request.postType === 'text') {
+      const categoryTitleOrError = CategoryTitle.create({
+        value: request.category,
+      });
+      if (categoryTitleOrError.isFailure) {
+        return left(categoryTitleOrError);
+      }
+
+      const categoryOrError = Category.create({
+        title: categoryTitleOrError.getValue(),
+      });
+      if (categoryOrError.isFailure) {
+        return left(categoryOrError);
+      }
+
+      if (request.postType === "text") {
         const textOrError = PostText.create({ value: request.text });
 
         if (textOrError.isFailure) {
           return left(textOrError);
         }
-        
+
         text = textOrError.getValue();
       } else {
         const linkOrError = PostLink.create({ url: request.link });
@@ -67,7 +84,7 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
         if (linkOrError.isFailure) {
           return left(linkOrError);
         }
-        
+
         link = linkOrError.getValue();
       }
 
@@ -86,8 +103,8 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
         type: request.postType,
         memberId: member.memberId,
         text,
-        link
-      }
+        link,
+      };
 
       const postOrError = Post.create(postProps);
 
@@ -99,8 +116,7 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
 
       await this.postRepo.save(post);
 
-      return right(Result.ok<void>())
-
+      return right(Result.ok<void>());
     } catch (err) {
       return left(new AppError.UnexpectedError(err));
     }

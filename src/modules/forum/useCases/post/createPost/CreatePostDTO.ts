@@ -1,4 +1,3 @@
-
 import { PostType } from "../../../domain/postType";
 
 export interface CreatePostDTO {
@@ -7,4 +6,6 @@ export interface CreatePostDTO {
   text: string;
   link: string;
   postType: PostType;
+  category: string;
+  tags: string[];
 }
