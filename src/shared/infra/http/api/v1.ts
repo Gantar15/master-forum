@@ -3,6 +3,7 @@ import {
   memberRouter,
 } from "../../../../modules/forum/infra/http/routes";
 
+import { categoryRouter } from "../../../../modules/forum/infra/http/routes/category";
 import express from "express";
 import { postRouter } from "../../../../modules/forum/infra/http/routes/post";
 import { userRouter } from "../../../../modules/users/infra/http/routes";
@@ -15,6 +16,7 @@ v1Router.get("/", (req, res) => {
 
 v1Router.use("/users", userRouter);
 v1Router.use("/members", memberRouter);
+v1Router.use("/categories", categoryRouter);
 v1Router.use("/posts", postRouter);
 v1Router.use("/comments", commentRouter);
 

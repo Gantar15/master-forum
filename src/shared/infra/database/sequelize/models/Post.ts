@@ -18,6 +18,14 @@ export default (sequelize, DataTypes) => {
         onDelete: "cascade",
         onUpdate: "cascade",
       },
+      category_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: "category",
+          key: "category_id",
+        },
+      },
       type: {
         type: DataTypes.STRING(30),
         allowNull: false,
@@ -62,10 +70,14 @@ export default (sequelize, DataTypes) => {
       targetKey: "member_id",
       as: "Member",
     });
+    Post.belongsTo(models.Category, {
+      foreignKey: "category_id",
+      targetKey: "category_id",
+      as: "Category",
+    });
     Post.hasMany(models.PostVote, { foreignKey: "post_id", as: "Votes" });
-    Post.hasMany(models.Tag, { foreignKey: "post_id", as: "Tags" });
-    Post.belongsToMany(models.Category, {
-      through: "posts_categories",
+    Post.belongsToMany(models.Tag, {
+      through: "posts_tags",
       foreignKey: "post_id",
     });
   };

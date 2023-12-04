@@ -22,10 +22,7 @@ export default (sequelize, DataTypes) => {
   );
 
   Category.associate = (models) => {
-    Category.belongsToMany(models.Post, {
-      through: "posts_categories",
-      foreignKey: "category_id",
-    });
+    Category.hasMany(models.Post, { foreignKey: "category_id", as: "Posts" });
   };
 
   return Category;

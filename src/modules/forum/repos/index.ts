@@ -11,7 +11,7 @@ const postVotesRepo = new PostVotesRepo(models);
 const memberRepo = new MemberRepo(models);
 const commentRepo = new CommentRepo(models, commentVotesRepo);
 const postRepo = new PostRepo(models, commentRepo, postVotesRepo);
-const categoryRepo = new CategoryRepo(models);
+const categoryRepo = new CategoryRepo(models, postRepo);
 
 export {
   memberRepo,

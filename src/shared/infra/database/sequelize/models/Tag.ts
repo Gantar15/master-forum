@@ -8,14 +8,6 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
       },
-      post_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-        references: {
-          model: "post",
-          key: "post_id",
-        },
-      },
       title: {
         type: DataTypes.STRING(250),
         allowNull: false,
@@ -30,10 +22,9 @@ export default (sequelize, DataTypes) => {
   );
 
   Tag.associate = (models) => {
-    Tag.belongsTo(models.Post, {
-      foreignKey: "post_id",
-      targetKey: "post_id",
-      as: "Post",
+    Tag.belongsToMany(models.Post, {
+      through: "posts_tags",
+      foreignKey: "tag_id",
     });
   };
 
