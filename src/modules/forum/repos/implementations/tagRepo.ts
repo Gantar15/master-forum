@@ -1,6 +1,9 @@
 import { ITagRepo } from "../tagRepo";
+import { PostId } from "../../domain/postId";
 import { Tag } from "../../domain/tag";
 import { TagMap } from "../../mappers/TagMap";
+import { TagTitle } from "../../domain/tagTitle";
+import { Tags } from "../../domain/tags";
 import { UniqueEntityID } from "../../../../shared/domain/UniqueEntityID";
 
 export class TagRepo implements ITagRepo {
@@ -23,6 +26,16 @@ export class TagRepo implements ITagRepo {
     const tagInstance = await TagModel.findOne(baseQuery);
     const found = !!tagInstance === true;
     return found;
+  }
+
+  async getTagByTitle(tagTitle: TagTitle): Promise<Tag> {
+    const TagModel = this.models.Tag;
+    const baseQuery = this.createBaseQuery();
+    baseQuery.where["title"] = tagTitle.toString();
+    const tagInstance = await TagModel.findOne(baseQuery);
+    const found = !!tagInstance === true;
+    if (!found) throw new Error("Tag not found");
+    return TagMap.toDomain(tagInstance);
   }
 
   async delete(tagId: UniqueEntityID): Promise<void> {

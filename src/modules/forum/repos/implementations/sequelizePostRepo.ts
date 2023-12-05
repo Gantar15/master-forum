@@ -7,9 +7,9 @@ import { PostDetailsMap } from "../../mappers/postDetailsMap";
 import { ICommentRepo } from "../commentRepo";
 import { IPostVotesRepo } from "../postVotesRepo";
 import { PostVotes } from "../../domain/postVotes";
-import { MemberId } from "../../domain/memberId";
 import { Comments } from "../../domain/comments";
-import { PostSlug } from "../../domain/postSlug";
+import { Tags } from "../../domain/tags";
+import { PostTitle } from "../../domain/postTitle";
 
 export class PostRepo implements IPostRepo {
   private models: any;
@@ -30,7 +30,16 @@ export class PostRepo implements IPostRepo {
     const models = this.models;
     return {
       where: {},
-      include: [],
+      include: [
+        {
+          model: models.Category,
+          as: "Category",
+        },
+        {
+          model: models.Tag,
+          as: "tags",
+        },
+      ],
     };
   }
 
@@ -43,6 +52,14 @@ export class PostRepo implements IPostRepo {
           model: models.Member,
           as: "Member",
           include: [{ model: models.BaseUser, as: "BaseUser" }],
+        },
+        {
+          model: models.Category,
+          as: "Category",
+        },
+        {
+          model: models.Tag,
+          as: "tags",
         },
       ],
       limit: 15,
@@ -86,6 +103,16 @@ export class PostRepo implements IPostRepo {
     const found = !!post === true;
     if (!found) throw new Error("Post not found");
     return PostDetailsMap.toDomain(post);
+  }
+
+  async getPostByTitle(postTitle: PostTitle): Promise<Post> {
+    const PostModel = this.models.Post;
+    const baseQuery = this.createBaseQuery();
+    baseQuery.where["title"] = postTitle.value;
+    const postInstance = await PostModel.findOne(baseQuery);
+    const found = !!postInstance === true;
+    if (!found) throw new Error("Post not found");
+    return PostMap.toDomain(postInstance);
   }
 
   public async getRecentPosts(offset?: number): Promise<PostDetails[]> {
@@ -144,6 +171,15 @@ export class PostRepo implements IPostRepo {
     return this.postVotesRepo.saveBulk(postVotes);
   }
 
+  private async setTagsToPost(postId: PostId, tags: Tags) {
+    const PostModel = this.models.Post;
+    const tagsIds = tags.getItems().map((tag) => tag.id.toString());
+    const detailsQuery = this.createBaseQuery();
+    detailsQuery.where["post_id"] = postId.getStringValue();
+    const postInstance = await PostModel.findOne(detailsQuery);
+    return postInstance.setTags(tagsIds);
+  }
+
   public async save(post: Post): Promise<void> {
     const PostModel = this.models.Post;
     const exists = await this.exists(post.postId);
@@ -155,6 +191,7 @@ export class PostRepo implements IPostRepo {
         await PostModel.create(rawSequelizePost);
         await this.saveComments(post.comments);
         await this.savePostVotes(post.getVotes());
+        await this.setTagsToPost(post.postId, post.tags);
       } catch (err) {
         await this.delete(post.postId);
         throw new Error(err.toString());
@@ -164,6 +201,7 @@ export class PostRepo implements IPostRepo {
       // so that any domain events on the aggregate get dispatched
       await this.saveComments(post.comments);
       await this.savePostVotes(post.getVotes());
+      await this.setTagsToPost(post.postId, post.tags);
 
       await PostModel.update(rawSequelizePost, {
         // To make sure your hooks always run, make sure to include this in

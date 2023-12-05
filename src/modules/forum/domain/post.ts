@@ -2,6 +2,7 @@ import { Either, Result, left, right } from "../../../shared/core/Result";
 import { Guard, IGuardArgument } from "../../../shared/core/Guard";
 
 import { AggregateRoot } from "../../../shared/domain/AggregateRoot";
+import { Category } from "./category";
 import { Comment } from "./comment";
 import { CommentPosted } from "./events/commentPosted";
 import { CommentVotesChanged } from "./events/commentVotesChanged";
@@ -18,6 +19,7 @@ import { PostType } from "./postType";
 import { PostVote } from "./postVote";
 import { PostVotes } from "./postVotes";
 import { PostVotesChanged } from "./events/postVotesChanged";
+import { Tags } from "./tags";
 import { UniqueEntityID } from "../../../shared/domain/UniqueEntityID";
 import { has } from "lodash";
 
@@ -31,9 +33,11 @@ export interface PostProps {
   slug: PostSlug;
   title: PostTitle;
   type: PostType;
+  category: Category;
   text?: PostText;
   link?: PostLink;
   comments?: Comments;
+  tags: Tags;
   votes?: PostVotes;
   totalNumComments?: number;
   points?: number; // posts can have negative or positive valued points
@@ -57,6 +61,10 @@ export class Post extends AggregateRoot<PostProps> {
     return this.props.slug;
   }
 
+  get category(): Category {
+    return this.props.category;
+  }
+
   get dateTimePosted(): string | Date {
     return this.props.dateTimePosted;
   }
@@ -67,6 +75,10 @@ export class Post extends AggregateRoot<PostProps> {
 
   get points(): number {
     return this.props.points;
+  }
+
+  get tags(): Tags {
+    return this.props.tags;
   }
 
   get link(): PostLink {
@@ -93,6 +105,28 @@ export class Post extends AggregateRoot<PostProps> {
 
   public hasComments(): boolean {
     return this.totalNumComments !== 0;
+  }
+
+  public updateTitle(postTitle: PostTitle): UpdatePostOrLinkResult {
+    const guardResult = Guard.againstNullOrUndefined(postTitle, "postTitle");
+
+    if (guardResult.isFailure) {
+      return left(Result.fail<any>(guardResult.getErrorValue()));
+    }
+
+    this.props.title = postTitle;
+    return right(Result.ok<void>());
+  }
+
+  public updateSlug(postSlug: PostSlug): UpdatePostOrLinkResult {
+    const guardResult = Guard.againstNullOrUndefined(postSlug, "postSlug");
+
+    if (guardResult.isFailure) {
+      return left(Result.fail<any>(guardResult.getErrorValue()));
+    }
+
+    this.props.slug = postSlug;
+    return right(Result.ok<void>());
   }
 
   public updateText(postText: PostText): UpdatePostOrLinkResult {
@@ -122,6 +156,28 @@ export class Post extends AggregateRoot<PostProps> {
     }
 
     this.props.link = postLink;
+    return right(Result.ok<void>());
+  }
+
+  public updateCategory(category: Category): UpdatePostOrLinkResult {
+    const guardResult = Guard.againstNullOrUndefined(category, "category");
+
+    if (guardResult.isFailure) {
+      return left(Result.fail<any>(guardResult.getErrorValue()));
+    }
+
+    this.props.category = category;
+    return right(Result.ok<void>());
+  }
+
+  public updateTags(tags: Tags): UpdatePostOrLinkResult {
+    const guardResult = Guard.againstNullOrUndefined(tags, "tags");
+
+    if (guardResult.isFailure) {
+      return left(Result.fail<any>(guardResult.getErrorValue()));
+    }
+
+    this.props.tags = tags;
     return right(Result.ok<void>());
   }
 
@@ -198,6 +254,8 @@ export class Post extends AggregateRoot<PostProps> {
       { argument: props.slug, argumentName: "slug" },
       { argument: props.title, argumentName: "title" },
       { argument: props.type, argumentName: "type" },
+      { argument: props.tags, argumentName: "tags" },
+      { argument: props.category, argumentName: "category" },
     ];
 
     if (props.type === "link") {

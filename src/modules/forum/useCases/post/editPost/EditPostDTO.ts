@@ -1,8 +1,9 @@
-
 export interface EditPostDTO {
-  postId: string;
+  userId: string;
+  slug: string;
   title?: string;
   text?: string;
   link?: string;
+  category?: string;
+  tags?: string[];
 }
-

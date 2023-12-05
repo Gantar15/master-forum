@@ -1,5 +1,6 @@
 import { Mapper } from "../../../shared/infra/Mapper";
 import { Tag } from "../domain/tag";
+import { TagTitle } from "../domain/tagTitle";
 import { UniqueEntityID } from "../../../shared/domain/UniqueEntityID";
 
 export class TagMap implements Mapper<Tag> {
@@ -11,9 +12,12 @@ export class TagMap implements Mapper<Tag> {
   }
 
   public static toDomain(raw: any): Tag {
+    const titleOrError = TagTitle.create({ value: raw.title });
+    if (titleOrError.isFailure) return null;
+
     const tagOrError = Tag.create(
       {
-        title: raw.title,
+        title: titleOrError.getValue(),
       },
       new UniqueEntityID(raw.tag_id)
     );

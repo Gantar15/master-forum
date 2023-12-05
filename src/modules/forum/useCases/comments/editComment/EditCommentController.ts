@@ -1,6 +1,5 @@
 import * as express from "express";
 
-import { AppError } from "../../../../../shared/core/AppError";
 import { BaseController } from "../../../../../shared/infra/http/models/BaseController";
 import { CommentDetailsMap } from "../../../mappers/commentDetailsMap";
 import { DecodedExpressRequest } from "../../../../users/infra/http/models/decodedRequest";

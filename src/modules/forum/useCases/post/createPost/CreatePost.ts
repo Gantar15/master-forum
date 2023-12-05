@@ -6,13 +6,17 @@ import { Category } from "../../../domain/category";
 import { CategoryTitle } from "../../../domain/categoryTitle";
 import { CreatePostDTO } from "./CreatePostDTO";
 import { CreatePostErrors } from "./CreatePostErrors";
+import { ICategoryRepo } from "../../../repos/categoryRepo";
 import { IMemberRepo } from "../../../repos/memberRepo";
 import { IPostRepo } from "../../../repos/postRepo";
+import { ITagRepo } from "../../../repos/tagRepo";
 import { Member } from "../../../domain/member";
 import { PostLink } from "../../../domain/postLink";
 import { PostSlug } from "../../../domain/postSlug";
 import { PostText } from "../../../domain/postText";
 import { PostTitle } from "../../../domain/postTitle";
+import { Tag } from "../../../domain/tag";
+import { TagMap } from "../../../mappers/TagMap";
 import { Tags } from "../../../domain/tags";
 import { UseCase } from "../../../../../shared/core/UseCase";
 
@@ -26,10 +30,19 @@ type Response = Either<
 export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
   private postRepo: IPostRepo;
   private memberRepo: IMemberRepo;
+  private categoryRepo: ICategoryRepo;
+  private tagRepo: ITagRepo;
 
-  constructor(postRepo: IPostRepo, memberRepo: IMemberRepo) {
+  constructor(
+    postRepo: IPostRepo,
+    memberRepo: IMemberRepo,
+    categoryRepo: ICategoryRepo,
+    tagRepo: ITagRepo
+  ) {
     this.postRepo = postRepo;
     this.memberRepo = memberRepo;
+    this.categoryRepo = categoryRepo;
+    this.tagRepo = tagRepo;
   }
 
   public async execute(request: CreatePostDTO): Promise<Response> {
@@ -40,7 +53,7 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
     let slug: PostSlug;
     let post: Post;
     let category: Category;
-    let tags: Tags;
+    let tags: Tags = Tags.create([]);
 
     const { userId } = request;
 
@@ -55,19 +68,13 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
       if (titleOrError.isFailure) {
         return left(titleOrError);
       }
+      title = titleOrError.getValue();
 
-      const categoryTitleOrError = CategoryTitle.create({
-        value: request.category,
-      });
-      if (categoryTitleOrError.isFailure) {
-        return left(categoryTitleOrError);
-      }
-
-      const categoryOrError = Category.create({
-        title: categoryTitleOrError.getValue(),
-      });
-      if (categoryOrError.isFailure) {
-        return left(categoryOrError);
+      const existingPost = await this.postRepo.getPostByTitle(title);
+      if (existingPost) {
+        return left(
+          new CreatePostErrors.PostWithSameTitleExistsError(title.value)
+        );
       }
 
       if (request.postType === "text") {
@@ -88,13 +95,48 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
         link = linkOrError.getValue();
       }
 
-      title = titleOrError.getValue();
-      const slugOrError = PostSlug.create(title);
+      const categoryTitleOrError = CategoryTitle.create({
+        value: request.category,
+      });
+      if (categoryTitleOrError.isFailure) {
+        return left(categoryTitleOrError);
+      }
+      try {
+        category = await this.categoryRepo.getCategoryByTitle(
+          categoryTitleOrError.getValue()
+        );
+      } catch (err) {
+        return left(
+          new CreatePostErrors.CategoryNotFoundError(
+            categoryTitleOrError.getValue().value
+          )
+        );
+      }
 
+      const domainTags = request.tags.map((tag) =>
+        TagMap.toDomain({ title: tag })
+      );
+      if (domainTags.includes(null))
+        return left(new CreatePostErrors.InvalidTagError());
+      try {
+        for (const tag of domainTags) {
+          let tagInstance: Tag;
+          try {
+            tagInstance = await this.tagRepo.getTagByTitle(tag.title);
+          } catch (err) {
+            await this.tagRepo.save(tag);
+            tagInstance = tag;
+          }
+          tags.add(tagInstance);
+        }
+      } catch (err) {
+        return left(new AppError.UnexpectedError(err));
+      }
+
+      const slugOrError = PostSlug.create(title);
       if (slugOrError.isFailure) {
         return left(slugOrError);
       }
-
       slug = slugOrError.getValue();
 
       const postProps: PostProps = {
@@ -104,6 +146,8 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
         memberId: member.memberId,
         text,
         link,
+        category,
+        tags: tags,
       };
 
       const postOrError = Post.create(postProps);

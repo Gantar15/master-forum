@@ -13,7 +13,7 @@ export namespace EditCommentErrors {
   export class ForbiddenError extends Result<UseCaseError> {
     constructor(commentId: string) {
       super(false, {
-        message: `You are not allowed to delete ${commentId} comment.`,
+        message: `You are not allowed to edit ${commentId} comment.`,
       } as UseCaseError);
     }
   }

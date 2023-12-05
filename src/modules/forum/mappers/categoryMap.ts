@@ -1,4 +1,5 @@
 import { Category } from "../domain/category";
+import { CategoryTitle } from "../domain/categoryTitle";
 import { Mapper } from "../../../shared/infra/Mapper";
 import { UniqueEntityID } from "../../../shared/domain/UniqueEntityID";
 
@@ -11,9 +12,12 @@ export class CategoryMap implements Mapper<Category> {
   }
 
   public static toDomain(raw: any): Category {
+    const titleOrError = CategoryTitle.create({ value: raw.title });
+    if (titleOrError.isFailure) return null;
+
     const categoryOrError = Category.create(
       {
-        title: raw.title,
+        title: titleOrError.getValue(),
       },
       new UniqueEntityID(raw.category_id)
     );

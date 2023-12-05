@@ -1,5 +1,6 @@
 import { Category } from "../../domain/category";
 import { CategoryMap } from "../../mappers/categoryMap";
+import { CategoryTitle } from "../../domain/categoryTitle";
 import { ICategoryRepo } from "../categoryRepo";
 import { IPostRepo } from "../postRepo";
 import { PostId } from "../../domain/postId";
@@ -35,6 +36,16 @@ export class CategoryRepo implements ICategoryRepo {
     const categoryInstance = await CategoryModel.findOne(baseQuery);
     const found = !!categoryInstance === true;
     return found;
+  }
+
+  async getCategoryByTitle(categoryTitle: CategoryTitle): Promise<Category> {
+    const CategoryModel = this.models.Category;
+    const baseQuery = this.createBaseQuery();
+    baseQuery.where["title"] = categoryTitle.value;
+    const categoryInstance = await CategoryModel.findOne(baseQuery);
+    const found = !!categoryInstance === true;
+    if (!found) throw new Error("Category not found");
+    return CategoryMap.toDomain(categoryInstance);
   }
 
   async delete(categoryId: UniqueEntityID): Promise<void> {

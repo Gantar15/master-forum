@@ -1,6 +1,7 @@
 import { createPostController } from "../../../useCases/post/createPost";
 import { deletePostController } from "../../../useCases/post/deletePost";
 import { downvotePostController } from "../../../useCases/post/downvotePost";
+import { editPostController } from "../../../useCases/post/editPost";
 import express from "express";
 import { getPopularPostsController } from "../../../useCases/post/getPopularPosts";
 import { getPostBySlugController } from "../../../useCases/post/getPostBySlug";
@@ -42,8 +43,8 @@ postRouter.delete("/:slug", middleware.ensureAuthenticated(), (req, res) =>
   deletePostController.execute(req, res)
 );
 
-// postRouter.patch("/:slug", middleware.ensureAuthenticated(), (req, res) =>
-//   editPostController.execute(req, res)
-// );
+postRouter.patch("/:slug", middleware.ensureAuthenticated(), (req, res) =>
+  editPostController.execute(req, res)
+);
 
 export { postRouter };

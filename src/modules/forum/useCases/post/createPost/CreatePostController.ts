@@ -1,5 +1,3 @@
-import * as express from "express";
-
 import { BaseController } from "../../../../../shared/infra/http/models/BaseController";
 import { CreatePost } from "./CreatePost";
 import { CreatePostDTO } from "./CreatePostDTO";
@@ -25,7 +23,7 @@ export class CreatePostController extends BaseController {
       postType: req.body.postType,
       link: !!req.body.link ? TextUtils.sanitize(req.body.link) : null,
       category: req.body.category,
-      tags: req.body.tags,
+      tags: req.body.tags.map((tag) => TextUtils.sanitize(tag)),
     };
 
     try {
@@ -37,6 +35,12 @@ export class CreatePostController extends BaseController {
         switch (error.constructor) {
           case CreatePostErrors.MemberDoesntExistError:
             return this.notFound(res, error.getErrorValue().message);
+          case CreatePostErrors.InvalidTagError:
+            return this.clientError(res, error.getErrorValue().message);
+          case CreatePostErrors.CategoryNotFoundError:
+            return this.clientError(res, error.getErrorValue().message);
+          case CreatePostErrors.PostWithSameTitleExistsError:
+            return this.clientError(res, error.getErrorValue().message);
           default:
             return this.fail(res, error.getErrorValue().message);
         }
