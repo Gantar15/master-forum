@@ -29,6 +29,7 @@ export class EditPostController extends BaseController {
       title: TextUtils.sanitize(req.body.title),
       text: !!req.body.text ? TextUtils.sanitize(req.body.text) : null,
       category: req.body.category,
+      postType: req.body.postType,
       tags: req.body.tags.map((tag) => TextUtils.sanitize(tag)),
     };
 
@@ -52,7 +53,7 @@ export class EditPostController extends BaseController {
           case EditPostErrors.PostWithSameTitleExistsError:
             return this.clientError(res, error.getErrorValue().message);
           default:
-            return this.fail(res, error.getErrorValue());
+            return this.fail(res, error.getErrorValue().message);
         }
       } else {
         return this.ok(res);

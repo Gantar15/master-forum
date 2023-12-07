@@ -31,7 +31,7 @@ export class TagRepo implements ITagRepo {
   async getTagByTitle(tagTitle: TagTitle): Promise<Tag> {
     const TagModel = this.models.Tag;
     const baseQuery = this.createBaseQuery();
-    baseQuery.where["title"] = tagTitle.toString();
+    baseQuery.where["title"] = tagTitle.value;
     const tagInstance = await TagModel.findOne(baseQuery);
     const found = !!tagInstance === true;
     if (!found) throw new Error("Tag not found");

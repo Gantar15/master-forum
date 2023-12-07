@@ -7,7 +7,7 @@ export class TagMap implements Mapper<Tag> {
   public static toPersistence(tag: Tag): any {
     return {
       tag_id: tag.id.toString(),
-      title: tag.title,
+      title: tag.title.value,
     };
   }
 

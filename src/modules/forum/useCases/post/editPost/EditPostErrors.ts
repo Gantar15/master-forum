@@ -3,9 +3,9 @@ import { UseCaseError } from "../../../../../shared/core/UseCaseError";
 
 export namespace EditPostErrors {
   export class PostNotFoundError extends Result<UseCaseError> {
-    constructor(id: string) {
+    constructor(slug: string) {
       super(false, {
-        message: `Couldn't find a post by id {${id}}.`,
+        message: `Couldn't find a post by slug ${slug}.`,
       } as UseCaseError);
     }
   }

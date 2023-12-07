@@ -181,6 +181,17 @@ export class Post extends AggregateRoot<PostProps> {
     return right(Result.ok<void>());
   }
 
+  public updateType(type: PostType): UpdatePostOrLinkResult {
+    const guardResult = Guard.againstNullOrUndefined(type, "type");
+
+    if (guardResult.isFailure) {
+      return left(Result.fail<any>(guardResult.getErrorValue()));
+    }
+
+    this.props.type = type;
+    return right(Result.ok<void>());
+  }
+
   public updatePostScore(
     numPostUpvotes: number,
     numPostDownvotes: number,

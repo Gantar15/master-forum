@@ -54,19 +54,14 @@ export class EditPost
     let postLinkOrError: Result<PostLink>;
     let postLink: PostLink;
 
-    let postSlugOrError: Result<PostSlug>;
-    let postSlug: PostSlug;
-
     let category: Category;
-    let tags: Tags;
+    let tags: Tags = Tags.create([]);
 
     try {
       try {
         post = await this.postRepo.getPostBySlug(request.slug);
       } catch (err) {
-        return left(
-          new EditPostErrors.PostNotFoundError(post.postId.getStringValue())
-        );
+        return left(new EditPostErrors.PostNotFoundError(request.slug));
       }
 
       //check is current user is the owner of the post
@@ -126,31 +121,26 @@ export class EditPost
         }
         postTitle = postTitleOrError.getValue();
 
-        const existingPost = await this.postRepo.getPostByTitle(postTitle);
-        if (existingPost) {
-          return left(
-            new EditPostErrors.PostWithSameTitleExistsError(postTitle.value)
-          );
-        }
+        try {
+          const existingPost = await this.postRepo.getPostByTitle(postTitle);
+          if (existingPost && !existingPost.id.equals(post.id)) {
+            return left(
+              new EditPostErrors.PostWithSameTitleExistsError(postTitle.value)
+            );
+          }
+        } catch (err) {}
 
         post.updateTitle(postTitle);
-
-        postSlugOrError = PostSlug.create(postTitle);
-        if (postSlugOrError.isFailure) {
-          return left(postSlugOrError);
-        }
-        postSlug = postSlugOrError.getValue();
-        post.updateSlug(postSlug);
       }
 
-      if (request.text) {
+      if (request.postType === "text") {
         postTextOrError = PostText.create({ value: request.text });
         if (postTextOrError.isFailure) {
           return left(postTextOrError);
         }
         postText = postTextOrError.getValue();
         post.updateText(postText);
-      } else if (request.link) {
+      } else if (request.postType === "link") {
         postLinkOrError = PostLink.create({ url: request.link });
         if (postLinkOrError.isFailure) {
           return left(postLinkOrError);
@@ -158,6 +148,8 @@ export class EditPost
         postLink = postLinkOrError.getValue();
         post.updateLink(postLink);
       }
+
+      post.updateType(request.postType);
 
       await this.postRepo.save(post);
 
