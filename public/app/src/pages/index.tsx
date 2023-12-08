@@ -137,6 +137,8 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
         {this.getPostsFromActiveFilterGroup().map((p, i) => (
           <PostRow
             key={i}
+            isDownvoted={p.wasDownvotedByMe}
+            isUpvoted={p.wasUpvotedByMe}
             onUpvoteClicked={() => this.props.upvotePost(p.slug)}
             onDownvoteClicked={() => this.props.downvotePost(p.slug)}
             isLoggedIn={this.props.users.isAuthenticated}

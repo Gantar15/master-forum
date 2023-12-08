@@ -1,13 +1,9 @@
+import { memberRepo, postRepo } from "../../../repos";
 
 import { GetPostBySlug } from "./GetPostBySlug";
-import { postRepo } from "../../../repos";
 import { GetPostBySlugController } from "./GetPostBySlugController";
 
-const getPostBySlug = new GetPostBySlug(postRepo);
+const getPostBySlug = new GetPostBySlug(postRepo, memberRepo);
 const getPostBySlugController = new GetPostBySlugController(getPostBySlug);
 
-export {
-  getPostBySlug,
-  getPostBySlugController
-}
-
+export { getPostBySlug, getPostBySlugController };

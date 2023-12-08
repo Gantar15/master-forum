@@ -13,6 +13,8 @@ interface HeaderProps {
   onDownvoteClicked?: Function;
   points?: number;
   isLoggedIn?: boolean;
+  isDownvoted?: boolean;
+  isUpvoted?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = (props) => (
@@ -20,6 +22,8 @@ const Header: React.FC<HeaderProps> = (props) => (
     <Logo />
     {props.isUpvotable && (
       <Points
+        isDownvoted={props.isDownvoted}
+        isUpvoted={props.isUpvoted}
         onUpvoteClicked={() =>
           props.onUpvoteClicked ? props.onUpvoteClicked() : ''
         }

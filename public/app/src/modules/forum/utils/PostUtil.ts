@@ -1,6 +1,5 @@
-
-import { Post } from "../models/Post";
-import { PostDTO } from "../dtos/postDTO";
+import { Post } from '../models/Post';
+import { PostDTO } from '../dtos/postDTO';
 
 export class PostUtil {
   public static maxTextLength: number = 10000;
@@ -12,23 +11,25 @@ export class PostUtil {
   public static maxLinkLength: number = 500;
   public static minLinkLength: number = 8;
 
-  public static computePostAfterUpvote (post: Post): Post {
+  public static computePostAfterUpvote(post: Post): Post {
     return {
       ...post,
-      wasUpvotedByMe: post.wasUpvotedByMe ? false : true,
-      points: post.wasUpvotedByMe ? (post.points - 1) : (post.points + 1)
-    } 
+      wasDownvotedByMe: false,
+      wasUpvotedByMe: !post.wasDownvotedByMe,
+      points: post.wasUpvotedByMe ? post.points : post.points + 1
+    };
   }
 
-  public static computePostAfterDownvote (post: Post): Post {
+  public static computePostAfterDownvote(post: Post): Post {
     return {
       ...post,
-      wasDownvotedByMe: post.wasDownvotedByMe ? false : true,
-      points: post.wasDownvotedByMe ? (post.points + 1) : (post.points - 1)
-    } 
+      wasUpvotedByMe: false,
+      wasDownvotedByMe: !post.wasUpvotedByMe,
+      points: post.wasDownvotedByMe ? post.points : post.points - 1
+    };
   }
 
-  public static toViewModel (dto: PostDTO): Post {
+  public static toViewModel(dto: PostDTO): Post {
     return {
       slug: dto.slug,
       title: dto.title,
@@ -41,6 +42,6 @@ export class PostUtil {
       link: dto.link,
       wasUpvotedByMe: dto.wasUpvotedByMe,
       wasDownvotedByMe: dto.wasDownvotedByMe
-    }
+    };
   }
 }

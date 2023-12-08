@@ -1,16 +1,12 @@
+import { memberRepo, postRepo } from "../../../repos";
 
 import { GetPopularPosts } from "./GetPopularPosts";
-import { postRepo } from "../../../repos";
 import { GetPopularPostsController } from "./GetPopularPostsController";
 
-const getPopularPosts = new GetPopularPosts(postRepo);
+const getPopularPosts = new GetPopularPosts(postRepo, memberRepo);
 
 const getPopularPostsController = new GetPopularPostsController(
   getPopularPosts
-)
+);
 
-export {
-  getPopularPosts,
-  getPopularPostsController
-}
-
+export { getPopularPosts, getPopularPostsController };

@@ -10,6 +10,7 @@ import { PostVotes } from "../../domain/postVotes";
 import { Comments } from "../../domain/comments";
 import { Tags } from "../../domain/tags";
 import { PostTitle } from "../../domain/postTitle";
+import { MemberId } from "../../domain/memberId";
 
 export class PostRepo implements IPostRepo {
   private models: any;
@@ -94,11 +95,21 @@ export class PostRepo implements IPostRepo {
 
   public async getPostDetailsBySlug(
     slug: string,
-    offset?: number
+    memberId?: MemberId
   ): Promise<PostDetails> {
     const PostModel = this.models.Post;
     const detailsQuery = this.createBaseDetailsQuery();
     detailsQuery.where["slug"] = slug;
+
+    if (!!memberId === true) {
+      detailsQuery.include.push({
+        model: this.models.PostVote,
+        as: "Votes",
+        where: { member_id: memberId.getStringValue() },
+        required: false,
+      });
+    }
+
     const post = await PostModel.findOne(detailsQuery);
     const found = !!post === true;
     if (!found) throw new Error("Post not found");
@@ -115,20 +126,44 @@ export class PostRepo implements IPostRepo {
     return PostMap.toDomain(postInstance);
   }
 
-  public async getRecentPosts(offset?: number): Promise<PostDetails[]> {
+  public async getRecentPosts(
+    offset?: number,
+    memberId?: MemberId
+  ): Promise<PostDetails[]> {
     const PostModel = this.models.Post;
     const detailsQuery = this.createBaseDetailsQuery();
     detailsQuery.offset = offset ? offset : detailsQuery.offset;
+
+    if (!!memberId === true) {
+      detailsQuery.include.push({
+        model: this.models.PostVote,
+        as: "Votes",
+        where: { member_id: memberId.getStringValue() },
+        required: false,
+      });
+    }
 
     const posts = await PostModel.findAll(detailsQuery);
     return posts.map((p) => PostDetailsMap.toDomain(p));
   }
 
-  public async getPopularPosts(offset?: number): Promise<PostDetails[]> {
+  public async getPopularPosts(
+    offset?: number,
+    memberId?: MemberId
+  ): Promise<PostDetails[]> {
     const PostModel = this.models.Post;
     const detailsQuery = this.createBaseDetailsQuery();
     detailsQuery.offset = offset ? offset : detailsQuery.offset;
     detailsQuery["order"] = [["points", "DESC"]];
+
+    if (!!memberId === true) {
+      detailsQuery.include.push({
+        model: this.models.PostVote,
+        as: "Votes",
+        where: { member_id: memberId.getStringValue() },
+        required: false,
+      });
+    }
 
     const posts = await PostModel.findAll(detailsQuery);
     return posts.map((p) => PostDetailsMap.toDomain(p));

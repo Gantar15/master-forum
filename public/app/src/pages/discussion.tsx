@@ -169,6 +169,8 @@ class DiscussionPage extends React.Component<
         ) : (
           <>
             <Header
+              isDownvoted={post.wasDownvotedByMe}
+              isUpvoted={post.wasUpvotedByMe}
               title={`"${post.title}"`}
               isUpvotable={true}
               onUpvoteClicked={() => this.props.upvotePost(post.slug)}
@@ -200,6 +202,8 @@ class DiscussionPage extends React.Component<
         {comments.map((c, i) => (
           <PostComment
             key={i}
+            isDownvoted={c.wasDownvotedByMe}
+            isUpvoted={c.wasUpvotedByMe}
             onDownvoteClicked={() =>
               this.props.downvoteComment(c.commentId, c.postSlug)
             }

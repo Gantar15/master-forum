@@ -1,6 +1,5 @@
-
-import { PostService } from "./postService"
+import { PostService } from "./PostService";
 
 const postService = new PostService();
 
-export { postService }
+export { postService };

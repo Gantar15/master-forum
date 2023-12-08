@@ -2,9 +2,12 @@ import '../styles/Point.scss';
 
 import PointHover from './PointHover';
 import React from 'react';
+import activeArrowSvg from '../assets/arrow-active.svg';
 import arrowSvg from '../assets/arrow.svg';
 
 interface PostPointsProps {
+  isDownvoted?: boolean;
+  isUpvoted?: boolean;
   points: number;
   onUpvoteClicked: () => void;
   onDownvoteClicked: () => void;
@@ -23,7 +26,11 @@ const Points: React.FC<PostPointsProps> = (props) => {
         onMouseLeave={() => setHover(false)}
       >
         {!props.isLoggedIn && <PointHover isHover={isHover} />}
-        <img src={arrowSvg} />
+        {props.isUpvoted ? (
+          <img src={activeArrowSvg} />
+        ) : (
+          <img src={arrowSvg} />
+        )}
       </div>
       <div>{props.points}</div>
       <div
@@ -32,7 +39,11 @@ const Points: React.FC<PostPointsProps> = (props) => {
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
-        <img src={arrowSvg} />
+        {props.isDownvoted ? (
+          <img src={activeArrowSvg} />
+        ) : (
+          <img src={arrowSvg} />
+        )}
       </div>
     </div>
   );

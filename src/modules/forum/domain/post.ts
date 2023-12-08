@@ -74,7 +74,7 @@ export class Post extends AggregateRoot<PostProps> {
   }
 
   get points(): number {
-    return this.props.points;
+    return this.props.points + this.computeVotePoints();
   }
 
   get tags(): Tags {
@@ -202,6 +202,32 @@ export class Post extends AggregateRoot<PostProps> {
       numPostUpvotes -
       numPostDownvotes +
       (numPostCommentUpvotes - numPostCommentDownvotes);
+  }
+
+  private computeVotePoints(): number {
+    let tally = 0;
+
+    for (let vote of this.props.votes.getNewItems()) {
+      if (vote.isUpvote()) {
+        tally++;
+      }
+
+      if (vote.isDownvote()) {
+        tally--;
+      }
+    }
+
+    for (let vote of this.props.votes.getRemovedItems()) {
+      if (vote.isUpvote()) {
+        tally--;
+      }
+
+      if (vote.isDownvote()) {
+        tally++;
+      }
+    }
+
+    return tally;
   }
 
   public addVote(vote: PostVote): Result<void> {

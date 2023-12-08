@@ -7,6 +7,8 @@ import PostCommentAuthorAndText from './PostCommentAuthorAndText';
 import React from 'react';
 
 interface PostCommentProps extends Comment {
+  isDownvoted: boolean;
+  isUpvoted: boolean;
   onUpvoteClicked: () => void;
   onDownvoteClicked: () => void;
   isLoggedIn: boolean;
@@ -15,6 +17,8 @@ interface PostCommentProps extends Comment {
 const PostComment: React.FC<PostCommentProps> = (props) => (
   <div className="comment">
     <Points
+      isDownvoted={props.isDownvoted}
+      isUpvoted={props.isUpvoted}
       points={props.points}
       onUpvoteClicked={() => props.onUpvoteClicked()}
       onDownvoteClicked={() => props.onDownvoteClicked()}
@@ -30,6 +34,8 @@ const PostComment: React.FC<PostCommentProps> = (props) => (
           props.childComments.map((c, i) => (
             <PostComment
               {...c}
+              isUpvoted={c.wasUpvotedByMe}
+              isDownvoted={c.wasDownvotedByMe}
               key={i}
               onDownvoteClicked={props.onDownvoteClicked}
               onUpvoteClicked={props.onUpvoteClicked}

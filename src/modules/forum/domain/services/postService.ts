@@ -1,45 +1,44 @@
+import { Either, Result, left, right } from "../../../../shared/core/Result";
 
-import { Post } from "../post";
-import { Member } from "../member";
 import { Comment } from "../comment";
 import { CommentText } from "../commentText";
-import { Either, Result, left, right } from "../../../../shared/core/Result";
-import { PostVote } from "../postVote";
-import { UpvotePostResponse } from "../../useCases/post/upvotePost/UpvotePostResponse";
-import { DownvotePostResponse } from "../../useCases/post/downvotePost/DownvotePostResponse";
 import { CommentVote } from "../commentVote";
-import { UpvoteCommentResponse } from "../../useCases/comments/upvoteComment/UpvoteCommentResonse";
 import { DownvoteCommentResponse } from "../../useCases/comments/downvoteComment/DownvoteCommentResponse";
+import { DownvotePostResponse } from "../../useCases/post/downvotePost/DownvotePostResponse";
+import { Member } from "../member";
+import { Post } from "../post";
+import { PostVote } from "../postVote";
+import { UpvoteCommentResponse } from "../../useCases/comments/upvoteComment/UpvoteCommentResonse";
+import { UpvotePostResponse } from "../../useCases/post/upvotePost/UpvotePostResponse";
 
 export class PostService {
-
-  public downvoteComment (
-    post: Post, 
-    member: Member, 
-    comment: Comment, 
+  public downvoteComment(
+    post: Post,
+    member: Member,
+    comment: Comment,
     existingVotesOnCommentByMember: CommentVote[]
   ): DownvoteCommentResponse {
-
     // If it was already downvoted, do nothing.
 
-    const existingDownvote: CommentVote = existingVotesOnCommentByMember
-      .find((v) => v.isDownvote());
+    const existingDownvote: CommentVote = existingVotesOnCommentByMember.find(
+      (v) => v.isDownvote()
+    );
 
     const downvoteAlreadyExists = !!existingDownvote;
 
     if (downvoteAlreadyExists) {
       // Do nothing
-      return right(Result.ok<void>())
+      return right(Result.ok<void>());
     }
 
     // If upvote exists, we need to remove it.
-    const existingUpvote: CommentVote = existingVotesOnCommentByMember
-      .find((v) => v.isUpvote());
+    const existingUpvote: CommentVote = existingVotesOnCommentByMember.find(
+      (v) => v.isUpvote()
+    );
 
     const upvoteAlreadyExists = !!existingUpvote;
 
     if (upvoteAlreadyExists) {
-
       comment.removeVote(existingUpvote);
 
       post.updateComment(comment);
@@ -48,8 +47,10 @@ export class PostService {
     }
 
     // Neither, let's create the downvote ourselves.
-    const downvoteOrError = CommentVote
-      .createDownvote(member.memberId, comment.commentId)
+    const downvoteOrError = CommentVote.createDownvote(
+      member.memberId,
+      comment.commentId
+    );
 
     if (downvoteOrError.isFailure) {
       return left(downvoteOrError);
@@ -57,31 +58,33 @@ export class PostService {
 
     const downvote: CommentVote = downvoteOrError.getValue();
     comment.addVote(downvote);
+
     post.updateComment(comment);
 
-    return right(Result.ok<void>());  
+    return right(Result.ok<void>());
   }
 
-  public upvoteComment (
-    post: Post, 
-    member: Member, 
-    comment: Comment, 
+  public upvoteComment(
+    post: Post,
+    member: Member,
+    comment: Comment,
     existingVotesOnCommentByMember: CommentVote[]
   ): UpvoteCommentResponse {
-
-    // If upvote already exists 
-    const existingUpvote: CommentVote = existingVotesOnCommentByMember
-      .find((v) => v.isUpvote());
+    // If upvote already exists
+    const existingUpvote: CommentVote = existingVotesOnCommentByMember.find(
+      (v) => v.isUpvote()
+    );
 
     const upvoteAlreadyExists = !!existingUpvote;
     if (upvoteAlreadyExists) {
       // Do nothing
       return right(Result.ok<void>());
-    } 
-    
+    }
+
     // If downvote exists, we need to promote the remove it.
-    const existingDownvote: CommentVote = existingVotesOnCommentByMember
-      .find((v) => v.isDownvote());
+    const existingDownvote: CommentVote = existingVotesOnCommentByMember.find(
+      (v) => v.isDownvote()
+    );
 
     const downvoteAlreadyExists = !!existingDownvote;
     if (downvoteAlreadyExists) {
@@ -90,11 +93,13 @@ export class PostService {
       post.updateComment(comment);
 
       return right(Result.ok<void>());
-    } 
+    }
 
     // Otherwise, give the comment an upvote
-    const upvoteOrError = CommentVote
-      .createUpvote(member.memberId, comment.commentId)
+    const upvoteOrError = CommentVote.createUpvote(
+      member.memberId,
+      comment.commentId
+    );
 
     if (upvoteOrError.isFailure) {
       return left(upvoteOrError);
@@ -105,18 +110,18 @@ export class PostService {
 
     post.updateComment(comment);
 
-    return right(Result.ok<void>()); 
+    return right(Result.ok<void>());
   }
 
-  public downvotePost (
+  public downvotePost(
     post: Post,
     member: Member,
     existingVotesOnPostByMember: PostVote[]
   ): DownvotePostResponse {
-
     // If already downvoted, do nothing
-    const existingDownvote: PostVote = existingVotesOnPostByMember
-      .find((v) => v.isDownvote());
+    const existingDownvote: PostVote = existingVotesOnPostByMember.find((v) =>
+      v.isDownvote()
+    );
 
     const downvoteAlreadyExists = !!existingDownvote;
 
@@ -125,13 +130,13 @@ export class PostService {
     }
 
     // If upvote exists, we need to remove it
-    const existingUpvote: PostVote = existingVotesOnPostByMember
-      .find((v) => v.isUpvote());
+    const existingUpvote: PostVote = existingVotesOnPostByMember.find((v) =>
+      v.isUpvote()
+    );
 
     const upvoteAlreadyExists = !!existingUpvote;
 
     if (upvoteAlreadyExists) {
-
       post.removeVote(existingUpvote);
 
       return right(Result.ok<void>());
@@ -139,8 +144,10 @@ export class PostService {
 
     // Otherwise, we get to create the downvote now
 
-    const downvoteOrError = PostVote
-      .createDownvote(member.memberId, post.postId);
+    const downvoteOrError = PostVote.createDownvote(
+      member.memberId,
+      post.postId
+    );
 
     if (downvoteOrError.isFailure) {
       return left(downvoteOrError);
@@ -150,28 +157,28 @@ export class PostService {
     post.addVote(downvote);
 
     return right(Result.ok<void>());
-    
   }
 
-  public upvotePost (
-    post: Post, 
-    member: Member, 
+  public upvotePost(
+    post: Post,
+    member: Member,
     existingVotesOnPostByMember: PostVote[]
   ): UpvotePostResponse {
-
-    const existingUpvote: PostVote = existingVotesOnPostByMember
-      .find((v) => v.isUpvote());
+    const existingUpvote: PostVote = existingVotesOnPostByMember.find((v) =>
+      v.isUpvote()
+    );
 
     // If already upvoted, do nothing
     const upvoteAlreadyExists = !!existingUpvote;
 
     if (upvoteAlreadyExists) {
       return right(Result.ok<void>());
-    } 
+    }
 
     // If downvoted, remove the downvote
-    const existingDownvote: PostVote = existingVotesOnPostByMember
-    .find((v) => v.isDownvote());
+    const existingDownvote: PostVote = existingVotesOnPostByMember.find((v) =>
+      v.isDownvote()
+    );
 
     const downvoteAlreadyExists = !!existingDownvote;
 
@@ -181,8 +188,7 @@ export class PostService {
     }
 
     // Otherwise, add upvote
-    const upvoteOrError = PostVote
-      .createUpvote(member.memberId, post.postId);
+    const upvoteOrError = PostVote.createUpvote(member.memberId, post.postId);
 
     if (upvoteOrError.isFailure) {
       return left(upvoteOrError);
@@ -194,18 +200,17 @@ export class PostService {
     return right(Result.ok<void>());
   }
 
-  public replyToComment (
-    post: Post, 
-    member: Member, 
-    parentComment: Comment, 
+  public replyToComment(
+    post: Post,
+    member: Member,
+    parentComment: Comment,
     newCommentText: CommentText
   ): Either<Result<any>, Result<void>> {
-
     const commentOrError = Comment.create({
       memberId: member.memberId,
       text: newCommentText,
       postId: post.postId,
-      parentCommentId: parentComment.commentId
+      parentCommentId: parentComment.commentId,
     });
 
     if (commentOrError.isFailure) {
