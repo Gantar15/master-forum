@@ -11,6 +11,7 @@ import { Comments } from "../../domain/comments";
 import { Tags } from "../../domain/tags";
 import { PostTitle } from "../../domain/postTitle";
 import { MemberId } from "../../domain/memberId";
+import { UniqueEntityID } from "../../../../shared/domain/UniqueEntityID";
 
 export class PostRepo implements IPostRepo {
   private models: any;
@@ -155,6 +156,27 @@ export class PostRepo implements IPostRepo {
     const detailsQuery = this.createBaseDetailsQuery();
     detailsQuery.offset = offset ? offset : detailsQuery.offset;
     detailsQuery["order"] = [["points", "DESC"]];
+
+    if (!!memberId === true) {
+      detailsQuery.include.push({
+        model: this.models.PostVote,
+        as: "Votes",
+        where: { member_id: memberId.getStringValue() },
+        required: false,
+      });
+    }
+
+    const posts = await PostModel.findAll(detailsQuery);
+    return posts.map((p) => PostDetailsMap.toDomain(p));
+  }
+
+  public async getPostsByCategory(
+    categoryId: UniqueEntityID,
+    memberId?: MemberId
+  ) {
+    const PostModel = this.models.Post;
+    const detailsQuery = this.createBaseDetailsQuery();
+    detailsQuery.where["category_id"] = categoryId.toString();
 
     if (!!memberId === true) {
       detailsQuery.include.push({

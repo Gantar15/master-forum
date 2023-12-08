@@ -5,6 +5,7 @@ import { editPostController } from "../../../useCases/post/editPost";
 import express from "express";
 import { getPopularPostsController } from "../../../useCases/post/getPopularPosts";
 import { getPostBySlugController } from "../../../useCases/post/getPostBySlug";
+import { getPostsByCategoryController } from "../../../useCases/post/getPostsByCategory";
 import { getRecentPostsController } from "../../../useCases/post/getRecentPosts";
 import { middleware } from "../../../../../shared/infra/http";
 import { upvotePostController } from "../../../useCases/post/upvotePost";
@@ -25,6 +26,12 @@ postRouter.get(
   "/popular",
   middleware.includeDecodedTokenIfExists(),
   (req, res) => getPopularPostsController.execute(req, res)
+);
+
+postRouter.get(
+  "/category",
+  middleware.includeDecodedTokenIfExists(),
+  (req, res) => getPostsByCategoryController.execute(req, res)
 );
 
 postRouter.get("/", middleware.includeDecodedTokenIfExists(), (req, res) =>
