@@ -9,8 +9,8 @@ import React from 'react';
 interface PostCommentProps extends Comment {
   isDownvoted: boolean;
   isUpvoted: boolean;
-  onUpvoteClicked: () => void;
-  onDownvoteClicked: () => void;
+  onUpvoteClicked: (commentId: string, postSlug: string) => void;
+  onDownvoteClicked: (commentId: string, postSlug: string) => void;
   isLoggedIn: boolean;
 }
 
@@ -20,8 +20,12 @@ const PostComment: React.FC<PostCommentProps> = (props) => (
       isDownvoted={props.isDownvoted}
       isUpvoted={props.isUpvoted}
       points={props.points}
-      onUpvoteClicked={() => props.onUpvoteClicked()}
-      onDownvoteClicked={() => props.onDownvoteClicked()}
+      onUpvoteClicked={() =>
+        props.onUpvoteClicked(props.commentId, props.postSlug)
+      }
+      onDownvoteClicked={() =>
+        props.onDownvoteClicked(props.commentId, props.postSlug)
+      }
       isLoggedIn={props.isLoggedIn}
     />
     <div className="post-comment-container">
@@ -37,8 +41,12 @@ const PostComment: React.FC<PostCommentProps> = (props) => (
               isUpvoted={c.wasUpvotedByMe}
               isDownvoted={c.wasDownvotedByMe}
               key={i}
-              onDownvoteClicked={props.onDownvoteClicked}
-              onUpvoteClicked={props.onUpvoteClicked}
+              onDownvoteClicked={() =>
+                props.onDownvoteClicked(c.commentId, c.postSlug)
+              }
+              onUpvoteClicked={() =>
+                props.onUpvoteClicked(c.commentId, c.postSlug)
+              }
               isLoggedIn={props.isLoggedIn}
             />
           ))}

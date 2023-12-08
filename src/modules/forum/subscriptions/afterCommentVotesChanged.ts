@@ -30,12 +30,18 @@ export class AfterCommentVotesChanged implements IHandle<CommentVotesChanged> {
   ): Promise<void> {
     // try {
     //   // First, update the comment stats
-    //   await this.updateCommentStats.execute({ commentId: event.comment.commentId });
+    //   await this.updateCommentStats.execute({
+    //     commentId: event.comment.commentId,
+    //   });
     //   // Then, update the post stats
-    //   await this.updatePostStats.execute({ postId: event.post.postId.getStringValue() });
+    //   await this.updatePostStats.execute({
+    //     postId: event.post.postId.getStringValue(),
+    //   });
     // } catch (err) {
     //   console.log(err);
-    //   console.log(`[AfterCommentVotesChanged]: Failed to update postId={${event.post.postId.getStringValue()}}`)
+    //   console.log(
+    //     `[AfterCommentVotesChanged]: Failed to update postId={${event.post.postId.getStringValue()}}`
+    //   );
     // }
   }
 }

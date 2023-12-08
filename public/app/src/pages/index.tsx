@@ -106,7 +106,6 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
   }
 
   render() {
-    console.log(this.props);
     const { activeFilter } = this.state;
 
     return (

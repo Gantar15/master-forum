@@ -204,12 +204,8 @@ class DiscussionPage extends React.Component<
             key={i}
             isDownvoted={c.wasDownvotedByMe}
             isUpvoted={c.wasUpvotedByMe}
-            onDownvoteClicked={() =>
-              this.props.downvoteComment(c.commentId, c.postSlug)
-            }
-            onUpvoteClicked={() =>
-              this.props.upvoteComment(c.commentId, c.postSlug)
-            }
+            onDownvoteClicked={this.props.downvoteComment}
+            onUpvoteClicked={this.props.upvoteComment}
             isLoggedIn={this.props.users.isAuthenticated}
             {...c}
           />
