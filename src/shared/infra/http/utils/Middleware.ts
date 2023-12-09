@@ -77,11 +77,12 @@ export class Middleware {
     };
   }
 
-  public ensureRole(role: UserRole) {
+  public ensureRole(roles: UserRole[] | UserRole) {
     return async (req, res, next) => {
       const token = req.headers["authorization"];
       // Confirm that the token was signed with our signature.
       if (token) {
+        if (!Array.isArray(roles)) roles = [roles];
         const decoded = await this.authService.decodeJWT(token);
         const signatureFailed = !!decoded === false;
 
@@ -104,12 +105,12 @@ export class Middleware {
           );
         }
 
-        if (role === "admin" && adminUser === true) {
+        if (roles.includes("admin") && adminUser === true) {
           return next();
-        } else if (role === "manager" && managerUser === true) {
+        } else if (roles.includes("manager") && managerUser === true) {
           return next();
         } else if (
-          role === "user" &&
+          roles.includes("user") &&
           adminUser === false &&
           managerUser === false
         ) {

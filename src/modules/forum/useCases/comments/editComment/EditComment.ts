@@ -28,7 +28,13 @@ export class EditComment implements UseCase<EditCommentDTO, Promise<Response>> {
   }
 
   public async execute(req: EditCommentDTO): Promise<Response> {
-    const { commentId, comment: commentText, userId } = req;
+    const {
+      commentId,
+      comment: commentText,
+      userId,
+      managerUser,
+      adminUser,
+    } = req;
     let comment: Comment;
     let commentDetails: CommentDetails;
 
@@ -41,7 +47,7 @@ export class EditComment implements UseCase<EditCommentDTO, Promise<Response>> {
 
       //check is current user is the owner of the comment
       const memberId = await this.memberRepo.getMemberIdByUserId(userId);
-      if (!comment.memberId.equals(memberId)) {
+      if (!managerUser && !adminUser && !comment.memberId.equals(memberId)) {
         return left(new EditCommentErrors.ForbiddenError(commentId));
       }
 

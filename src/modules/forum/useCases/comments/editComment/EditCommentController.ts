@@ -19,12 +19,14 @@ export class EditCommentController extends BaseController {
     req: DecodedExpressRequest,
     res: express.Response
   ): Promise<any> {
-    const { userId } = req.decoded;
+    const { userId, managerUser, adminUser } = req.decoded;
 
     const dto: EditCommentDTO = {
       commentId: req.params.commentId,
       comment: req.body.comment,
       userId,
+      managerUser,
+      adminUser,
     };
 
     try {

@@ -30,7 +30,7 @@ export class DeleteComment
   }
 
   public async execute(req: DeleteCommentDTO): Promise<Response> {
-    const { commentId, userId } = req;
+    const { commentId, userId, managerUser, adminUser } = req;
 
     try {
       let comment: Comment;
@@ -41,7 +41,7 @@ export class DeleteComment
       }
 
       const memberId = await this.memberRepo.getMemberIdByUserId(userId);
-      if (!comment.memberId.equals(memberId)) {
+      if (!managerUser && !adminUser && !comment.memberId.equals(memberId)) {
         return left(new DeleteCommentErrors.ForbiddenError(commentId));
       }
 

@@ -18,10 +18,12 @@ export class DeleteCommentController extends BaseController {
     req: DecodedExpressRequest,
     res: express.Response
   ): Promise<any> {
-    const { userId } = req.decoded;
+    const { userId, managerUser, adminUser } = req.decoded;
 
     const dto: DeleteCommentDTO = {
       commentId: req.params.commentId,
+      managerUser,
+      adminUser,
       userId,
     };
 

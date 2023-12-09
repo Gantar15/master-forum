@@ -25,7 +25,7 @@ export class DeletePost implements UseCase<DeletePostDTO, Promise<Response>> {
   }
 
   public async execute(req: DeletePostDTO): Promise<Response> {
-    const { slug, userId } = req;
+    const { slug, userId, managerUser, adminUser } = req;
 
     try {
       let post: Post;
@@ -36,7 +36,7 @@ export class DeletePost implements UseCase<DeletePostDTO, Promise<Response>> {
       }
 
       const memberId = await this.memberRepo.getMemberIdByUserId(userId);
-      if (!post.memberId.equals(memberId)) {
+      if (!managerUser && !adminUser && !post.memberId.equals(memberId)) {
         return left(new DeletePostErrors.ForbiddenError(slug));
       }
 

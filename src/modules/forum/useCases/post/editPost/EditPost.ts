@@ -41,7 +41,7 @@ export class EditPost
   }
 
   public async execute(request: EditPostDTO): Promise<EditPostResponse> {
-    const { userId } = request;
+    const { userId, managerUser, adminUser } = request;
 
     let post: Post;
 
@@ -66,7 +66,7 @@ export class EditPost
 
       //check is current user is the owner of the post
       const memberId = await this.memberRepo.getMemberIdByUserId(userId);
-      if (!post.memberId.equals(memberId)) {
+      if (!managerUser && !adminUser && !post.memberId.equals(memberId)) {
         return left(new EditPostErrors.ForbiddenError());
       }
 

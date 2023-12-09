@@ -5,13 +5,15 @@ import { middleware } from "../../../../../shared/infra/http";
 
 const categoryRouter = express.Router();
 
-categoryRouter.post("/", middleware.ensureAuthenticated(), (req, res) =>
-  createCategoryController.execute(req, res)
+categoryRouter.post(
+  "/",
+  middleware.ensureRole(["admin", "manager"]),
+  (req, res) => createCategoryController.execute(req, res)
 );
 
 categoryRouter.delete(
   "/:categoryId",
-  middleware.ensureAuthenticated(),
+  middleware.ensureRole(["admin", "manager"]),
   (req, res) => deleteCategoryController.execute(req, res)
 );
 

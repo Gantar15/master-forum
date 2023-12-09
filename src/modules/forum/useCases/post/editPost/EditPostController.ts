@@ -19,11 +19,13 @@ export class EditPostController extends BaseController {
     req: DecodedExpressRequest,
     res: express.Response
   ): Promise<any> {
-    const { userId } = req.decoded;
+    const { userId, managerUser, adminUser } = req.decoded;
     const { slug } = req.params;
 
     const dto: EditPostDTO = {
       userId: userId,
+      managerUser: managerUser,
+      adminUser: adminUser,
       slug: slug,
       link: !!req.body.link ? TextUtils.sanitize(req.body.link) : null,
       title: TextUtils.sanitize(req.body.title),

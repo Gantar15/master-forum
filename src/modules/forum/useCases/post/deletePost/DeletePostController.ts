@@ -18,11 +18,13 @@ export class DeletePostController extends BaseController {
     req: DecodedExpressRequest,
     res: express.Response
   ): Promise<any> {
-    const { userId } = req.decoded;
+    const { userId, managerUser, adminUser } = req.decoded;
 
     const dto: DeletePostDTO = {
       slug: req.params.slug,
       userId,
+      managerUser,
+      adminUser,
     };
 
     try {
