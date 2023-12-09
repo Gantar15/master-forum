@@ -11,8 +11,7 @@ import { UseCase } from "../../../../../shared/core/UseCase";
 type Response = Either<
   | DeletePostErrors.PostNotFoundError
   | DeletePostErrors.ForbiddenError
-  | AppError.UnexpectedError
-  | Result<any>,
+  | AppError.UnexpectedError,
   Result<void>
 >;
 

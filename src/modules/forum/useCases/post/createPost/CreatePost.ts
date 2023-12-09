@@ -22,8 +22,11 @@ import { UseCase } from "../../../../../shared/core/UseCase";
 
 type Response = Either<
   | CreatePostErrors.MemberDoesntExistError
+  | CreatePostErrors.CategoryNotFoundError
+  | CreatePostErrors.InvalidTagError
+  | CreatePostErrors.PostWithSameTitleExistsError
   | AppError.UnexpectedError
-  | Result<any>,
+  | AppError.MessageError,
   Result<void>
 >;
 
@@ -66,22 +69,24 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
 
       const titleOrError = PostTitle.create({ value: request.title });
       if (titleOrError.isFailure) {
-        return left(titleOrError);
+        return left(new AppError.MessageError("Title is invalid"));
       }
       title = titleOrError.getValue();
 
-      const existingPost = await this.postRepo.getPostByTitle(title);
-      if (existingPost) {
-        return left(
-          new CreatePostErrors.PostWithSameTitleExistsError(title.value)
-        );
-      }
+      try {
+        const existingPost = await this.postRepo.getPostByTitle(title);
+        if (existingPost) {
+          return left(
+            new CreatePostErrors.PostWithSameTitleExistsError(title.value)
+          );
+        }
+      } catch (err) {}
 
       if (request.postType === "text") {
         const textOrError = PostText.create({ value: request.text });
 
         if (textOrError.isFailure) {
-          return left(textOrError);
+          return left(new AppError.MessageError("Text is invalid"));
         }
 
         text = textOrError.getValue();
@@ -89,7 +94,8 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
         const linkOrError = PostLink.create({ url: request.link });
 
         if (linkOrError.isFailure) {
-          return left(linkOrError);
+          //@ts-ignore
+          return left(new AppError.MessageError(linkOrError.getErrorValue()));
         }
 
         link = linkOrError.getValue();
@@ -99,7 +105,7 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
         value: request.category,
       });
       if (categoryTitleOrError.isFailure) {
-        return left(categoryTitleOrError);
+        return left(new AppError.MessageError("Category title is invalid"));
       }
       try {
         category = await this.categoryRepo.getCategoryByTitle(
@@ -135,7 +141,7 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
 
       const slugOrError = PostSlug.create(title);
       if (slugOrError.isFailure) {
-        return left(slugOrError);
+        return left(new AppError.MessageError("Invalid slug"));
       }
       slug = slugOrError.getValue();
 
@@ -153,7 +159,7 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
       const postOrError = Post.create(postProps);
 
       if (postOrError.isFailure) {
-        return left(postOrError);
+        return left(new AppError.MessageError("Cannot create post"));
       }
 
       post = postOrError.getValue();

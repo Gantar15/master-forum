@@ -23,7 +23,7 @@ export class CreatePostController extends BaseController {
       postType: req.body.postType,
       link: !!req.body.link ? TextUtils.sanitize(req.body.link) : null,
       category: req.body.category,
-      tags: req.body.tags.map((tag) => TextUtils.sanitize(tag)),
+      tags: (req.body.tags || []).map((tag) => TextUtils.sanitize(tag)),
     };
 
     try {

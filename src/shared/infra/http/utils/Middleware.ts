@@ -1,11 +1,13 @@
 import { IAuthService } from "../../../../modules/users/services/authService";
+import { IUserRepo } from "../../../../modules/users/repos/userRepo";
+import { UserRole } from "../../../../modules/users/domain/userRole";
 import { isProduction } from "../../../../config";
 const rateLimit = require("express-rate-limit");
 
 export class Middleware {
   private authService: IAuthService;
 
-  constructor(authService: IAuthService) {
+  constructor(authService: IAuthService, userRepo: IUserRepo) {
     this.authService = authService;
   }
 
@@ -69,6 +71,55 @@ export class Middleware {
             res
           );
         }
+      } else {
+        return this.endRequest(403, "No access token provided", res);
+      }
+    };
+  }
+
+  public ensureRole(role: UserRole) {
+    return async (req, res, next) => {
+      const token = req.headers["authorization"];
+      // Confirm that the token was signed with our signature.
+      if (token) {
+        const decoded = await this.authService.decodeJWT(token);
+        const signatureFailed = !!decoded === false;
+
+        if (signatureFailed) {
+          return this.endRequest(403, "Token signature expired.", res);
+        }
+
+        // See if the token was found
+        const { username, adminUser, managerUser } = decoded;
+        const tokens = await this.authService.getTokens(username);
+
+        // if the token was found, just continue the request.
+        if (tokens.length !== 0) {
+          req.decoded = decoded;
+        } else {
+          return this.endRequest(
+            403,
+            "Auth token not found. User is probably not logged in. Please login again.",
+            res
+          );
+        }
+
+        if (role === "admin" && adminUser === true) {
+          return next();
+        } else if (role === "manager" && managerUser === true) {
+          return next();
+        } else if (
+          role === "user" &&
+          adminUser === false &&
+          managerUser === false
+        ) {
+          return next();
+        }
+        return this.endRequest(
+          403,
+          "I'm sorry you don't have the rights to do that.",
+          res
+        );
       } else {
         return this.endRequest(403, "No access token provided", res);
       }

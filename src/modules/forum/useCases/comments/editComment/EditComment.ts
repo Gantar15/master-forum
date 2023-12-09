@@ -14,7 +14,7 @@ type Response = Either<
   | EditCommentErrors.CommentNotFoundError
   | EditCommentErrors.ForbiddenError
   | AppError.UnexpectedError
-  | Result<Error>,
+  | AppError.UnexpectedError,
   Result<CommentDetails>
 >;
 
@@ -47,8 +47,9 @@ export class EditComment implements UseCase<EditCommentDTO, Promise<Response>> {
 
       let commentTextModel = CommentText.create({ value: commentText });
       if (commentTextModel.isFailure) {
-        //@ts-ignore
-        return left(commentTextModel.getErrorValue());
+        return left(
+          new AppError.MessageError(commentTextModel.getErrorValue().value)
+        );
       }
       await this.commentRepo.save(comment);
 

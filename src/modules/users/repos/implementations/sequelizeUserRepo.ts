@@ -3,6 +3,7 @@ import { UserName } from "../../domain/userName";
 import { User } from "../../domain/user";
 import { UserMap } from "../../mappers/userMap";
 import { UserEmail } from "../../domain/userEmail";
+import { UserId } from "../../domain/userId";
 
 export class SequelizeUserRepo implements IUserRepo {
   private models: any;
@@ -44,13 +45,28 @@ export class SequelizeUserRepo implements IUserRepo {
     return UserMap.toDomain(baseUser);
   }
 
+  async delete(userId: UserId): Promise<void> {
+    const UserModel = this.models.BaseUser;
+    return UserModel.destroy({
+      where: { base_user_id: userId.getStringValue() },
+    });
+  }
+
   async save(user: User): Promise<void> {
     const UserModel = this.models.BaseUser;
     const exists = await this.exists(user.email);
+    const rawSequelizeUser = await UserMap.toPersistence(user);
 
     if (!exists) {
-      const rawSequelizeUser = await UserMap.toPersistence(user);
       await UserModel.create(rawSequelizeUser);
+    } else {
+      await UserModel.update(rawSequelizeUser, {
+        // To make sure your hooks always run, make sure to include this in
+        // the query
+        individualHooks: true,
+        hooks: true,
+        where: { base_user_id: user.userId.getStringValue() },
+      });
     }
 
     return;
