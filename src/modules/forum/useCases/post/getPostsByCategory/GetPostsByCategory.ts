@@ -2,14 +2,13 @@ import { Either, Result, left, right } from "../../../../../shared/core/Result";
 
 import { AppError } from "../../../../../shared/core/AppError";
 import { Category } from "../../../domain/category";
-import { CategoryRepo } from "../../../repos/implementations/categoryRepo";
 import { CategoryTitle } from "../../../domain/categoryTitle";
 import { GetPostsByCategoryErrors } from "./GetPostsByCategoryErrors";
 import { GetPostsByCategoryRequestDTO } from "./GetPostsByCategoryRequestDTO";
+import { ICategoryRepo } from "../../../repos/categoryRepo";
 import { IMemberRepo } from "../../../repos/memberRepo";
 import { IPostRepo } from "../../../repos/postRepo";
 import { MemberId } from "../../../domain/memberId";
-import { MemberRepo } from "../../../repos/implementations/sequelizeMemberRepo";
 import { PostDetails } from "../../../domain/postDetails";
 import { UseCase } from "../../../../../shared/core/UseCase";
 
@@ -22,13 +21,13 @@ export class GetPostsByCategory
   implements UseCase<GetPostsByCategoryRequestDTO, Promise<Response>>
 {
   private postRepo: IPostRepo;
-  private categoryRepo: CategoryRepo;
-  private memberRepo: MemberRepo;
+  private categoryRepo: ICategoryRepo;
+  private memberRepo: IMemberRepo;
 
   constructor(
     postRepo: IPostRepo,
-    categoryRepo: CategoryRepo,
-    memberRepo: MemberRepo
+    categoryRepo: ICategoryRepo,
+    memberRepo: IMemberRepo
   ) {
     this.postRepo = postRepo;
     this.categoryRepo = categoryRepo;

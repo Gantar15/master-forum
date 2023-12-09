@@ -1,7 +1,7 @@
 import { categoryRepo, memberRepo, postRepo } from "../../../repos";
 
 import { GetPostsByCategory } from "./GetPostsByCategory";
-import { GetPostsByCategoryController } from "./GetPopularPostsController";
+import { GetPostsByCategoryController } from "./GetPostsByCategoryController";
 
 const getPostsByCategory = new GetPostsByCategory(
   postRepo,

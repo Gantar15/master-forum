@@ -8,6 +8,7 @@ import { getPostBySlugController } from "../../../useCases/post/getPostBySlug";
 import { getPostsByCategoryController } from "../../../useCases/post/getPostsByCategory";
 import { getRecentPostsController } from "../../../useCases/post/getRecentPosts";
 import { middleware } from "../../../../../shared/infra/http";
+import { searchPostsController } from "../../../useCases/post/searchPosts";
 import { upvotePostController } from "../../../useCases/post/upvotePost";
 
 const postRouter = express.Router();
@@ -32,6 +33,12 @@ postRouter.get(
   "/category",
   middleware.includeDecodedTokenIfExists(),
   (req, res) => getPostsByCategoryController.execute(req, res)
+);
+
+postRouter.get(
+  "/search",
+  middleware.includeDecodedTokenIfExists(),
+  (req, res) => searchPostsController.execute(req, res)
 );
 
 postRouter.get("/", middleware.includeDecodedTokenIfExists(), (req, res) =>

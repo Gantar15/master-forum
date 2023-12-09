@@ -12,6 +12,8 @@ import { Tags } from "../../domain/tags";
 import { PostTitle } from "../../domain/postTitle";
 import { MemberId } from "../../domain/memberId";
 import { UniqueEntityID } from "../../../../shared/domain/UniqueEntityID";
+import { SearchString } from "../../domain/SearchString";
+import Sequelize, { Op } from "sequelize";
 
 export class PostRepo implements IPostRepo {
   private models: any;
@@ -199,6 +201,30 @@ export class PostRepo implements IPostRepo {
     const found = !!post === true;
     if (!found) throw new Error("Post not found");
     return PostMap.toDomain(post);
+  }
+
+  async search(
+    searchString: SearchString,
+    memberId?: MemberId
+  ): Promise<PostDetails[]> {
+    const PostModel = this.models.Post;
+    const searchStringValue = searchString.value;
+    const detailsQuery = this.createBaseDetailsQuery();
+    detailsQuery.where[Op.or] = {
+      title: { [Op.like]: `%${searchStringValue}%` },
+    };
+
+    if (!!memberId === true) {
+      detailsQuery.include.push({
+        model: this.models.PostVote,
+        as: "Votes",
+        where: { member_id: memberId.getStringValue() },
+        required: false,
+      });
+    }
+
+    const posts = await PostModel.findAll(detailsQuery);
+    return posts.map((p) => PostDetailsMap.toDomain(p));
   }
 
   public async exists(postId: PostId): Promise<boolean> {
