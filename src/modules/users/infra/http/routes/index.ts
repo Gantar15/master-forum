@@ -10,7 +10,9 @@ import { refreshAccessTokenController } from "../../../useCases/refreshAccessTok
 
 const userRouter = express.Router();
 
-userRouter.post("/", (req, res) => createUserController.execute(req, res));
+userRouter.post("/", middleware.includeDecodedTokenIfExists(), (req, res) =>
+  createUserController.execute(req, res)
+);
 
 userRouter.get("/me", middleware.ensureAuthenticated(), (req, res) =>
   getCurrentUserController.execute(req, res)
