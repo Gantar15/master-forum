@@ -21,7 +21,7 @@ export class GetPostBySlugController extends BaseController {
   ): Promise<any> {
     const dto: GetPostBySlugDTO = {
       slug: req.query.slug,
-      userId: req.decoded.userId,
+      userId: !!req.decoded === true ? req.decoded.userId : null,
     };
 
     try {

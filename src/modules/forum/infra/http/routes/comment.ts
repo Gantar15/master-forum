@@ -33,13 +33,13 @@ commentRouter.get(
 
 commentRouter.post(
   "/:commentId/upvote",
-  middleware.includeDecodedTokenIfExists(),
+  middleware.ensureAuthenticated(),
   (req, res) => upvoteCommentController.execute(req, res)
 );
 
 commentRouter.post(
   "/:commentId/downvote",
-  middleware.includeDecodedTokenIfExists(),
+  middleware.ensureAuthenticated(),
   (req, res) => downvoteCommentController.execute(req, res)
 );
 
