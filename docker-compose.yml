@@ -5,6 +5,7 @@ services:
     container_name: forum_mysql
     command: --default-authentication-plugin=mysql_native_password
     image: mysql:latest
+    restart: always
     ports:
       - 3306:3306
     environment:
@@ -12,6 +13,8 @@ services:
       - MYSQL_DATABASE=${DDD_FORUM_DB_DEV_DB_NAME}
       - MYSQL_USER=${DDD_FORUM_DB_USER}
       - MYSQL_PASSWORD=${DDD_FORUM_DB_PASS}
+    networks:
+      - forum_net
 
   adminer:
     image: adminer
@@ -23,5 +26,69 @@ services:
   redis:
     container_name: forum_redis
     image: redis:latest
+    restart: always
     ports:
       - 6379:6379
+    networks:
+      - forum_net
+
+  elasticsearch:
+    container_name: forum_elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.2
+    environment:
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      discovery.type: single-node
+      xpack.security.enabled: false
+    volumes:
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elastic_data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks:
+      - forum_net
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.8.2
+    container_name: kibana
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    environment:
+      SERVER_HOST: "0.0.0.0"
+      ELASTICSEARCH_HOSTS: "http://localhost:9200"
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    networks:
+      - forum_net
+
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile
+  #   container_name: app
+  #   restart: always
+  #   ports:
+  #     - 5500:5500
+  #   volumes:
+  #     - ./.env:/usr/src/ddd/.env
+  #   depends_on:
+  #     - mysql
+  #     - redis
+  #     - elasticsearch
+  #   networks:
+  #     - forum_net
+
+networks:
+  forum_net:
+    driver: bridge
+
+volumes:
+  elastic_data:
+    driver: local

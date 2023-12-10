@@ -22,6 +22,10 @@ export interface IPostRepo {
     searchString: SearchString,
     memberId?: MemberId
   ): Promise<PostDetails[]>;
+  searchByEs(
+    searchString: SearchString,
+    memberId?: MemberId
+  ): Promise<PostDetails[]>;
   exists(postId: PostId): Promise<boolean>;
   save(post: Post): Promise<void>;
   deleteBySlug(slug: string): Promise<void>;

@@ -38,6 +38,7 @@
   "author": "Egor Pavlovskiy",
   "license": "ISC",
   "dependencies": {
+    "@elastic/elasticsearch": "^8.10.0",
     "@types/express": "^4.17.1",
     "@types/jest": "^24.0.18",
     "@types/lodash": "^4.14.141",

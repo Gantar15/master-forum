@@ -15,4 +15,6 @@ RUN cd public/app && npm i
 
 RUN chmod +x entrypoint.sh
 
+EXPOSE 5550
+
 CMD ["./entrypoint.sh"]
