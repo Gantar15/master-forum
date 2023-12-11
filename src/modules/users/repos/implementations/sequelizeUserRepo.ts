@@ -45,6 +45,12 @@ export class SequelizeUserRepo implements IUserRepo {
     return UserMap.toDomain(baseUser);
   }
 
+  async getUsers(): Promise<User[]> {
+    const BaseUserModel = this.models.BaseUser;
+    const baseUsers = await BaseUserModel.findAll();
+    return baseUsers.map(UserMap.toDomain);
+  }
+
   async delete(userId: UserId): Promise<void> {
     const UserModel = this.models.BaseUser;
     return UserModel.destroy({

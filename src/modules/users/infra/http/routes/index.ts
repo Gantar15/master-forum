@@ -3,6 +3,7 @@ import { deleteUserController } from "../../../useCases/deleteUser";
 import express from "express";
 import { getCurrentUserController } from "../../../useCases/getCurrentUser";
 import { getUserByUserNameController } from "../../../useCases/getUserByUserName";
+import { getUsersController } from "../../../useCases/getCategories";
 import { loginController } from "../../../useCases/login";
 import { logoutController } from "../../../useCases/logout";
 import { middleware } from "../../../../../shared/infra/http";
@@ -12,6 +13,10 @@ const userRouter = express.Router();
 
 userRouter.post("/", middleware.includeDecodedTokenIfExists(), (req, res) =>
   createUserController.execute(req, res)
+);
+
+userRouter.get("/", middleware.ensureRole(["admin"]), (req, res) =>
+  getUsersController.execute(req, res)
 );
 
 userRouter.get("/me", middleware.ensureAuthenticated(), (req, res) =>

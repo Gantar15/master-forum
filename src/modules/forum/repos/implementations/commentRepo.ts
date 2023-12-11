@@ -51,8 +51,7 @@ export class CommentRepo implements ICommentRepo {
 
   async getCommentDetailsByPostSlug(
     slug: string,
-    memberId?: MemberId,
-    offset?: number
+    memberId?: MemberId
   ): Promise<CommentDetails[]> {
     const CommentModel = this.models.Comment;
     const detailsQuery = this.createBaseDetailsQuery();

@@ -3,9 +3,11 @@ version: "3"
 services:
   mysql:
     container_name: forum_mysql
-    command: --default-authentication-plugin=mysql_native_password
+    command: --authentication_policy=mysql_native_password
     image: mysql:latest
     restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
     ports:
       - 3306:3306
     environment:
@@ -22,6 +24,8 @@ services:
       - mysql
     ports:
       - 8080:8080
+    networks:
+      - forum_net
 
   redis:
     container_name: forum_redis
@@ -91,4 +95,6 @@ networks:
 
 volumes:
   elastic_data:
+    driver: local
+  mysql_data:
     driver: local

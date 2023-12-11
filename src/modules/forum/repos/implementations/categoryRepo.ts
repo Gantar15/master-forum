@@ -48,6 +48,13 @@ export class CategoryRepo implements ICategoryRepo {
     return CategoryMap.toDomain(categoryInstance);
   }
 
+  async getCategories(): Promise<Category[]> {
+    const CategoryModel = this.models.Category;
+    const baseQuery = this.createBaseQuery();
+    const categoryInstances = await CategoryModel.findAll(baseQuery);
+    return categoryInstances.map(CategoryMap.toDomain);
+  }
+
   async delete(categoryId: UniqueEntityID): Promise<void> {
     const CategoryModel = this.models.Category;
     const baseQuery = this.createBaseQuery();

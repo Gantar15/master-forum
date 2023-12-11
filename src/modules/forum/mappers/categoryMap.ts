@@ -28,4 +28,8 @@ export class CategoryMap implements Mapper<Category> {
 
     return categoryOrError.isSuccess ? categoryOrError.getValue() : null;
   }
+
+  public static toDTO(category: Category): string {
+    return category.title.value;
+  }
 }
