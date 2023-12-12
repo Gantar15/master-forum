@@ -19,6 +19,8 @@ export class CommentUtil {
         username: dto.member.user.username,
         reputation: dto.member.reputation
       },
+      wasUpvotedByMe: dto.wasUpvotedByMe,
+      wasDownvotedByMe: dto.wasDownvotedByMe,
       createdAt: dto.createdAt,
       childComments: [],
       postTitle: dto.postTitle,

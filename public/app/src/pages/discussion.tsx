@@ -4,12 +4,14 @@ import * as usersOperators from '../modules/users/redux/operators';
 import { BackNavigation } from '../shared/components/header';
 import { Comment } from '../modules/forum/models/Comment';
 import { CommentUtil } from '../modules/forum/utils/CommentUtil';
+import DeleteButtons from '../shared/components/modal-window/actions-buttons/delete/components/DeleteButtons';
 import Editor from '../modules/forum/components/comments/components/Editor';
 import EntityActions from '../shared/components/entity-actions/components/EntityActions';
 import { ForumState } from '../modules/forum/redux/states';
 import { FullPageLoader } from '../shared/components/loader';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
+import ModalWindow from '../shared/components/modal-window/components/ModalWindow';
 import { Points } from '../modules/forum/components/posts/points';
 import { Post } from '../modules/forum/models/Post';
 import PostComment from '../modules/forum/components/posts/post/components/PostComment';
@@ -38,6 +40,7 @@ interface DiscussionPageProps
 interface DiscussionState {
   comments: Comment[];
   newCommentText: string;
+  isDeletePostModalOpen: boolean;
 }
 
 class DiscussionPage extends React.Component<
@@ -49,7 +52,8 @@ class DiscussionPage extends React.Component<
 
     this.state = {
       comments: [],
-      newCommentText: ''
+      newCommentText: '',
+      isDeletePostModalOpen: false
     };
   }
 
@@ -116,10 +120,41 @@ class DiscussionPage extends React.Component<
   onPostAction(action: string) {
     if (!('slug' in this.props.forum.post)) return;
     if (action === 'delete') {
-      const slug = this.props.forum.post.slug;
+      this.setState((state) => ({
+        ...state,
+        isDeletePostModalOpen: !state.isDeletePostModalOpen
+      }));
     } else if (action === 'edit') {
       this.props.setEditPost(this.props.forum.post);
       this.props.history.push('/submit');
+    }
+  }
+
+  afterSuccessfulPostDelete(prevProps: DiscussionPageProps) {
+    const currentProps: DiscussionPageProps = this.props;
+    if (
+      currentProps.forum.isDeletePostSuccess ===
+      !prevProps.forum.isDeletePostSuccess
+    ) {
+      toast.success(`Done-zo! 🤠`, {
+        autoClose: 2000
+      });
+      setTimeout(() => {
+        this.props.history.push('/');
+      }, 1000);
+    }
+  }
+
+  afterFailedPostDelete(prevProps: DiscussionPageProps) {
+    const currentProps: DiscussionPageProps = this.props;
+    if (
+      currentProps.forum.isDeletePostFailure ===
+      !prevProps.forum.isDeletePostFailure
+    ) {
+      const error: string = currentProps.forum.error;
+      return toast.error(`Yeahhhhh, ${error} 🤠`, {
+        autoClose: 3000
+      });
     }
   }
 
@@ -154,15 +189,17 @@ class DiscussionPage extends React.Component<
   componentDidUpdate(prevProps: DiscussionPageProps) {
     this.afterSuccessfulCommentPost(prevProps);
     this.afterFailedCommentPost(prevProps);
+    this.afterSuccessfulPostDelete(prevProps);
+    this.afterFailedPostDelete(prevProps);
   }
 
   render() {
     const post = this.props.forum.post as Post;
     const user = this.props.users.user;
     const comments = this.props.forum.comments;
-    const postAuthorUsername = this.props.forum.editPost?.postAuthor;
     let isPostAuthor = false;
     if ('username' in user) {
+      const postAuthorUsername = post.postAuthor;
       isPostAuthor =
         postAuthorUsername === user.username ||
         user.isAdminUser ||
@@ -171,6 +208,14 @@ class DiscussionPage extends React.Component<
 
     return (
       <Layout>
+        <ModalWindow
+          title="Confirmation!"
+          text="Are you sure you want to delete this post?"
+          isOpen={this.state.isDeletePostModalOpen}
+          onOk={() => this.props.deletePost(post.slug)}
+          onCancel={() => this.setState({ isDeletePostModalOpen: false })}
+          okTitle="Yes, delete"
+        />
         <div className="header-container flex flex-row flex-center flex-between">
           <BackNavigation text="Back to all discussions" to="/" />
           <ProfileButton

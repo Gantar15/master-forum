@@ -3,6 +3,7 @@ import { Post, PostType } from '../../models/Post';
 import { createReplyToComment } from './createReplyToComment';
 import { createReplyToPost } from './createReplyToPost';
 import { creatingReplyToComment } from '../actionCreators';
+import { deletePost } from './deletePost';
 import { downvoteComment } from './downvoteComment';
 import { downvotePost } from './downvotePost';
 import { getCommentByCommentId } from './getCommentByCommentId';
@@ -11,6 +12,7 @@ import { getComments } from './getComments';
 import { getPopularPosts } from './getPopularPosts';
 import { getPostBySlug } from './getPostBySlug';
 import { getRecentPosts } from './getRecentPosts';
+import { setEditComment } from './setEditComment';
 import { setEditPost } from './setEditPost';
 import { submitPost } from './submitPost';
 import { updatePost } from './updatePost';
@@ -61,7 +63,9 @@ export interface IForumOperations {
 }
 
 export {
+  deletePost,
   updatePost,
+  setEditComment,
   setEditPost,
   submitPost,
   getRecentPosts,

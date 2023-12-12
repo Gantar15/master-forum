@@ -91,7 +91,13 @@ export default function forum(
     case actions.DELETE_POST_SUCCESS:
       return {
         ...state,
-        ...ReduxUtils.reportEventStatus('isDeletePost', true)
+        ...ReduxUtils.reportEventStatus('isDeletePost', true),
+        recentPosts: state.recentPosts.filter(
+          (post) => post.slug !== action.post.slug
+        ),
+        popularPosts: state.recentPosts.filter(
+          (post) => post.slug !== action.post.slug
+        )
       };
     case actions.DELETE_POST_FAILURE:
       return {

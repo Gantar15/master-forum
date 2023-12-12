@@ -207,10 +207,15 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
   }
 
   render() {
+    const isUpdatePage = !!this.props.forum.editPost;
+
     return (
       <Layout>
         <div className="header-container flex flex-row flex-center flex-even">
-          <Header title="New submission" subtitle="" />
+          <Header
+            title={isUpdatePage ? 'Edit submission' : 'New submission'}
+            subtitle=""
+          />
           <ProfileButton
             isLoggedIn={this.props.users.isAuthenticated}
             username={

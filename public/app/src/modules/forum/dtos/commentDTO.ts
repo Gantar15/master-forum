@@ -1,5 +1,4 @@
-
-import { MemberDTO } from "./memberDTO";
+import { MemberDTO } from './memberDTO';
 
 export interface CommentDTO {
   postSlug: string;
@@ -11,5 +10,6 @@ export interface CommentDTO {
   childComments: CommentDTO[];
   postTitle: string;
   points: number;
+  wasDownvotedByMe: boolean;
+  wasUpvotedByMe: boolean;
 }
-
