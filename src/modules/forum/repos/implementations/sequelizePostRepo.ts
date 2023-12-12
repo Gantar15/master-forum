@@ -198,13 +198,18 @@ export class PostRepo implements IPostRepo {
   }
 
   public async getPostBySlug(slug: string): Promise<Post> {
+    const post = await this.getPostRawBySlug(slug);
+    return PostMap.toDomain(post);
+  }
+
+  public async getPostRawBySlug(slug: string): Promise<any> {
     const PostModel = this.models.Post;
-    const detailsQuery = this.createBaseQuery();
+    const detailsQuery = this.createBaseDetailsQuery();
     detailsQuery.where["slug"] = slug;
     const post = await PostModel.findOne(detailsQuery);
     const found = !!post === true;
     if (!found) throw new Error("Post not found");
-    return PostMap.toDomain(post);
+    return post;
   }
 
   async search(
@@ -268,17 +273,18 @@ export class PostRepo implements IPostRepo {
     return found;
   }
 
-  public async delete(postId: PostId): Promise<void> {
+  public async delete(postId: string): Promise<void> {
     const PostModel = this.models.Post;
     await PostModel.destroy({
-      where: { post_id: postId.getStringValue() },
+      where: { post_id: postId },
     });
-    return await this.esPostService.removeIndex(postId.getStringValue());
+    return await this.esPostService.removeIndex(postId);
   }
 
-  public async deleteBySlug(slug: string): Promise<void> {
-    const post = await this.getPostBySlug(slug);
-    return await this.delete(post.postId);
+  public async deleteBySlug(slug: string): Promise<PostDetails> {
+    const post = await this.getPostRawBySlug(slug);
+    await this.delete(post.post_id);
+    return PostDetailsMap.toDomain(post);
   }
 
   private saveComments(comments: Comments) {
@@ -298,11 +304,11 @@ export class PostRepo implements IPostRepo {
     return postInstance.setTags(tagsIds);
   }
 
-  public async save(post: Post): Promise<void> {
+  public async save(post: Post): Promise<PostDetails> {
     const PostModel = this.models.Post;
-    const exists = await this.exists(post.postId);
+    let exists = await this.exists(post.postId);
     const isNewPost = !exists;
-    const rawSequelizePost = await PostMap.toPersistence(post);
+    const rawSequelizePost = PostMap.toPersistence(post);
 
     if (isNewPost) {
       try {
@@ -312,7 +318,7 @@ export class PostRepo implements IPostRepo {
         await this.setTagsToPost(post.postId, post.tags);
         await this.esPostService.indexPost(rawSequelizePost);
       } catch (err) {
-        await this.delete(post.postId);
+        await this.delete(post.postId.getStringValue());
         throw new Error(err.toString());
       }
     } else {
@@ -329,7 +335,9 @@ export class PostRepo implements IPostRepo {
         hooks: true,
         where: { post_id: post.postId.getStringValue() },
       });
-      await this.esPostService.updateIndexPost(rawSequelizePost);
     }
+    const updatedPostRaw = await this.getPostRawBySlug(post.slug.value);
+
+    return PostDetailsMap.toDomain(updatedPostRaw);
   }
 }

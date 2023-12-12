@@ -3,7 +3,8 @@ import * as actionCreators from '../actionCreators';
 import { PostType } from '../../models/Post';
 import { postService } from '../../services';
 
-function submitPost(
+function updatePost(
+  slug: string,
   title: string,
   type: PostType,
   category: string,
@@ -12,9 +13,10 @@ function submitPost(
   tags?: string[]
 ) {
   return async (dispatch: any) => {
-    dispatch(actionCreators.submittingPost());
+    dispatch(actionCreators.updatePost());
 
-    const result = await postService.createPost(
+    const result = await postService.updatePost(
+      slug,
       title,
       type,
       category,
@@ -25,11 +27,12 @@ function submitPost(
 
     if (result.isLeft()) {
       const error: string = result.value;
-      dispatch(actionCreators.submittingPostFailure(error));
+      dispatch(actionCreators.updatePostFailure(error));
     } else {
-      dispatch(actionCreators.submittingPostSuccess());
+      const post = result.value.getValue();
+      dispatch(actionCreators.updatePostSuccess(post));
     }
   };
 }
 
-export { submitPost };
+export { updatePost };

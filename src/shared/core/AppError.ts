@@ -18,7 +18,7 @@ export namespace AppError {
   }
 
   export class MessageError extends Result<UseCaseError> {
-    public constructor(message: string, err?: any) {
+    public constructor(message: any, err?: any) {
       super(false, {
         message: message,
         error: err || new Error(message),
@@ -27,7 +27,7 @@ export namespace AppError {
       console.error(err);
     }
 
-    public static create(message: string, err?: any): UnexpectedError {
+    public static create(message: any, err?: any): UnexpectedError {
       return new MessageError(message, err);
     }
   }

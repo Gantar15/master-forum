@@ -5,7 +5,6 @@ import PostFilters, {
   PostFilterType
 } from '../modules/forum/components/posts/filters/components/PostFilters';
 
-import { DateUtil } from '../shared/utils/DateUtil';
 import { ForumState } from '../modules/forum/redux/states';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';

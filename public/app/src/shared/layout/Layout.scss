@@ -7,14 +7,24 @@
 
   padding-bottom: 1rem;
 
+  padding-left: 1rem;
+
+  padding-right: 1rem;
+
 
   .app-layout-inner {
     // background: #F9F9F9;
 
-// border-radius: 0.25rem;
+    // border-radius: 0.25rem;
   }
 }
+
 .header-container {
+
+  &>.button {
+    margin-left: 20px;
+  }
+
   @media (max-width: 500px) {
     flex-direction: column-reverse;
 
@@ -30,7 +40,6 @@
 
       padding-right: 1rem;
 
-
       h1 {
         font-size: 1.5rem;
       }
@@ -41,6 +50,7 @@
     }
   }
 }
+
 body {
   @media (max-width: 500px) {
     margin: 0.5rem !important;

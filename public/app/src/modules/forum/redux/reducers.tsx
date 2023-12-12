@@ -12,6 +12,126 @@ export default function forum(
   action: ForumAction
 ): ForumState {
   switch (action.type as actions.ForumActionType) {
+    case actions.GET_POSTS_BY_CATEGORY:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isGetPostsByCategory'),
+        error: ''
+      };
+    case actions.GET_POSTS_BY_CATEGORY_SUCCESS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isGetPostsByCategory', true),
+        categoryPosts: action.categoryPosts
+      };
+    case actions.GET_POSTS_BY_CATEGORY_FAILURE:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isGetPostsByCategory', false),
+        error: action.error
+      };
+    case actions.GET_CATEGORIES:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isGetCategories'),
+        error: ''
+      };
+    case actions.GET_CATEGORIES_SUCCESS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isGetCategories', true),
+        categories: action.categories
+      };
+    case actions.GET_CATEGORIES_FAILURE:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isGetCategories', false),
+        error: action.error
+      };
+    case actions.DELETE_COMMENT:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isDeleteComment'),
+        error: ''
+      };
+    case actions.DELETE_COMMENT_SUCCESS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isDeleteComment', true)
+      };
+    case actions.DELETE_COMMENT_FAILURE:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isDeleteComment', false),
+        error: action.error
+      };
+    case actions.UPDATE_COMMENT:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isUpdateComment'),
+        error: ''
+      };
+    case actions.UPDATE_COMMENT_SUCCESS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isUpdateComment', true)
+      };
+    case actions.UPDATE_COMMENT_FAILURE:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isUpdateComment', false),
+        error: action.error
+      };
+    case actions.DELETE_POST:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isDeletePost'),
+        error: ''
+      };
+    case actions.DELETE_POST_SUCCESS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isDeletePost', true)
+      };
+    case actions.DELETE_POST_FAILURE:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isDeletePost', false),
+        error: action.error
+      };
+    case actions.UPDATE_POST:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isUpdatePost'),
+        error: ''
+      };
+    case actions.UPDATE_POST_SUCCESS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isUpdatePost', true),
+        recentPosts: state.recentPosts.map((post) =>
+          post.slug === action.post.slug ? action.post : post
+        ),
+        popularPosts: state.popularPosts.map((post) =>
+          post.slug === action.post.slug ? action.post : post
+        )
+      };
+    case actions.UPDATE_POST_FAILURE:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isUpdatePost', false),
+        error: action.error
+      };
+    case actions.SET_EDIT_POST:
+      return {
+        ...state,
+        editPost: action.editPost
+      };
+    case actions.SET_EDIT_COMMENT:
+      return {
+        ...state,
+        editComment: action.editComment
+      };
     case actions.SUBMITTING_POST:
       return {
         ...state,
@@ -26,7 +146,8 @@ export default function forum(
     case actions.SUBMITTING_POST_FAILURE:
       return {
         ...state,
-        ...ReduxUtils.reportEventStatus('isSubmittingPost', false)
+        ...ReduxUtils.reportEventStatus('isSubmittingPost', false),
+        error: action.error
       };
 
     case actions.GETTING_RECENT_POSTS:

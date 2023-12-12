@@ -1,4 +1,3 @@
-
 export type JWTToken = string;
 
 export type RefreshToken = string;
@@ -8,5 +7,6 @@ export interface JWTTokenClaims {
   isEmailVerified: boolean;
   email: string;
   adminUser: boolean;
+  managerUser: boolean;
   sessionId?: string;
 }

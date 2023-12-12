@@ -11,6 +11,12 @@ export class PostUtil {
   public static maxLinkLength: number = 500;
   public static minLinkLength: number = 8;
 
+  public static maxCategoryLength: number = 50;
+  public static minCategoryLength: number = 1;
+
+  public static maxTagLength: number = 40;
+  public static minTagLength: number = 1;
+
   public static computePostAfterUpvote(post: Post): Post {
     return {
       ...post,
@@ -40,6 +46,8 @@ export class PostUtil {
       type: dto.type,
       text: dto.text,
       link: dto.link,
+      category: dto.category,
+      tags: dto.tags,
       wasUpvotedByMe: dto.wasUpvotedByMe,
       wasDownvotedByMe: dto.wasDownvotedByMe
     };

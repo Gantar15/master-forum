@@ -69,7 +69,7 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
 
       const titleOrError = PostTitle.create({ value: request.title });
       if (titleOrError.isFailure) {
-        return left(new AppError.MessageError("Title is invalid"));
+        return left(AppError.MessageError.create(titleOrError.getErrorValue()));
       }
       title = titleOrError.getValue();
 
@@ -86,7 +86,9 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
         const textOrError = PostText.create({ value: request.text });
 
         if (textOrError.isFailure) {
-          return left(new AppError.MessageError("Text is invalid"));
+          return left(
+            AppError.MessageError.create(textOrError.getErrorValue())
+          );
         }
 
         text = textOrError.getValue();
@@ -94,8 +96,9 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
         const linkOrError = PostLink.create({ url: request.link });
 
         if (linkOrError.isFailure) {
-          //@ts-ignore
-          return left(new AppError.MessageError(linkOrError.getErrorValue()));
+          return left(
+            AppError.MessageError.create(linkOrError.getErrorValue())
+          );
         }
 
         link = linkOrError.getValue();
@@ -105,7 +108,9 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
         value: request.category,
       });
       if (categoryTitleOrError.isFailure) {
-        return left(new AppError.MessageError("Category title is invalid"));
+        return left(
+          AppError.MessageError.create(categoryTitleOrError.getErrorValue())
+        );
       }
       try {
         category = await this.categoryRepo.getCategoryByTitle(
@@ -141,7 +146,7 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
 
       const slugOrError = PostSlug.create(title);
       if (slugOrError.isFailure) {
-        return left(new AppError.MessageError("Invalid slug"));
+        return left(AppError.MessageError.create(slugOrError.getErrorValue()));
       }
       slug = slugOrError.getValue();
 
@@ -159,7 +164,7 @@ export class CreatePost implements UseCase<CreatePostDTO, Promise<Response>> {
       const postOrError = Post.create(postProps);
 
       if (postOrError.isFailure) {
-        return left(new AppError.MessageError("Cannot create post"));
+        return left(AppError.MessageError.create(postOrError.getErrorValue()));
       }
 
       post = postOrError.getValue();

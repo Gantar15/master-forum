@@ -12,12 +12,12 @@ function withVoting(WrappedComponent: any) {
       super(props);
     }
 
-    handleUpvoteComment(commentId: string) {
-      this.props.upvoteComment(commentId);
+    handleUpvoteComment(commentId: string, postSlug: string) {
+      this.props.upvoteComment(commentId, postSlug);
     }
 
-    handleDownvoteComment(commentId: string) {
-      this.props.downvoteComment(commentId);
+    handleDownvoteComment(commentId: string, postSlug: string) {
+      this.props.downvoteComment(commentId, postSlug);
     }
 
     handleUpvotePost(postSlug: string) {
@@ -31,15 +31,15 @@ function withVoting(WrappedComponent: any) {
     render() {
       return (
         <WrappedComponent
-          upvoteComment={(commentId: string) =>
-            this.handleUpvoteComment(commentId)
+          {...this.props}
+          upvoteComment={(commentId: string, postSlug: string) =>
+            this.handleUpvoteComment(commentId, postSlug)
           }
-          downvoteComment={(commentId: string) =>
-            this.handleDownvoteComment(commentId)
+          downvoteComment={(commentId: string, postSlug: string) =>
+            this.handleDownvoteComment(commentId, postSlug)
           }
           upvotePost={(slug: string) => this.handleUpvotePost(slug)}
           downvotePost={(slug: string) => this.handleDownvotePost(slug)}
-          {...this.props}
         />
       );
     }

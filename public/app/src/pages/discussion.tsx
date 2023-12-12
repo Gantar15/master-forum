@@ -5,6 +5,7 @@ import { BackNavigation } from '../shared/components/header';
 import { Comment } from '../modules/forum/models/Comment';
 import { CommentUtil } from '../modules/forum/utils/CommentUtil';
 import Editor from '../modules/forum/components/comments/components/Editor';
+import EntityActions from '../shared/components/entity-actions/components/EntityActions';
 import { ForumState } from '../modules/forum/redux/states';
 import { FullPageLoader } from '../shared/components/loader';
 import Header from '../shared/components/header/components/Header';
@@ -112,6 +113,16 @@ class DiscussionPage extends React.Component<
     }
   }
 
+  onPostAction(action: string) {
+    if (!('slug' in this.props.forum.post)) return;
+    if (action === 'delete') {
+      const slug = this.props.forum.post.slug;
+    } else if (action === 'edit') {
+      this.props.setEditPost(this.props.forum.post);
+      this.props.history.push('/submit');
+    }
+  }
+
   afterSuccessfulCommentPost(prevProps: DiscussionPageProps) {
     const currentProps: DiscussionPageProps = this.props;
     if (
@@ -147,7 +158,16 @@ class DiscussionPage extends React.Component<
 
   render() {
     const post = this.props.forum.post as Post;
+    const user = this.props.users.user;
     const comments = this.props.forum.comments;
+    const postAuthorUsername = this.props.forum.editPost?.postAuthor;
+    let isPostAuthor = false;
+    if ('username' in user) {
+      isPostAuthor =
+        postAuthorUsername === user.username ||
+        user.isAdminUser ||
+        user.isManagerUser;
+    }
 
     return (
       <Layout>
@@ -182,6 +202,16 @@ class DiscussionPage extends React.Component<
             <br />
             <br />
             <PostSummary {...(post as Post)} />
+
+            {isPostAuthor && this.props.users.isAuthenticated ? (
+              <div>
+                <EntityActions
+                  actions={['delete', 'edit']}
+                  onAction={(actions) => this.onPostAction(actions)}
+                />
+              </div>
+            ) : null}
+
             <h3>Leave a comment</h3>
             <Editor
               text={this.state.newCommentText}

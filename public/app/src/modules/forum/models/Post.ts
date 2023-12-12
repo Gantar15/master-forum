@@ -1,4 +1,3 @@
-
 export type PostType = 'text' | 'link';
 
 export interface Post {
@@ -13,6 +12,6 @@ export interface Post {
   link: string;
   wasUpvotedByMe: boolean;
   wasDownvotedByMe: boolean;
+  category: string;
+  tags: string[];
 }
-
-

@@ -5,6 +5,7 @@ import { DecodedExpressRequest } from "../../../../users/infra/http/models/decod
 import { DeletePost } from "./DeletePost";
 import { DeletePostDTO } from "./DeletePostDTO";
 import { DeletePostErrors } from "./DeletePostErrors";
+import { PostDetailsMap } from "../../../mappers/postDetailsMap";
 
 export class DeletePostController extends BaseController {
   private useCase: DeletePost;
@@ -42,7 +43,10 @@ export class DeletePostController extends BaseController {
             return this.fail(res, error.getErrorValue().message);
         }
       } else {
-        return this.ok(res);
+        const postDetails = result.value.getValue();
+        return this.ok(res, {
+          post: PostDetailsMap.toDTO(postDetails),
+        });
       }
     } catch (err) {
       return this.fail(res, err);

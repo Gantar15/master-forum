@@ -1,40 +1,41 @@
 //@ts-ignore
 import axios, { AxiosInstance } from 'axios';
-import { apiConfig } from '../../../config/api';
-import { get } from 'lodash'
+
 import { IAuthService } from '../../../modules/users/services/authService';
 import { JWTToken } from '../../../modules/users/models/tokens';
+import { apiConfig } from '../../../config/api';
+import { get } from 'lodash';
 
 export abstract class BaseAPI {
   protected baseUrl: string;
   private axiosInstance: AxiosInstance | any = null;
   public authService: IAuthService;
 
-  constructor (authService: IAuthService) {
+  constructor(authService: IAuthService) {
     this.authService = authService;
-    this.baseUrl = apiConfig.baseUrl
-    this.axiosInstance = axios.create({})
+    this.baseUrl = apiConfig.baseUrl;
+    this.axiosInstance = axios.create({});
     this.enableInterceptors();
   }
 
-  private enableInterceptors (): void {
+  private enableInterceptors(): void {
     this.axiosInstance.interceptors.response.use(
       this.getSuccessResponseHandler(),
       this.getErrorResponseHandler()
-    )
+    );
   }
 
-  private getSuccessResponseHandler () {
+  private getSuccessResponseHandler() {
     return (response: any) => {
       return response;
-    }
+    };
   }
 
-  private didAccessTokenExpire (response: any): boolean {
-    return get(response, 'data.message') === "Token signature expired.";
+  private didAccessTokenExpire(response: any): boolean {
+    return get(response, 'data.message') === 'Token signature expired.';
   }
 
-  private async regenerateAccessTokenFromRefreshToken (): Promise<JWTToken> {
+  private async regenerateAccessTokenFromRefreshToken(): Promise<JWTToken> {
     const response = await axios({
       method: 'POST',
       url: `${this.baseUrl}/users/token/refresh`,
@@ -45,7 +46,7 @@ export abstract class BaseAPI {
     return response.data.accessToken;
   }
 
-  private getErrorResponseHandler () {
+  private getErrorResponseHandler() {
     return async (error: any) => {
       if (this.didAccessTokenExpire(error.response)) {
         const refreshToken = this.authService.getToken('refresh-token');
@@ -54,8 +55,8 @@ export abstract class BaseAPI {
         if (hasRefreshToken) {
           try {
             // Get the new access token
-            const accessToken = await this
-              .regenerateAccessTokenFromRefreshToken();
+            const accessToken =
+              await this.regenerateAccessTokenFromRefreshToken();
 
             // Save token
             this.authService.setToken('access-token', accessToken);
@@ -63,7 +64,6 @@ export abstract class BaseAPI {
             // Retry request
             error.config.headers['authorization'] = accessToken;
             return this.axiosInstance.request(error.config);
-            
           } catch (err) {
             // remove access and refresh tokens
             this.authService.removeToken('access-token');
@@ -71,28 +71,62 @@ export abstract class BaseAPI {
             console.log(err);
           }
         }
-        
       }
-      return Promise.reject({ ...error })
-    }
+      return Promise.reject({ ...error });
+    };
   }
 
-  protected get (url: string, params?: any, headers?: any): Promise<any> {
+  protected get(url: string, params?: any, headers?: any): Promise<any> {
     return this.axiosInstance({
       method: 'GET',
       url: `${this.baseUrl}${url}`,
       params: params ? params : null,
       headers: headers ? headers : null
-    })
+    });
   }
 
-  protected post (url: string, data?: any, params?: any, headers?: any): Promise<any> { 
+  protected post(
+    url: string,
+    data?: any,
+    params?: any,
+    headers?: any
+  ): Promise<any> {
     return this.axiosInstance({
       method: 'POST',
       url: `${this.baseUrl}${url}`,
       data: data ? data : null,
       params: params ? params : null,
       headers: headers ? headers : null
-    })
+    });
+  }
+
+  protected delete(
+    url: string,
+    data?: any,
+    params?: any,
+    headers?: any
+  ): Promise<any> {
+    return this.axiosInstance({
+      method: 'DELETE',
+      url: `${this.baseUrl}${url}`,
+      data: data ? data : null,
+      params: params ? params : null,
+      headers: headers ? headers : null
+    });
+  }
+
+  protected patch(
+    url: string,
+    data?: any,
+    params?: any,
+    headers?: any
+  ): Promise<any> {
+    return this.axiosInstance({
+      method: 'PATCH',
+      url: `${this.baseUrl}${url}`,
+      data: data ? data : null,
+      params: params ? params : null,
+      headers: headers ? headers : null
+    });
   }
 }

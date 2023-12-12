@@ -32,7 +32,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
   }
 
   attachQuillRefs = () => {
-    if (typeof this.reactQuillRef.getEditor !== 'function') return;
+    if (typeof this.reactQuillRef?.getEditor !== 'function') return;
     this.quillRef = this.reactQuillRef.getEditor();
   };
 
@@ -40,6 +40,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
     var limit = this.props.maxLength;
     var quill = this.quillRef;
 
+    if (!quill) return;
     quill.on('text-change', function (delta: any, old: any, source: any) {
       if (quill.getLength() > limit) {
         quill.deleteText(limit, quill.getLength());

@@ -8,6 +8,7 @@ import { UniqueEntityID } from "../../../shared/domain/UniqueEntityID";
 
 export interface IPostRepo {
   getPostDetailsBySlug(slug: string, memberId?: MemberId): Promise<PostDetails>;
+  getPostRawBySlug(slug: string): Promise<any>;
   getPostBySlug(slug: string): Promise<Post>;
   getRecentPosts(offset?: number, memberId?: MemberId): Promise<PostDetails[]>;
   getPopularPosts(offset?: number, memberId?: MemberId): Promise<PostDetails[]>;
@@ -27,7 +28,7 @@ export interface IPostRepo {
     memberId?: MemberId
   ): Promise<PostDetails[]>;
   exists(postId: PostId): Promise<boolean>;
-  save(post: Post): Promise<void>;
-  deleteBySlug(slug: string): Promise<void>;
-  delete(postId: PostId): Promise<void>;
+  save(post: Post): Promise<PostDetails>;
+  deleteBySlug(slug: string): Promise<PostDetails>;
+  delete(postId: string): Promise<void>;
 }

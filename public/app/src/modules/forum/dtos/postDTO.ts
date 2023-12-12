@@ -1,6 +1,5 @@
-
-import { MemberDTO } from "./memberDTO";
-import { PostType } from "../models/Post";
+import { MemberDTO } from './memberDTO';
+import { PostType } from '../models/Post';
 
 export interface PostDTO {
   slug: string;
@@ -12,7 +11,8 @@ export interface PostDTO {
   text: string;
   type: PostType;
   link: string;
+  category: string;
+  tags: string[];
   wasUpvotedByMe: boolean;
   wasDownvotedByMe: boolean;
 }
-

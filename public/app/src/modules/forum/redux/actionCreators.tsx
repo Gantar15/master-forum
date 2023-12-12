@@ -5,6 +5,165 @@ import { Post } from '../models/Post';
 
 export type ForumAction = { [key: string]: actions.ForumActionType | any };
 
+//get categories
+
+function getPostsByCategory(): ForumAction {
+  return {
+    type: actions.GET_POSTS_BY_CATEGORY
+  };
+}
+
+function getPostsByCategorySuccess(
+  posts: Post[]
+): ForumAction & { posts: Post[] } {
+  return {
+    type: actions.GET_POSTS_BY_CATEGORY_SUCCESS,
+    posts
+  };
+}
+
+function getPostsByCategoryFailure(
+  error: string
+): ForumAction & { error: string } {
+  return {
+    type: actions.GET_POSTS_BY_CATEGORY_FAILURE,
+    error
+  };
+}
+
+//get categories
+
+function getCategories(): ForumAction {
+  return {
+    type: actions.GET_CATEGORIES
+  };
+}
+
+function getCategoriesSuccess(
+  categories: string[]
+): ForumAction & { categories: string[] } {
+  return {
+    type: actions.GET_CATEGORIES_SUCCESS,
+    categories
+  };
+}
+
+function getCategoriesFailure(error: string): ForumAction & { error: string } {
+  return {
+    type: actions.GET_CATEGORIES_FAILURE,
+    error
+  };
+}
+
+//delete post
+
+function deletePost(): ForumAction {
+  return {
+    type: actions.DELETE_POST
+  };
+}
+
+function deletePostSuccess(post: Post): ForumAction & { post: Post } {
+  return {
+    type: actions.DELETE_POST_SUCCESS,
+    post
+  };
+}
+
+function deletePostFailure(error: string): ForumAction & { error: string } {
+  return {
+    type: actions.DELETE_POST_FAILURE,
+    error
+  };
+}
+
+//update post
+function updatePost(): ForumAction {
+  return {
+    type: actions.UPDATE_POST
+  };
+}
+
+function updatePostSuccess(post: Post): ForumAction & { post: Post } {
+  return {
+    type: actions.UPDATE_POST_SUCCESS,
+    post
+  };
+}
+
+function updatePostFailure(error: string): ForumAction & { error: string } {
+  return {
+    type: actions.UPDATE_POST_FAILURE,
+    error
+  };
+}
+
+function setEditPost(editPost: Post): ForumAction & { editPost: Post } {
+  return {
+    type: actions.SET_EDIT_POST,
+    editPost
+  };
+}
+
+//delete comment
+
+function deleteComment(): ForumAction {
+  return {
+    type: actions.DELETE_COMMENT
+  };
+}
+
+function deleteCommentSuccess(
+  comment: Comment
+): ForumAction & { comment: Comment } {
+  return {
+    type: actions.DELETE_COMMENT_SUCCESS,
+    comment
+  };
+}
+
+function deleteCommentFailure(error: string): ForumAction & { error: string } {
+  return {
+    type: actions.DELETE_COMMENT_FAILURE,
+    error
+  };
+}
+
+//update comment
+
+function updateComment(): ForumAction {
+  return {
+    type: actions.UPDATE_COMMENT
+  };
+}
+
+function updateCommentSuccess(
+  comment: Comment
+): ForumAction & { comment: Comment } {
+  return {
+    type: actions.UPDATE_COMMENT_SUCCESS,
+    comment
+  };
+}
+
+function updateCommentFailure(error: string): ForumAction & { error: string } {
+  return {
+    type: actions.UPDATE_COMMENT_FAILURE,
+    error
+  };
+}
+
+function setEditComment(
+  editComment: Comment
+): ForumAction & { editComment: Comment } {
+  return {
+    type: actions.SET_EDIT_COMMENT,
+    editComment
+  };
+}
+
+//submit post
+
 function submittingPost(): ForumAction {
   return {
     type: actions.SUBMITTING_POST
@@ -23,6 +182,8 @@ function submittingPostFailure(error: string): ForumAction & { error: string } {
     error
   };
 }
+
+//get recent posts
 
 function getRecentPosts(): ForumAction {
   return {
@@ -43,6 +204,8 @@ function getRecentPostsFailure(error: string): ForumAction & { error: string } {
     error
   };
 }
+
+//get post by slug
 
 function gettingPostBySlug(): ForumAction {
   return {
@@ -66,6 +229,8 @@ function gettingPostBySlugFailure(
   };
 }
 
+//create reply to post
+
 function creatingReplyToPost(): ForumAction {
   return {
     type: actions.CREATING_REPLY_TO_POST
@@ -84,6 +249,8 @@ function creatingReplyToPostFailure(error: string): ForumAction {
     error
   };
 }
+
+//get comments
 
 function gettingComments(): ForumAction {
   return {
@@ -104,6 +271,8 @@ function gettingCommentsFailure(error: string): ForumAction {
     error
   };
 }
+
+//get popular posts
 
 function getPopularPosts(): ForumAction {
   return {
@@ -127,6 +296,8 @@ function getPopularPostsFailure(
   };
 }
 
+//get comment by comment id
+
 function gettingCommentByCommentId(): ForumAction {
   return {
     type: actions.GETTING_COMMENT_BY_COMMENT_ID
@@ -147,6 +318,8 @@ function gettingCommentByCommentIdFailure(error: string): ForumAction {
   };
 }
 
+//create reply to comment
+
 function creatingReplyToComment(): ForumAction {
   return {
     type: actions.CREATING_REPLY_TO_COMMENT
@@ -165,6 +338,8 @@ function creatingReplyToCommentFailure(error: string): ForumAction {
     error
   };
 }
+
+//upvote post
 
 function upvotingPost(): ForumAction {
   return {
@@ -186,6 +361,8 @@ function upvotingPostFailure(error: string): ForumAction {
   };
 }
 
+//downvote post
+
 function downvotingPost(): ForumAction {
   return {
     type: actions.DOWNVOTING_POST
@@ -206,6 +383,8 @@ function downvotingPostFailure(error: string): ForumAction {
   };
 }
 
+//upvote comment
+
 function upvotingComment(): ForumAction {
   return {
     type: actions.UPVOTING_COMMENT
@@ -225,6 +404,8 @@ function upvotingCommentFailure(error: string): ForumAction {
     error
   };
 }
+
+//downvote comment
 
 function downvotingComment(): ForumAction {
   return {
@@ -247,6 +428,26 @@ function downvotingCommentFailure(error: string): ForumAction {
 }
 
 export {
+  updatePost,
+  updatePostSuccess,
+  updatePostFailure,
+  deletePost,
+  deletePostSuccess,
+  deletePostFailure,
+  updateComment,
+  updateCommentSuccess,
+  updateCommentFailure,
+  deleteComment,
+  deleteCommentSuccess,
+  deleteCommentFailure,
+  getPostsByCategory,
+  getPostsByCategorySuccess,
+  getPostsByCategoryFailure,
+  getCategories,
+  getCategoriesSuccess,
+  getCategoriesFailure,
+  setEditComment,
+  setEditPost,
   submittingPost,
   submittingPostSuccess,
   submittingPostFailure,

@@ -6,13 +6,14 @@ import { DeletePostErrors } from "./DeletePostErrors";
 import { IMemberRepo } from "../../../repos/memberRepo";
 import { IPostRepo } from "../../../repos/postRepo";
 import { Post } from "../../../domain/post";
+import { PostDetails } from "../../../domain/postDetails";
 import { UseCase } from "../../../../../shared/core/UseCase";
 
 type Response = Either<
   | DeletePostErrors.PostNotFoundError
   | DeletePostErrors.ForbiddenError
   | AppError.UnexpectedError,
-  Result<void>
+  Result<PostDetails>
 >;
 
 export class DeletePost implements UseCase<DeletePostDTO, Promise<Response>> {
@@ -40,9 +41,9 @@ export class DeletePost implements UseCase<DeletePostDTO, Promise<Response>> {
         return left(new DeletePostErrors.ForbiddenError(slug));
       }
 
-      await this.postRepo.deleteBySlug(slug);
+      const deletedPost = await this.postRepo.deleteBySlug(slug);
 
-      return right(Result.ok<void>());
+      return right(Result.ok<PostDetails>(deletedPost));
     } catch (err) {
       return left(new AppError.UnexpectedError(err));
     }

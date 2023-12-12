@@ -11,8 +11,8 @@ import { IMemberRepo } from "../../../repos/memberRepo";
 import { IPostRepo } from "../../../repos/postRepo";
 import { ITagRepo } from "../../../repos/tagRepo";
 import { Post } from "../../../domain/post";
+import { PostDetails } from "../../../domain/postDetails";
 import { PostLink } from "../../../domain/postLink";
-import { PostSlug } from "../../../domain/postSlug";
 import { PostText } from "../../../domain/postText";
 import { PostTitle } from "../../../domain/postTitle";
 import { Tag } from "../../../domain/tag";
@@ -75,7 +75,9 @@ export class EditPost
           value: request.category,
         });
         if (categoryTitleOrError.isFailure) {
-          return left(categoryTitleOrError);
+          return left(
+            AppError.MessageError.create(categoryTitleOrError.getErrorValue())
+          );
         }
         try {
           category = await this.categoryRepo.getCategoryByTitle(
@@ -117,7 +119,9 @@ export class EditPost
       if (request.title) {
         postTitleOrError = PostTitle.create({ value: request.title });
         if (postTitleOrError.isFailure) {
-          return left(postTitleOrError);
+          return left(
+            AppError.MessageError.create(postTitleOrError.getErrorValue())
+          );
         }
         postTitle = postTitleOrError.getValue();
 
@@ -136,14 +140,18 @@ export class EditPost
       if (request.postType === "text") {
         postTextOrError = PostText.create({ value: request.text });
         if (postTextOrError.isFailure) {
-          return left(postTextOrError);
+          return left(
+            AppError.MessageError.create(postTextOrError.getErrorValue())
+          );
         }
         postText = postTextOrError.getValue();
         post.updateText(postText);
       } else if (request.postType === "link") {
         postLinkOrError = PostLink.create({ url: request.link });
         if (postLinkOrError.isFailure) {
-          return left(postLinkOrError);
+          return left(
+            AppError.MessageError.create(postLinkOrError.getErrorValue())
+          );
         }
         postLink = postLinkOrError.getValue();
         post.updateLink(postLink);
@@ -151,9 +159,9 @@ export class EditPost
 
       post.updateType(request.postType);
 
-      await this.postRepo.save(post);
+      const postDetails = await this.postRepo.save(post);
 
-      return right(Result.ok<void>());
+      return right(Result.ok<PostDetails>(postDetails));
     } catch (err) {
       return left(new AppError.UnexpectedError(err));
     }

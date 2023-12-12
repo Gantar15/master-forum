@@ -1,8 +1,31 @@
-
-import { Post } from "../models/Post";
-import { Comment } from "../models/Comment";
+import { Comment } from '../models/Comment';
+import { Post } from '../models/Post';
 
 export interface ForumState {
+  isGetPostsByCategory: boolean;
+  isGetPostsByCategorySuccess: boolean;
+  isGetPostsByCategoryFailure: boolean;
+
+  isGetCategories: boolean;
+  isGetCategoriesSuccess: boolean;
+  isGetCategoriesFailure: boolean;
+
+  isDeleteComment: boolean;
+  isDeleteCommentSuccess: boolean;
+  isDeleteCommentFailure: boolean;
+
+  isUpdateComment: boolean;
+  isUpdateCommentSuccess: boolean;
+  isUpdateCommentFailure: boolean;
+
+  isDeletePost: boolean;
+  isDeletePostSuccess: boolean;
+  isDeletePostFailure: boolean;
+
+  isUpdatePost: boolean;
+  isUpdatePostSuccess: boolean;
+  isUpdatePostFailure: boolean;
+
   isSubmittingPost: boolean;
   isSubmittingPostSuccess: boolean;
   isSubmittingPostFailure: boolean;
@@ -53,17 +76,48 @@ export interface ForumState {
 
   recentPosts: Post[];
   popularPosts: Post[];
+  categoryPosts: Post[];
 
   post: Post | {};
+
+  editPost?: Post;
+
+  editComment?: Comment;
 
   comments: Comment[];
 
   comment: Comment | {};
 
+  categories: string[];
+
   error: string;
 }
 
 const initialForumState: ForumState = {
+  isGetPostsByCategory: false,
+  isGetPostsByCategorySuccess: false,
+  isGetPostsByCategoryFailure: false,
+
+  isGetCategories: false,
+  isGetCategoriesSuccess: false,
+  isGetCategoriesFailure: false,
+
+  isDeleteComment: false,
+  isDeleteCommentSuccess: false,
+  isDeleteCommentFailure: false,
+
+  isUpdateComment: false,
+  isUpdateCommentSuccess: false,
+  isUpdateCommentFailure: false,
+
+  isDeletePost: false,
+  isDeletePostSuccess: false,
+  isDeletePostFailure: false,
+
+  isUpdatePost: false,
+  isUpdatePostSuccess: false,
+  isUpdatePostFailure: false,
+
   isSubmittingPost: false,
   isSubmittingPostSuccess: false,
   isSubmittingPostFailure: false,
@@ -116,12 +170,19 @@ const initialForumState: ForumState = {
 
   recentPosts: [],
   popularPosts: [],
+  categoryPosts: [],
 
   post: {},
 
+  editPost: undefined,
+
+  editComment: undefined,
+
   comment: {},
 
+  categories: [],
+
   error: ''
-}
+};
 
 export default initialForumState;

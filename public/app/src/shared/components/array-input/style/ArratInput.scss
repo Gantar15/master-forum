@@ -1,0 +1,31 @@
+.array-input {
+    .tags-input {
+        border: solid 3px #000000c9;
+        display: block;
+        padding: 0.6rem 1rem 0.6rem 1rem;
+        border-radius: 3px;
+        border: solid 3px rgba(0, 0, 0, 0.7882352941);
+        width: 100%;
+        margin-bottom: 0.5rem;
+        color: rgba(0, 0, 0, 0.8392156863);
+        transition: 0.2s all;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+
+    .react-tagsinput-tag {
+        background: white;
+        font-family: Helvetica, Arial, sans-serif;
+        border-radius: 2px;
+        font-size: 1rem;
+        padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+        border: solid 3px #6a69ff;
+        color: rgba(0, 0, 0, 0.8392156863);
+    }
+
+    .react-tagsinput {
+        border: 0;
+        padding: 0;
+        background-color: transparent;
+    }
+}

@@ -5,6 +5,7 @@ import { DecodedExpressRequest } from "../../../../users/infra/http/models/decod
 import { EditPost } from "./EditPost";
 import { EditPostDTO } from "./EditPostDTO";
 import { EditPostErrors } from "./EditPostErrors";
+import { PostDetailsMap } from "../../../mappers/postDetailsMap";
 import { TextUtils } from "../../../../../shared/utils/TextUtils";
 
 export class EditPostController extends BaseController {
@@ -58,7 +59,10 @@ export class EditPostController extends BaseController {
             return this.fail(res, error.getErrorValue().message);
         }
       } else {
-        return this.ok(res);
+        const postDetails = result.value.getValue();
+        return this.ok(res, {
+          post: PostDetailsMap.toDTO(postDetails),
+        });
       }
     } catch (err) {
       return this.fail(res, err);
