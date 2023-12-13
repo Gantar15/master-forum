@@ -1,6 +1,7 @@
 import '../styles/PostComment.scss';
 
 import { Comment } from '../../../../models/Comment';
+import EntityActions from '../../../../../../shared/components/entity-actions/components/EntityActions';
 import { Link } from 'react-router-dom';
 import { Points } from '../../points';
 import PostCommentAuthorAndText from './PostCommentAuthorAndText';
@@ -11,10 +12,11 @@ interface PostCommentProps extends Comment {
   isUpvoted: boolean;
   onUpvoteClicked: (commentId: string, postSlug: string) => void;
   onDownvoteClicked: (commentId: string, postSlug: string) => void;
+  onAction?: (action: string, comment: Comment) => void;
   isLoggedIn: boolean;
 }
 
-const PostComment: React.FC<PostCommentProps> = (props) => {
+const PostComment: React.FC<PostCommentProps> = ({ onAction, ...props }) => {
   return (
     <div className="comment">
       <Points
@@ -32,7 +34,15 @@ const PostComment: React.FC<PostCommentProps> = (props) => {
       <div className="post-comment-container">
         <div className="post-comment">
           <PostCommentAuthorAndText {...props} />
-          <Link to={`/comment/${props.commentId}`}>reply</Link>
+          <div className="comment__actions">
+            <Link to={`/comment/${props.commentId}`}>reply</Link>
+            {onAction ? (
+              <EntityActions
+                actions={['delete', 'edit']}
+                onAction={(action) => onAction(action, props)}
+              />
+            ) : null}
+          </div>
         </div>
         <div className="indent">
           {props.childComments.length !== 0 &&
@@ -49,6 +59,9 @@ const PostComment: React.FC<PostCommentProps> = (props) => {
                   props.onUpvoteClicked(c.commentId, c.postSlug)
                 }
                 isLoggedIn={props.isLoggedIn}
+                onAction={
+                  onAction ? (action) => onAction(action, c) : undefined
+                }
               />
             ))}
         </div>

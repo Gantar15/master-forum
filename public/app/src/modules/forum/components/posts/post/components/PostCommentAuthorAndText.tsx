@@ -1,13 +1,22 @@
 import { Comment } from '../../../../models/Comment';
+import { CommentUtil } from '../../../../utils/CommentUtil';
+import Editor from '../../../comments/components/Editor';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import moment from 'moment';
 
-interface PostCommentAuthorAndTextProps extends Comment {}
+interface PostCommentAuthorAndTextProps extends Comment {
+  isEditable?: boolean;
+  handleChange?: (v: string) => void;
+  updateCommentText?: string;
+}
 
-const PostCommentAuthorAndText: React.FC<PostCommentAuthorAndTextProps> = (
-  props
-) => (
+const PostCommentAuthorAndText: React.FC<PostCommentAuthorAndTextProps> = ({
+  handleChange = () => {},
+  isEditable = false,
+  updateCommentText = '',
+  ...props
+}) => (
   <div>
     <div className="comment-meta">
       <Link to={`/member/${props.member.username}`}>
@@ -19,7 +28,15 @@ const PostCommentAuthorAndText: React.FC<PostCommentAuthorAndTextProps> = (
       </a>
     </div>
     <p className="comment-text">
-      <b dangerouslySetInnerHTML={{ __html: props.text }} />
+      {!isEditable && <p dangerouslySetInnerHTML={{ __html: props.text }} />}
+      {isEditable && (
+        <Editor
+          text={updateCommentText}
+          maxLength={CommentUtil.maxCommentLength}
+          placeholder="Edit your comment"
+          handleChange={handleChange}
+        />
+      )}
     </p>
   </div>
 );

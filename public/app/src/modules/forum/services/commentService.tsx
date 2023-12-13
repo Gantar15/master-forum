@@ -15,6 +15,8 @@ export interface ICommentService {
     parentCommentId: string,
     slug: string
   ): Promise<APIResponse<void>>;
+  updateComment(text: string, commentId: string): Promise<APIResponse<Comment>>;
+  deleteComment(commentId: string): Promise<APIResponse<void>>;
   getCommentsBySlug(
     slug: string,
     offset?: number
@@ -27,6 +29,42 @@ export interface ICommentService {
 export class CommentService extends BaseAPI implements ICommentService {
   constructor(authService: IAuthService) {
     super(authService);
+  }
+
+  async updateComment(
+    text: string,
+    commentId: string
+  ): Promise<APIResponse<Comment>> {
+    try {
+      const response = await this.patch(
+        `/comments/${commentId}`,
+        { comment: text },
+        null,
+        {
+          authorization: this.authService.getToken('access-token')
+        }
+      );
+
+      const commentDTO = response.data.comment;
+      return right(Result.ok(CommentUtil.toViewModel(commentDTO)));
+    } catch (err: any) {
+      console.log(err);
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+  async deleteComment(commentId: string): Promise<APIResponse<void>> {
+    try {
+      await this.delete(`/comments/${commentId}`, null, null, {
+        authorization: this.authService.getToken('access-token')
+      });
+      return right(Result.ok<void>());
+    } catch (err: any) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
   }
 
   async createReplyToPost(

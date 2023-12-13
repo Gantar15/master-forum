@@ -114,11 +114,11 @@ function deleteComment(): ForumAction {
 }
 
 function deleteCommentSuccess(
-  comment: Comment
-): ForumAction & { comment: Comment } {
+  commentId: string
+): ForumAction & { commentId: string } {
   return {
     type: actions.DELETE_COMMENT_SUCCESS,
-    comment
+    commentId
   };
 }
 

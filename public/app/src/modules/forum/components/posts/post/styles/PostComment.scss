@@ -1,6 +1,12 @@
 .comment {
   display: flex;
 
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 15px;
+  }
 
   .post-comment-container {
     width: 100%;
@@ -27,7 +33,7 @@
     }
 
     .comment-text {
-      font-weight: bold;
+      font-weight: normal;
 
       >b {
         img {

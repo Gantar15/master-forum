@@ -1,8 +1,10 @@
 import { Post, PostType } from '../../models/Post';
 
+import { Comment } from '../../models/Comment';
 import { createReplyToComment } from './createReplyToComment';
 import { createReplyToPost } from './createReplyToPost';
 import { creatingReplyToComment } from '../actionCreators';
+import { deleteComment } from './deleteComment';
 import { deletePost } from './deletePost';
 import { downvoteComment } from './downvoteComment';
 import { downvotePost } from './downvotePost';
@@ -15,6 +17,7 @@ import { getRecentPosts } from './getRecentPosts';
 import { setEditComment } from './setEditComment';
 import { setEditPost } from './setEditPost';
 import { submitPost } from './submitPost';
+import { updateComment } from './updateComment';
 import { updatePost } from './updatePost';
 import { upvoteComment } from './upvoteComment';
 import { upvotePost } from './upvotePost';
@@ -22,8 +25,8 @@ import { upvotePost } from './upvotePost';
 export interface IForumOperations {
   getPostsByCategory(category: string): void;
   getCategories(): void;
-  updateComment(text: string): void;
-  deleteComment(commentSlug: string): void;
+  updateComment(slug: string, text: string): void;
+  deleteComment(commentId: string): void;
   updatePost(
     slug: string,
     title: string,
@@ -63,6 +66,8 @@ export interface IForumOperations {
 }
 
 export {
+  deleteComment,
+  updateComment,
   deletePost,
   updatePost,
   setEditComment,

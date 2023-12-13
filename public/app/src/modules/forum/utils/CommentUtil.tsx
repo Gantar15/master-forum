@@ -28,6 +28,68 @@ export class CommentUtil {
     };
   }
 
+  public static computeCommentsAfterUpdate(
+    comments: Comment[],
+    updateCommentId: string,
+    updateComment: (comment: Comment) => Comment
+  ): Comment[] {
+    return [
+      ...comments.map((comment) =>
+        comment.commentId === updateCommentId
+          ? updateComment(comment)
+          : {
+              ...comment,
+              childComments: [
+                ...this.computeCommentsAfterUpdate(
+                  comment.childComments,
+                  updateCommentId,
+                  updateComment
+                )
+              ]
+            }
+      )
+    ];
+  }
+
+  public static computeCommentsAfterDelete(
+    comments: Comment[],
+    deleteCommentId: string
+  ): Comment[] {
+    const newComments: Comment[] = [];
+    for (let index = 0; index < comments.length; index++) {
+      const comment = comments[index];
+      if (comment.commentId === deleteCommentId) {
+        continue;
+      } else {
+        const childComments = this.computeCommentsAfterDelete(
+          comment.childComments,
+          deleteCommentId
+        );
+        comment.childComments = childComments;
+        newComments.push(comment);
+      }
+    }
+    return newComments;
+  }
+
+  public static computeCommentAfterUpvote(comment: Comment): Comment {
+    return {
+      ...comment,
+      wasDownvotedByMe: false,
+      wasUpvotedByMe: !comment.wasDownvotedByMe,
+      points: comment.wasUpvotedByMe ? comment.points : comment.points + 1
+    };
+  }
+
+  public static computeCommentAfterDownvote(comment: Comment): Comment {
+    return {
+      ...comment,
+      wasUpvotedByMe: false,
+      wasDownvotedByMe: !comment.wasUpvotedByMe,
+      points: comment.wasDownvotedByMe ? comment.points : comment.points - 1
+    };
+  }
+
   public static getSortedComments(comments: Comment[]): Comment[] {
     comments.forEach((c) => {
       const hasParentComment = !!c.parentCommentId === true;
@@ -55,48 +117,16 @@ export class CommentUtil {
     parentCommentId: string,
     comments: Comment[]
   ): Comment[] {
-    comments.forEach((c, cIndex) => {
-      const hasParentComment = !!c.parentCommentId === true;
-      if (hasParentComment) {
-        const parentCommentIndex = comments.findIndex(
-          (cc) => cc.commentId === c.parentCommentId
-        );
-        const foundParentComment = parentCommentIndex !== -1;
+    const tree = [];
 
-        if (foundParentComment) {
-          // Add to thread
-          comments[parentCommentIndex].childComments.push(c);
-
-          // Sort
-          comments[parentCommentIndex].childComments = comments[
-            parentCommentIndex
-          ].childComments.sort(this.sortByDateDesc);
-
-          // Remove from root thread
-          comments.splice(cIndex, 1);
-        }
+    for (const comment of comments) {
+      if (comment.parentCommentId === parentCommentId) {
+        const childComments = this.getThread(comment.commentId, comments);
+        comment.childComments = childComments;
+        tree.push(comment);
       }
-    });
+    }
 
-    const parentComment = this.traverseToComment(parentCommentId, comments);
-    return !!parentComment === true
-      ? parentComment.childComments.filter(
-          (c) => c.commentId !== parentCommentId
-        )
-      : [];
-  }
-
-  private static traverseToComment(
-    targetCommentId: string,
-    comments: Comment[]
-  ): Comment {
-    return comments.find((comment) => {
-      const found = comment.commentId === targetCommentId;
-      if (found) {
-        return comment;
-      } else {
-        return this.traverseToComment(targetCommentId, comment.childComments);
-      }
-    }) as Comment;
+    return tree;
   }
 }

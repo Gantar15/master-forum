@@ -1,7 +1,6 @@
 import * as actionCreators from '../actionCreators';
 
 import { commentService } from '../../services';
-import { getComments } from './getComments';
 
 function downvoteComment(commentId: string, slug: string) {
   return async (dispatch: any) => {
@@ -14,7 +13,6 @@ function downvoteComment(commentId: string, slug: string) {
       dispatch(actionCreators.downvotingCommentFailure(error));
     } else {
       dispatch(actionCreators.downvotingCommentSuccess(commentId));
-      await getComments(slug)(dispatch);
     }
   };
 }

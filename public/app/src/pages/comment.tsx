@@ -5,10 +5,13 @@ import { BackNavigation } from '../shared/components/header';
 import { Comment } from '../modules/forum/models/Comment';
 import { CommentUtil } from '../modules/forum/utils/CommentUtil';
 import Editor from '../modules/forum/components/comments/components/Editor';
+import EntityActions from '../shared/components/entity-actions/components/EntityActions';
 import { ForumState } from '../modules/forum/redux/states';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
 import { Loader } from '../shared/components/loader';
+import ModalWindow from '../shared/components/modal-window/components/ModalWindow';
+import { Post } from '../modules/forum/models/Post';
 import PostComment from '../modules/forum/components/posts/post/components/PostComment';
 import PostCommentAuthorAndText from '../modules/forum/components/posts/post/components/PostCommentAuthorAndText';
 import { ProfileButton } from '../modules/users/components/profileButton';
@@ -18,15 +21,19 @@ import { TextUtil } from '../shared/utils/TextUtil';
 import { User } from '../modules/users/models/user';
 import { UsersState } from '../modules/users/redux/states';
 import { bindActionCreators } from 'redux';
-//@ts-ignore
 import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import withLogoutHandling from '../modules/users/hocs/withLogoutHandling';
 import withVoting from '../modules/forum/hocs/withVoting';
 
+//@ts-ignore
+
 interface CommentState {
   newCommentText: string;
+  updateCommentText: string;
   commentFetched: boolean;
+  isDeleteCommentModalOpen: boolean;
+  commentToDelete?: Comment;
 }
 
 interface CommentPageProps
@@ -34,6 +41,7 @@ interface CommentPageProps
     forumOperators.IForumOperations {
   users: UsersState;
   forum: ForumState;
+  history: any;
 }
 
 class CommentPage extends React.Component<CommentPageProps, CommentState> {
@@ -42,7 +50,10 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
 
     this.state = {
       commentFetched: false,
-      newCommentText: ''
+      newCommentText: '',
+      updateCommentText: '',
+      isDeleteCommentModalOpen: false,
+      commentToDelete: undefined
     };
   }
 
@@ -83,11 +94,25 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
     this.props.getCommentByCommentId(commentId);
   }
 
+  onCommentAction(action: string, comment: Comment) {
+    if (action === 'delete') {
+      this.setState((state) => ({
+        ...state,
+        isDeleteCommentModalOpen: !state.isDeleteCommentModalOpen,
+        commentToDelete: comment
+      }));
+    } else if (action === 'edit') {
+      this.props.setEditComment(comment);
+    }
+  }
+
   afterSuccessfulCommentPost(prevProps: CommentPageProps) {
     const currentProps: CommentPageProps = this.props;
     if (
       currentProps.forum.isCreatingReplyToCommentSuccess ===
-      !prevProps.forum.isCreatingReplyToCommentSuccess
+        !prevProps.forum.isCreatingReplyToCommentSuccess ||
+      currentProps.forum.isUpdateCommentSuccess ===
+        !prevProps.forum.isUpdateCommentSuccess
     ) {
       toast.success(`Done-zo! 🤠`, {
         autoClose: 2000
@@ -102,7 +127,9 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
     const currentProps: CommentPageProps = this.props;
     if (
       currentProps.forum.isCreatingReplyToCommentFailure ===
-      !prevProps.forum.isCreatingReplyToCommentFailure
+        !prevProps.forum.isCreatingReplyToCommentFailure ||
+      currentProps.forum.isUpdateCommentFailure ===
+        !prevProps.forum.isUpdateCommentFailure
     ) {
       const error: string = currentProps.forum.error;
       return toast.error(`Yeahhhhh, ${error} 🤠`, {
@@ -117,8 +144,12 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
       currentProps.forum.isGettingCommentByCommentIdSuccess &&
       !this.state.commentFetched
     ) {
-      this.setState({ ...this.state, commentFetched: true });
       const currentComment = this.props.forum.comment as Comment;
+      this.setState({
+        ...this.state,
+        commentFetched: true,
+        updateCommentText: currentComment.text
+      });
       this.props.getCommentReplies(
         currentComment.postSlug,
         currentComment.commentId
@@ -126,10 +157,57 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
     }
   }
 
+  afterSuccessfulCommentDelete(prevProps: CommentPageProps) {
+    const currentProps: CommentPageProps = this.props;
+    if (
+      currentProps.forum.isDeleteCommentSuccess ===
+      !prevProps.forum.isDeleteCommentSuccess
+    ) {
+      this.setState({
+        ...this.state,
+        isDeleteCommentModalOpen: false
+      });
+      this.props.history.push(
+        `/discuss/${(this.props.forum.post as Post).slug}`
+      );
+    }
+  }
+
+  afterFailedCommentDelete(prevProps: CommentPageProps) {
+    const currentProps: CommentPageProps = this.props;
+    if (
+      currentProps.forum.isDeleteCommentFailure ===
+      !prevProps.forum.isDeleteCommentFailure
+    ) {
+      this.setState({
+        ...this.state,
+        isDeleteCommentModalOpen: false
+      });
+      const error: string = currentProps.forum.error;
+      return toast.error(`Yeahhhhh, ${error} 🤠`, {
+        autoClose: 3000
+      });
+    }
+  }
+
   componentDidUpdate(prevProps: CommentPageProps) {
+    if (
+      'commentId' in this.props.forum.comment &&
+      !this.props.forum.isGettingCommentByCommentId &&
+      this.props.forum.comment.commentId !== this.getCommentIdFromWindow()
+    ) {
+      this.setState({
+        ...this.state,
+        commentFetched: false
+      });
+      this.getComment();
+    }
+
     this.afterCommentFetched(prevProps);
     this.afterSuccessfulCommentPost(prevProps);
     this.afterFailedCommentPost(prevProps);
+    this.afterFailedCommentDelete(prevProps);
+    this.afterSuccessfulCommentDelete(prevProps);
   }
 
   componentDidMount() {
@@ -137,23 +215,49 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
   }
 
   isFormValid(): boolean {
-    const { newCommentText } = this.state;
+    const editComment = this.props.forum.editComment;
+    const isEditMode = !!editComment;
+    const { newCommentText, updateCommentText } = this.state;
 
-    if (
-      !!newCommentText === false ||
-      TextUtil.atLeast(newCommentText, CommentUtil.minCommentLength) ||
-      TextUtil.atMost(newCommentText, CommentUtil.maxCommentLength)
-    ) {
-      toast.error(
-        `Yeahhhhh, comments should be ${CommentUtil.minCommentLength} to ${CommentUtil.maxCommentLength} characters. Yours was ${newCommentText.length}. 🤠`,
-        {
-          autoClose: 3000
-        }
-      );
-      return false;
+    if (!isEditMode) {
+      if (
+        !!newCommentText === false ||
+        TextUtil.atLeast(newCommentText, CommentUtil.minCommentLength) ||
+        TextUtil.atMost(newCommentText, CommentUtil.maxCommentLength)
+      ) {
+        toast.error(
+          `Yeahhhhh, comments should be ${CommentUtil.minCommentLength} to ${CommentUtil.maxCommentLength} characters. Yours was ${newCommentText.length}. 🤠`,
+          {
+            autoClose: 3000
+          }
+        );
+        return false;
+      }
+    } else {
+      if (
+        !!updateCommentText === false ||
+        TextUtil.atLeast(updateCommentText, CommentUtil.minCommentLength) ||
+        TextUtil.atMost(updateCommentText, CommentUtil.maxCommentLength)
+      ) {
+        toast.error(
+          `Yeahhhhh, comments should be ${CommentUtil.minCommentLength} to ${CommentUtil.maxCommentLength} characters. Yours was ${updateCommentText.length}. 🤠`,
+          {
+            autoClose: 3000
+          }
+        );
+        return false;
+      }
     }
 
     return true;
+  }
+
+  async updateComment() {
+    if (this.isFormValid()) {
+      const text = this.state.updateCommentText;
+      const comment = this.props.forum.comment as Comment;
+      this.props.updateComment(comment.commentId, text);
+    }
   }
 
   async submitComment() {
@@ -170,11 +274,33 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
 
   render() {
     const comment = this.props.forum.comment as Comment;
+    const user = this.props.users.user;
     const isCommentFetched =
-      this.props.forum.isGettingCommentByCommentIdSuccess;
+      this.props.forum.isGettingCommentByCommentIdSuccess &&
+      'member' in comment;
+    const editComment = this.props.forum.editComment;
+    let isCommentAuthor = false;
+    if (isCommentFetched && 'username' in user) {
+      const commentAuthorUsername = comment.member.username;
+      isCommentAuthor =
+        commentAuthorUsername === user.username ||
+        user.isAdminUser ||
+        user.isManagerUser;
+    }
+    const isEditMode = !!editComment && isCommentAuthor;
 
     return (
       <Layout>
+        <ModalWindow
+          title="Confirmation!"
+          text="Are you sure you want to delete this comment?"
+          isOpen={this.state.isDeleteCommentModalOpen}
+          onOk={() =>
+            this.props.deleteComment(this.state.commentToDelete!.commentId)
+          }
+          onCancel={() => this.setState({ isDeleteCommentModalOpen: false })}
+          okTitle="Yes, delete"
+        />
         <div className="header-container flex flex-row flex-center flex-even">
           <Header title={``} />
           {!isCommentFetched ? (
@@ -202,35 +328,74 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
           </div>
         ) : (
           <>
-            <PostCommentAuthorAndText {...comment} />
-            <br />
-            <br />
-            <Editor
-              text={this.state.newCommentText}
-              maxLength={CommentUtil.maxCommentLength}
-              placeholder="Post your reply"
-              handleChange={(v: any) => this.updateValue('newCommentText', v)}
+            <PostCommentAuthorAndText
+              {...comment}
+              updateCommentText={this.state.updateCommentText}
+              isEditable={isEditMode}
+              handleChange={(v: any) =>
+                this.updateValue('updateCommentText', v)
+              }
             />
-            <SubmitButton
-              text="Submit reply"
-              onClick={() => this.submitComment()}
-            />
-            <br />
-            <br />
+            {isEditMode ? (
+              <SubmitButton
+                text="Update comment"
+                onClick={() => this.updateComment()}
+              />
+            ) : null}
+            {!isEditMode && (
+              <>
+                {isCommentAuthor ? (
+                  <div>
+                    <EntityActions
+                      actions={['delete', 'edit']}
+                      onAction={(action) =>
+                        this.onCommentAction(action, comment)
+                      }
+                    />
+                  </div>
+                ) : null}
+                <br />
+                <br />
+                <Editor
+                  text={this.state.newCommentText}
+                  maxLength={CommentUtil.maxCommentLength}
+                  placeholder="Post your reply"
+                  handleChange={(v: any) =>
+                    this.updateValue('newCommentText', v)
+                  }
+                />
+                <SubmitButton
+                  text="Submit reply"
+                  onClick={() => this.submitComment()}
+                />
+                <br />
+                <br />
+              </>
+            )}
           </>
         )}
 
-        {this.props.forum.comments.map((c, i) => (
-          <PostComment
-            key={i}
-            isDownvoted={c.wasDownvotedByMe}
-            isUpvoted={c.wasUpvotedByMe}
-            onUpvoteClicked={() => this.props.upvoteComment(c.commentId)}
-            onDownvoteClicked={() => this.props.downvoteComment(c.commentId)}
-            isLoggedIn={this.props.users.isAuthenticated}
-            {...c}
-          />
-        ))}
+        {!isEditMode &&
+          this.props.forum.comments.map((c, i) => (
+            <PostComment
+              key={i}
+              isDownvoted={c.wasDownvotedByMe}
+              isUpvoted={c.wasUpvotedByMe}
+              onUpvoteClicked={() =>
+                this.props.upvoteComment(c.commentId, c.postSlug)
+              }
+              onDownvoteClicked={() =>
+                this.props.downvoteComment(c.commentId, c.postSlug)
+              }
+              isLoggedIn={this.props.users.isAuthenticated}
+              onAction={
+                isCommentAuthor
+                  ? (actions, comment) => this.onCommentAction(actions, comment)
+                  : undefined
+              }
+              {...c}
+            />
+          ))}
       </Layout>
     );
   }

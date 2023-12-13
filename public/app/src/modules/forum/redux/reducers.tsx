@@ -2,6 +2,7 @@ import * as actions from './actions';
 
 import states, { ForumState } from './states';
 
+import { CommentUtil } from '../utils/CommentUtil';
 import { ForumAction } from './actionCreators';
 import { Post } from '../models/Post';
 import { PostUtil } from '../utils/PostUtil';
@@ -57,7 +58,16 @@ export default function forum(
     case actions.DELETE_COMMENT_SUCCESS:
       return {
         ...state,
-        ...ReduxUtils.reportEventStatus('isDeleteComment', true)
+        ...ReduxUtils.reportEventStatus('isDeleteComment', true),
+        comment:
+          'commentId' in state.comment &&
+          state.comment.commentId === action.commentId
+            ? {}
+            : state.comment,
+        comments: CommentUtil.computeCommentsAfterDelete(
+          state.comments,
+          action.commentId
+        )
       };
     case actions.DELETE_COMMENT_FAILURE:
       return {
@@ -74,7 +84,17 @@ export default function forum(
     case actions.UPDATE_COMMENT_SUCCESS:
       return {
         ...state,
-        ...ReduxUtils.reportEventStatus('isUpdateComment', true)
+        ...ReduxUtils.reportEventStatus('isUpdateComment', true),
+        comment:
+          'commentId' in state.comment &&
+          state.comment.commentId === action.comment.commentId
+            ? action.comment
+            : state.comment,
+        comments: CommentUtil.computeCommentsAfterUpdate(
+          state.comments,
+          action.comment.commentId,
+          () => action.comment
+        )
       };
     case actions.UPDATE_COMMENT_FAILURE:
       return {
@@ -96,6 +116,9 @@ export default function forum(
           (post) => post.slug !== action.post.slug
         ),
         popularPosts: state.recentPosts.filter(
+          (post) => post.slug !== action.post.slug
+        ),
+        categoryPosts: state.categoryPosts.filter(
           (post) => post.slug !== action.post.slug
         )
       };
@@ -119,6 +142,9 @@ export default function forum(
           post.slug === action.post.slug ? action.post : post
         ),
         popularPosts: state.popularPosts.map((post) =>
+          post.slug === action.post.slug ? action.post : post
+        ),
+        categoryPosts: state.categoryPosts.map((post) =>
           post.slug === action.post.slug ? action.post : post
         )
       };
@@ -262,7 +288,8 @@ export default function forum(
       return {
         ...state,
         ...ReduxUtils.reportEventStatus('isGettingCommentByCommentId', true),
-        comment: action.comment
+        comment: action.comment,
+        comments: action.comment.childComments
       };
     case actions.GETTING_COMMENT_BY_COMMENT_ID_FAILURE:
       return {
@@ -298,6 +325,9 @@ export default function forum(
         popularPosts: state.popularPosts.map((p) =>
           p.slug === action.postSlug ? PostUtil.computePostAfterUpvote(p) : p
         ),
+        categoryPosts: state.categoryPosts.map((p) =>
+          p.slug === action.postSlug ? PostUtil.computePostAfterUpvote(p) : p
+        ),
         post:
           Object.keys(state.post).length !== 0 &&
           (state.post as Post).slug === action.postSlug
@@ -314,11 +344,44 @@ export default function forum(
         popularPosts: state.popularPosts.map((p) =>
           p.slug === action.postSlug ? PostUtil.computePostAfterDownvote(p) : p
         ),
+        categoryPosts: state.categoryPosts.map((p) =>
+          p.slug === action.postSlug ? PostUtil.computePostAfterDownvote(p) : p
+        ),
         post:
           Object.keys(state.post).length !== 0 &&
           (state.post as Post).slug === action.postSlug
             ? PostUtil.computePostAfterDownvote(state.post as Post)
             : state.post
+      };
+
+    case actions.UPVOTING_COMMENT_SUCCESS:
+      return {
+        ...state,
+        comments: CommentUtil.computeCommentsAfterUpdate(
+          state.comments,
+          action.commentId,
+          CommentUtil.computeCommentAfterUpvote
+        ),
+        comment:
+          'commentId' in state.comment &&
+          state.comment.commentId === action.commentId
+            ? CommentUtil.computeCommentAfterUpvote(state.comment)
+            : state.comment
+      };
+
+    case actions.DOWNVOTING_COMMENT_SUCCESS:
+      return {
+        ...state,
+        comments: CommentUtil.computeCommentsAfterUpdate(
+          state.comments,
+          action.commentId,
+          CommentUtil.computeCommentAfterDownvote
+        ),
+        comment:
+          'commentId' in state.comment &&
+          state.comment.commentId === action.commentId
+            ? CommentUtil.computeCommentAfterDownvote(state.comment)
+            : state.comment
       };
 
     default:

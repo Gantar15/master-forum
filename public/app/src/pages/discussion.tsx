@@ -4,7 +4,6 @@ import * as usersOperators from '../modules/users/redux/operators';
 import { BackNavigation } from '../shared/components/header';
 import { Comment } from '../modules/forum/models/Comment';
 import { CommentUtil } from '../modules/forum/utils/CommentUtil';
-import DeleteButtons from '../shared/components/modal-window/actions-buttons/delete/components/DeleteButtons';
 import Editor from '../modules/forum/components/comments/components/Editor';
 import EntityActions from '../shared/components/entity-actions/components/EntityActions';
 import { ForumState } from '../modules/forum/redux/states';
@@ -12,7 +11,6 @@ import { FullPageLoader } from '../shared/components/loader';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
 import ModalWindow from '../shared/components/modal-window/components/ModalWindow';
-import { Points } from '../modules/forum/components/posts/points';
 import { Post } from '../modules/forum/models/Post';
 import PostComment from '../modules/forum/components/posts/post/components/PostComment';
 import PostSummary from '../modules/forum/components/posts/post/components/PostSummary';
@@ -41,6 +39,8 @@ interface DiscussionState {
   comments: Comment[];
   newCommentText: string;
   isDeletePostModalOpen: boolean;
+  isDeleteCommentModalOpen: boolean;
+  commentToDelete?: Comment;
 }
 
 class DiscussionPage extends React.Component<
@@ -53,7 +53,9 @@ class DiscussionPage extends React.Component<
     this.state = {
       comments: [],
       newCommentText: '',
-      isDeletePostModalOpen: false
+      isDeletePostModalOpen: false,
+      isDeleteCommentModalOpen: false,
+      commentToDelete: undefined
     };
   }
 
@@ -130,12 +132,29 @@ class DiscussionPage extends React.Component<
     }
   }
 
+  onCommentAction(action: string, comment: Comment) {
+    if (action === 'delete') {
+      this.setState((state) => ({
+        ...state,
+        isDeleteCommentModalOpen: !state.isDeleteCommentModalOpen,
+        commentToDelete: comment
+      }));
+    } else if (action === 'edit') {
+      this.props.setEditComment(comment);
+      this.props.history.push(`/comment/${comment.commentId}`);
+    }
+  }
+
   afterSuccessfulPostDelete(prevProps: DiscussionPageProps) {
     const currentProps: DiscussionPageProps = this.props;
     if (
       currentProps.forum.isDeletePostSuccess ===
       !prevProps.forum.isDeletePostSuccess
     ) {
+      this.setState({
+        ...this.state,
+        isDeletePostModalOpen: false
+      });
       toast.success(`Done-zo! 🤠`, {
         autoClose: 2000
       });
@@ -151,6 +170,46 @@ class DiscussionPage extends React.Component<
       currentProps.forum.isDeletePostFailure ===
       !prevProps.forum.isDeletePostFailure
     ) {
+      this.setState({
+        ...this.state,
+        isDeletePostModalOpen: false
+      });
+      const error: string = currentProps.forum.error;
+      return toast.error(`Yeahhhhh, ${error} 🤠`, {
+        autoClose: 3000
+      });
+    }
+  }
+
+  afterSuccessfulCommentDelete(prevProps: DiscussionPageProps) {
+    const currentProps: DiscussionPageProps = this.props;
+    if (
+      currentProps.forum.isDeleteCommentSuccess ===
+      !prevProps.forum.isDeleteCommentSuccess
+    ) {
+      this.setState({
+        ...this.state,
+        isDeleteCommentModalOpen: false
+      });
+      toast.success(`Done-zo! 🤠`, {
+        autoClose: 2000
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    }
+  }
+
+  afterFailedCommentDelete(prevProps: DiscussionPageProps) {
+    const currentProps: DiscussionPageProps = this.props;
+    if (
+      currentProps.forum.isDeleteCommentFailure ===
+      !prevProps.forum.isDeleteCommentFailure
+    ) {
+      this.setState({
+        ...this.state,
+        isDeleteCommentModalOpen: false
+      });
       const error: string = currentProps.forum.error;
       return toast.error(`Yeahhhhh, ${error} 🤠`, {
         autoClose: 3000
@@ -191,6 +250,8 @@ class DiscussionPage extends React.Component<
     this.afterFailedCommentPost(prevProps);
     this.afterSuccessfulPostDelete(prevProps);
     this.afterFailedPostDelete(prevProps);
+    this.afterFailedCommentDelete(prevProps);
+    this.afterSuccessfulCommentDelete(prevProps);
   }
 
   render() {
@@ -214,6 +275,16 @@ class DiscussionPage extends React.Component<
           isOpen={this.state.isDeletePostModalOpen}
           onOk={() => this.props.deletePost(post.slug)}
           onCancel={() => this.setState({ isDeletePostModalOpen: false })}
+          okTitle="Yes, delete"
+        />
+        <ModalWindow
+          title="Confirmation!"
+          text="Are you sure you want to delete this comment?"
+          isOpen={this.state.isDeleteCommentModalOpen}
+          onOk={() =>
+            this.props.deleteComment(this.state.commentToDelete!.commentId)
+          }
+          onCancel={() => this.setState({ isDeleteCommentModalOpen: false })}
           okTitle="Yes, delete"
         />
         <div className="header-container flex flex-row flex-center flex-between">
@@ -248,11 +319,11 @@ class DiscussionPage extends React.Component<
             <br />
             <PostSummary {...(post as Post)} />
 
-            {isPostAuthor && this.props.users.isAuthenticated ? (
+            {isPostAuthor ? (
               <div>
                 <EntityActions
                   actions={['delete', 'edit']}
-                  onAction={(actions) => this.onPostAction(actions)}
+                  onAction={(action) => this.onPostAction(action)}
                 />
               </div>
             ) : null}
@@ -282,6 +353,11 @@ class DiscussionPage extends React.Component<
             onDownvoteClicked={this.props.downvoteComment}
             onUpvoteClicked={this.props.upvoteComment}
             isLoggedIn={this.props.users.isAuthenticated}
+            onAction={
+              isPostAuthor
+                ? (actions, comment) => this.onCommentAction(actions, comment)
+                : undefined
+            }
             {...c}
           />
         ))}

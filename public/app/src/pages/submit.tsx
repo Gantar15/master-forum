@@ -1,13 +1,13 @@
 import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
-import { Post, PostType } from '../modules/forum/models/Post';
-
+import { BackNavigation } from '../shared/components/header';
 import { ForumState } from '../modules/forum/redux/states';
 import { FullPageLoader } from '../shared/components/loader';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
 import PostSubmission from '../modules/forum/components/comments/components/PostSubmission';
+import { PostType } from '../modules/forum/models/Post';
 import { PostUtil } from '../modules/forum/utils/PostUtil';
 import { ProfileButton } from '../modules/users/components/profileButton';
 import React from 'react';
@@ -216,6 +216,12 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
             title={isUpdatePage ? 'Edit submission' : 'New submission'}
             subtitle=""
           />
+          {isUpdatePage && (
+            <BackNavigation
+              to={`/discuss/${this.props.forum.editPost!.slug}`}
+              text={`Back to "${this.props.forum.editPost!.title}"`}
+            />
+          )}
           <ProfileButton
             isLoggedIn={this.props.users.isAuthenticated}
             username={
