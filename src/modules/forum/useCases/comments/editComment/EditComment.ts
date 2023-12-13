@@ -57,6 +57,8 @@ export class EditComment implements UseCase<EditCommentDTO, Promise<Response>> {
           new AppError.MessageError(commentTextModel.getErrorValue().value)
         );
       }
+      comment.setText(commentTextModel.getValue());
+
       await this.commentRepo.save(comment);
 
       try {
@@ -65,7 +67,7 @@ export class EditComment implements UseCase<EditCommentDTO, Promise<Response>> {
           memberId
         );
       } catch (err) {
-        return left(new EditCommentErrors.CommentNotFoundError(commentId));
+        return left(new AppError.UnexpectedError(err));
       }
 
       return right(Result.ok<CommentDetails>(commentDetails));

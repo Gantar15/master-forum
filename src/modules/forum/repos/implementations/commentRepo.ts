@@ -129,10 +129,9 @@ export class CommentRepo implements ICommentRepo {
     } else {
       await this.saveCommentVotes(comment.getVotes());
 
-      const sequelizeCommentInstance = await CommentModel.findOne({
+      await CommentModel.update(rawSequelizeComment, {
         where: { comment_id: comment.commentId.getStringValue() },
       });
-      await sequelizeCommentInstance.update(rawSequelizeComment);
     }
   }
 

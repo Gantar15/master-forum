@@ -198,10 +198,7 @@ export class Post extends AggregateRoot<PostProps> {
     numPostCommentUpvotes: number,
     numPostCommentDownvotes: number
   ) {
-    this.props.points =
-      numPostUpvotes -
-      numPostDownvotes +
-      (numPostCommentUpvotes - numPostCommentDownvotes);
+    this.props.points = numPostUpvotes - numPostDownvotes;
   }
 
   private computeVotePoints(): number {
@@ -246,6 +243,12 @@ export class Post extends AggregateRoot<PostProps> {
     if (this.props.comments.exists(comment)) {
       this.props.comments.remove(comment);
     }
+  }
+
+  public removeComment(comment: Comment): Result<void> {
+    this.removeCommentIfExists(comment);
+    this.props.totalNumComments--;
+    return Result.ok<void>();
   }
 
   public addComment(comment: Comment): Result<void> {

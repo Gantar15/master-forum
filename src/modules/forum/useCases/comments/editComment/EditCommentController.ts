@@ -6,6 +6,7 @@ import { DecodedExpressRequest } from "../../../../users/infra/http/models/decod
 import { EditComment } from "./EditComment";
 import { EditCommentDTO } from "./EditCommentDTO";
 import { EditCommentErrors } from "./EditCommentErrors";
+import { EditCommentResponseDTO } from "./EditCommentResponseDTO";
 
 export class EditCommentController extends BaseController {
   private useCase: EditComment;
@@ -45,7 +46,9 @@ export class EditCommentController extends BaseController {
         }
       } else {
         const commentDetails = result.value.getValue();
-        return this.ok(res, CommentDetailsMap.toDTO(commentDetails));
+        return this.ok<EditCommentResponseDTO>(res, {
+          comment: CommentDetailsMap.toDTO(commentDetails),
+        });
       }
     } catch (err) {
       return this.fail(res, err);

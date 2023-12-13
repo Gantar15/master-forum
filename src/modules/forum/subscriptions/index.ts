@@ -1,11 +1,10 @@
-
-import { createMember } from "../useCases/members/createMember";
-import { AfterUserCreated } from "./afterUserCreated";
 import { AfterCommentPosted } from "./afterCommentPosted";
-import { updatePostStats } from "../useCases/post/updatePostStats";
 import { AfterCommentVotesChanged } from "./afterCommentVotesChanged";
-import { updateCommentStats } from "../useCases/comments/updateCommentStats";
 import { AfterPostVotesChanged } from "./afterPostVotesChanged";
+import { AfterUserCreated } from "./afterUserCreated";
+import { createMember } from "../useCases/members/createMember";
+import { updateCommentStats } from "../useCases/comments/updateCommentStats";
+import { updatePostStats } from "../useCases/post/updatePostStats";
 
 // Subscriptions
 new AfterUserCreated(createMember);

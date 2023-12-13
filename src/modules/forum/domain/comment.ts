@@ -89,6 +89,10 @@ export class Comment extends Entity<CommentProps> {
     this.props.points = totalNumUpvotes - totalNumDownvotes;
   }
 
+  public setText(text: CommentText): void {
+    this.props.text = text;
+  }
+
   private constructor(props: CommentProps, id?: UniqueEntityID) {
     super(props, id);
   }
