@@ -39,14 +39,12 @@ const Search = ({
           placeholder={placeholder}
           type="text"
         />
-        {searchValue && (
-          <SubmitButton
-            onClick={() => {
-              onSearch(searchValue);
-            }}
-            text="Search"
-          />
-        )}
+        <SubmitButton
+          onClick={() => {
+            onSearch(searchValue);
+          }}
+          text="Search"
+        />
       </div>
     </div>
   );

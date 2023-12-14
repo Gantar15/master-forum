@@ -127,10 +127,10 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
           />
         </div>
         <br />
+        <br />
         <Search
           onSearch={(text) => this.props.history.push('/search/' + text)}
         />
-        <br />
         <br />
 
         <PostFilters

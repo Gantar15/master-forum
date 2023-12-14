@@ -1,6 +1,7 @@
 import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
+import { BackNavigation } from '../shared/components/header';
 import { ForumState } from '../modules/forum/redux/states';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
@@ -78,11 +79,8 @@ class SearchPage extends React.Component<SearchPageProps, SearchPageState> {
   render() {
     return (
       <Layout>
-        <div className="header-container flex flex-row flex-center flex-even">
-          <Header
-            title="Master-Forum Community"
-            subtitle="Where awesome Peoples can communicate"
-          />
+        <div className="header-container flex flex-row flex-center flex-between">
+          <BackNavigation text="Back to all discussions" to="/" />
           <ProfileButton
             isLoggedIn={this.props.users.isAuthenticated}
             username={
@@ -93,11 +91,16 @@ class SearchPage extends React.Component<SearchPageProps, SearchPageState> {
             onLogout={() => this.props.logout()}
           />
         </div>
+        <Header
+          title="Master-Forum Community"
+          subtitle="Where awesome Peoples can communicate"
+        />
+        <br />
+        <br />
         <Search
           onSearch={(text) => this.props.history.push('/search/' + text)}
           value={this.state.searchString}
         />
-        <br />
         <br />
 
         {this.props.forum.searchPosts.length > 0 ? (
