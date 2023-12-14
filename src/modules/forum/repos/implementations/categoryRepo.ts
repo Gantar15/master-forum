@@ -51,6 +51,7 @@ export class CategoryRepo implements ICategoryRepo {
   async getCategories(): Promise<Category[]> {
     const CategoryModel = this.models.Category;
     const baseQuery = this.createBaseQuery();
+    baseQuery.order = [["created_at", "DESC"]];
     const categoryInstances = await CategoryModel.findAll(baseQuery);
     return categoryInstances.map(CategoryMap.toDomain);
   }

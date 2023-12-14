@@ -51,6 +51,7 @@ export class SequelizeUserRepo implements IUserRepo {
       where: {
         is_admin_user: false,
       },
+      order: [["created_at", "DESC"]],
     });
     return baseUsers.map(UserMap.toDomain);
   }

@@ -17,7 +17,7 @@ categoryRouter.post(
 );
 
 categoryRouter.delete(
-  "/:categoryId",
+  "/:categoryTitle",
   middleware.ensureRole(["admin", "manager"]),
   (req, res) => deleteCategoryController.execute(req, res)
 );

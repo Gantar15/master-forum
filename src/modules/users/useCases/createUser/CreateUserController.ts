@@ -25,14 +25,14 @@ export class CreateUserController extends BaseController {
       username: req.body.username,
       email: req.body.email,
       password: req.body.password,
-      role: req.body.role,
-      isAdminUser: !!req.decoded ? req.decoded.adminUser : false,
     };
 
     dto = {
       username: TextUtils.sanitize(dto.username),
       email: TextUtils.sanitize(dto.email),
       password: dto.password,
+      role: req.body.role,
+      isAdminUser: !!req.decoded ? req.decoded.adminUser : false,
     };
 
     try {
