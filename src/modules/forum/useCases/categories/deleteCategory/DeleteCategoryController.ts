@@ -19,7 +19,7 @@ export class DeleteCategoryController extends BaseController {
     res: express.Response
   ): Promise<any> {
     const dto: DeleteCategoryDTO = {
-      categoryId: req.params.categoryId,
+      categoryTitle: req.params.categoryTitle,
     };
 
     try {

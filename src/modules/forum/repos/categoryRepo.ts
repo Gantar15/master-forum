@@ -9,5 +9,6 @@ export interface ICategoryRepo {
   getCategoryByTitle(categoryTitle: CategoryTitle): Promise<Category>;
   addPostToCategory(categoryId: UniqueEntityID, postId: PostId): Promise<void>;
   delete(categoryId: UniqueEntityID): Promise<void>;
+  deleteByTitle(categoryTitle: CategoryTitle): Promise<void>;
   save(category: Category): Promise<void>;
 }

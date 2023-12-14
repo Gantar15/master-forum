@@ -1,3 +1,3 @@
 export interface DeleteCategoryDTO {
-  categoryId: string;
+  categoryTitle: string;
 }

@@ -62,6 +62,13 @@ export class CategoryRepo implements ICategoryRepo {
     await CategoryModel.destroy(baseQuery);
   }
 
+  async deleteByTitle(categoryTitle: CategoryTitle): Promise<void> {
+    const CategoryModel = this.models.Category;
+    const baseQuery = this.createBaseQuery();
+    baseQuery.where["title"] = categoryTitle.value;
+    await CategoryModel.destroy(baseQuery);
+  }
+
   async addPostToCategory(
     categoryId: UniqueEntityID,
     postId: PostId

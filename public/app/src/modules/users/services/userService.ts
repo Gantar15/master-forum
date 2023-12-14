@@ -65,10 +65,16 @@ export class UsersService extends BaseAPI implements IUsersService {
   async createUser(
     email: string,
     username: string,
-    password: string
+    password: string,
+    role?: 'admin' | 'manager'
   ): Promise<APIResponse<User>> {
     try {
-      const response = await this.post('/users', { email, username, password });
+      const response = await this.post('/users', {
+        email,
+        username,
+        password,
+        role
+      });
       return right(Result.ok<User>(response));
     } catch (err) {
       return left(
