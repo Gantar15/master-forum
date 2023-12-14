@@ -2,6 +2,10 @@ import { Comment } from '../models/Comment';
 import { Post } from '../models/Post';
 
 export interface ForumState {
+  isSearchPosts: boolean;
+  isSearchPostsSuccess: boolean;
+  isSearchPostsFailure: boolean;
+
   isGetPostsByCategory: boolean;
   isGetPostsByCategorySuccess: boolean;
   isGetPostsByCategoryFailure: boolean;
@@ -77,6 +81,7 @@ export interface ForumState {
   recentPosts: Post[];
   popularPosts: Post[];
   categoryPosts: Post[];
+  searchPosts: Post[];
 
   post: Post | {};
 
@@ -94,6 +99,10 @@ export interface ForumState {
 }
 
 const initialForumState: ForumState = {
+  isSearchPosts: false,
+  isSearchPostsSuccess: false,
+  isSearchPostsFailure: false,
+
   isGetPostsByCategory: false,
   isGetPostsByCategorySuccess: false,
   isGetPostsByCategoryFailure: false,
@@ -171,6 +180,7 @@ const initialForumState: ForumState = {
   recentPosts: [],
   popularPosts: [],
   categoryPosts: [],
+  searchPosts: [],
 
   post: {},
 

@@ -10,6 +10,7 @@ import JoinPage from './pages/join';
 import LoginPage from './pages/login';
 import MemberPage from './pages/member';
 import React from 'react';
+import SearchPage from './pages/search';
 import SubmitPage from './pages/submit';
 
 const App: React.FC = () => {
@@ -19,6 +20,8 @@ const App: React.FC = () => {
       <Route path="/discuss/:slug" component={DiscussionPage} />
       <Route path="/comment/:commentId" component={CommentPage} />
       <Route path="/member/:username" component={MemberPage} />
+      <Route path="/search/:searchString" component={SearchPage} />
+      {/* <Route path="/category/:category" component={CategoryPage} /> */}
       <AuthenticatedRoute path="/submit" component={SubmitPage} />
       <Route path="/join" component={JoinPage} />
       <Route path="/login" component={LoginPage} />

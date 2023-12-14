@@ -42,6 +42,7 @@ const Header: React.FC<HeaderProps> = (props) => (
       <div className="header-links">
         <Link to="/submit">submit</Link>
       </div>
+      <br />
     </div>
   </div>
 );

@@ -23,6 +23,18 @@ const PostMeta: React.FC<PostMetaProps> = (props) => (
       <Link to={`/member/${props.postAuthor}`}>{props.postAuthor}</Link> |{' '}
       {`${props.numComments} comments`}
     </div>
+    <div className="post-row-classification">
+      <Link
+        className="post-row-classification__category"
+        to={`/category/${props.category}`}
+      >
+        {props.category}
+      </Link>
+      <div className="post-row-classification__tags">
+        {props.tags?.length > 0 &&
+          props.tags.map((tag) => <div key={tag}>#{tag}</div>)}
+      </div>
+    </div>
   </div>
 );
 

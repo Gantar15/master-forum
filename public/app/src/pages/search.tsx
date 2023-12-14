@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import withLogoutHandling from '../modules/users/hocs/withLogoutHandling';
 import withVoting from '../modules/forum/hocs/withVoting';
 
-interface IndexPageProps
+interface SearchPageProps
   extends usersOperators.IUserOperators,
     forumOperators.IForumOperations {
   users: UsersState;
@@ -30,92 +30,64 @@ interface IndexPageProps
   history: any;
 }
 
-interface IndexPageState {
-  activeFilter: PostFilterType;
+interface SearchPageState {
+  searchString: string;
 }
 
-class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
-  constructor(props: IndexPageProps) {
+class SearchPage extends React.Component<SearchPageProps, SearchPageState> {
+  constructor(props: SearchPageProps) {
     super(props);
 
     this.state = {
-      activeFilter: 'POPULAR'
+      searchString: ''
     };
   }
 
-  onClickJoinButton() {}
+  getSearchStringFromWindow(): string {
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname;
+      const searchString = pathname.substring(pathname.lastIndexOf('/') + 1);
+      return decodeURI(searchString);
+    } else {
+      return '';
+    }
+  }
 
-  setActiveFilter(filter: PostFilterType) {
+  setSearchString(searchString: string) {
     this.setState({
       ...this.state,
-      activeFilter: filter
+      searchString
     });
   }
 
-  getPosts() {
-    const activeFilter = this.state.activeFilter;
-
-    if (activeFilter === 'NEW') {
-      this.props.getRecentPosts();
-    } else {
-      this.props.getPopularPosts();
-    }
+  getPosts(searchString: string) {
+    this.props.searchPosts(searchString);
   }
 
-  onFilterChanged(prevState: IndexPageState) {
-    const currentState: IndexPageState = this.state;
-    if (prevState.activeFilter !== currentState.activeFilter) {
-      this.getPosts();
+  componentDidUpdate(prevProps: SearchPageProps, prevState: SearchPageState) {
+    const searchString = this.getSearchStringFromWindow();
+    if (
+      !this.props.forum.isSearchPosts &&
+      prevState.searchString !== searchString
+    ) {
+      this.getPosts(searchString);
     }
-  }
-
-  setActiveFilterOnLoad() {
-    const showNewFilter = (this.props.location.search as string).includes(
-      'show=new'
-    );
-    const showPopularFilter = (this.props.location.search as string).includes(
-      'show=popular'
-    );
-
-    let activeFilter = this.state.activeFilter;
-
-    if (showNewFilter) {
-      activeFilter = 'NEW';
-    }
-
-    this.setState({
-      ...this.state,
-      activeFilter
-    });
-  }
-
-  getPostsFromActiveFilterGroup(): Post[] {
-    if (this.state.activeFilter === 'NEW') {
-      return this.props.forum.recentPosts;
-    } else {
-      return this.props.forum.popularPosts;
-    }
-  }
-
-  componentDidUpdate(prevProps: IndexPageProps, prevState: IndexPageState) {
-    this.onFilterChanged(prevState);
   }
 
   componentDidMount() {
-    this.setActiveFilterOnLoad();
-    this.getPosts();
+    const searchString = this.getSearchStringFromWindow();
+    this.setSearchString(searchString);
+    this.getPosts(searchString);
   }
 
   render() {
-    const { activeFilter } = this.state;
-
     return (
       <Layout>
         <div className="header-container flex flex-row flex-center flex-even">
           <Header
             title="Master-Forum Community"
             subtitle="Where awesome Peoples can communicate"
-          />{' '}
+          />
           <ProfileButton
             isLoggedIn={this.props.users.isAuthenticated}
             username={
@@ -128,26 +100,28 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
         </div>
         <Search
           onSearch={(text) => this.props.history.push('/search/' + text)}
+          value={this.state.searchString}
         />
         <br />
         <br />
 
-        <PostFilters
-          activeFilter={activeFilter}
-          onClick={(filter) => this.setActiveFilter(filter)}
-        />
-
-        {this.getPostsFromActiveFilterGroup().map((p, i) => (
-          <PostRow
-            key={i}
-            isDownvoted={p.wasDownvotedByMe}
-            isUpvoted={p.wasUpvotedByMe}
-            onUpvoteClicked={() => this.props.upvotePost(p.slug)}
-            onDownvoteClicked={() => this.props.downvotePost(p.slug)}
-            isLoggedIn={this.props.users.isAuthenticated}
-            {...p}
-          />
-        ))}
+        {this.props.forum.searchPosts.length > 0 ? (
+          this.props.forum.searchPosts.map((p, i) => (
+            <PostRow
+              key={i}
+              isDownvoted={p.wasDownvotedByMe}
+              isUpvoted={p.wasUpvotedByMe}
+              onUpvoteClicked={() => this.props.upvotePost(p.slug)}
+              onDownvoteClicked={() => this.props.downvotePost(p.slug)}
+              isLoggedIn={this.props.users.isAuthenticated}
+              {...p}
+            />
+          ))
+        ) : (
+          <div className="header-container flex flex-row flex-center flex-justify-center">
+            No posts found
+          </div>
+        )}
       </Layout>
     );
   }
@@ -179,4 +153,4 @@ function mapActionCreatorsToProps(dispatch: any) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withLogoutHandling(withVoting(IndexPage)));
+)(withLogoutHandling(withVoting(SearchPage)));

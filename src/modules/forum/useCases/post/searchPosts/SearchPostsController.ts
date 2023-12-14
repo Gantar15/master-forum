@@ -21,7 +21,7 @@ export class SearchPostsController extends BaseController {
     res: express.Response
   ): Promise<any> {
     const dto: SearchPostsRequestDTO = {
-      searchString: req.body.searchString,
+      searchString: req.query.searchString,
       userId: !!req.decoded === true ? req.decoded.userId : null,
     };
 

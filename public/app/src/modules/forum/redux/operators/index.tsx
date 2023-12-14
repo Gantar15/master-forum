@@ -13,7 +13,9 @@ import { getCommentReplies } from './getCommentReplies';
 import { getComments } from './getComments';
 import { getPopularPosts } from './getPopularPosts';
 import { getPostBySlug } from './getPostBySlug';
+import { getPostsByCategory } from './getPostsByCategory';
 import { getRecentPosts } from './getRecentPosts';
+import { searchPosts } from './searchPosts';
 import { setEditComment } from './setEditComment';
 import { setEditPost } from './setEditPost';
 import { submitPost } from './submitPost';
@@ -23,6 +25,7 @@ import { upvoteComment } from './upvoteComment';
 import { upvotePost } from './upvotePost';
 
 export interface IForumOperations {
+  searchPosts(searchString: string): void;
   getPostsByCategory(category: string): void;
   getCategories(): void;
   updateComment(slug: string, text: string): void;
@@ -66,6 +69,8 @@ export interface IForumOperations {
 }
 
 export {
+  searchPosts,
+  getPostsByCategory,
   deleteComment,
   updateComment,
   deletePost,

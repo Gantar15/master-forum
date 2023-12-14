@@ -58,6 +58,18 @@ html {
   justify-content: space-between;
 }
 
+.flex-justify-center {
+  justify-content: center;
+}
+
 pre {
   font-weight: normal;
+}
+
+a {
+  color: hsl(210, 72%, 43%);
+
+  &:visited {
+    color: hsl(226, 70%, 47%);
+  }
 }

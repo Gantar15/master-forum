@@ -5,7 +5,31 @@ import { Post } from '../models/Post';
 
 export type ForumAction = { [key: string]: actions.ForumActionType | any };
 
-//get categories
+//search posts
+
+function searchPosts(): ForumAction {
+  return {
+    type: actions.SEARCH_POSTS
+  };
+}
+
+function searchPostsSuccess(
+  searchPosts: Post[]
+): ForumAction & { searchPosts: Post[] } {
+  return {
+    type: actions.SEARCH_POSTS_SUCCESS,
+    searchPosts
+  };
+}
+
+function searchPostsFailure(error: string): ForumAction & { error: string } {
+  return {
+    type: actions.SEARCH_POSTS_FAILURE,
+    error
+  };
+}
+
+//get posts by category
 
 function getPostsByCategory(): ForumAction {
   return {
@@ -443,6 +467,9 @@ export {
   getPostsByCategory,
   getPostsByCategorySuccess,
   getPostsByCategoryFailure,
+  searchPosts,
+  searchPostsSuccess,
+  searchPostsFailure,
   getCategories,
   getCategoriesSuccess,
   getCategoriesFailure,

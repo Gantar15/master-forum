@@ -13,6 +13,24 @@ export default function forum(
   action: ForumAction
 ): ForumState {
   switch (action.type as actions.ForumActionType) {
+    case actions.SEARCH_POSTS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isSearchPosts'),
+        error: ''
+      };
+    case actions.SEARCH_POSTS_SUCCESS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isSearchPosts', true),
+        searchPosts: action.searchPosts
+      };
+    case actions.SEARCH_POSTS_FAILURE:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isSearchPosts', false),
+        error: action.error
+      };
     case actions.GET_POSTS_BY_CATEGORY:
       return {
         ...state,
@@ -120,6 +138,9 @@ export default function forum(
         ),
         categoryPosts: state.categoryPosts.filter(
           (post) => post.slug !== action.post.slug
+        ),
+        searchPosts: state.searchPosts.filter(
+          (post) => post.slug !== action.post.slug
         )
       };
     case actions.DELETE_POST_FAILURE:
@@ -146,7 +167,11 @@ export default function forum(
         ),
         categoryPosts: state.categoryPosts.map((post) =>
           post.slug === action.post.slug ? action.post : post
-        )
+        ),
+        searchPosts: state.searchPosts.map((post) =>
+          post.slug === action.post.slug ? action.post : post
+        ),
+        post: action.post
       };
     case actions.UPDATE_POST_FAILURE:
       return {
@@ -328,6 +353,9 @@ export default function forum(
         categoryPosts: state.categoryPosts.map((p) =>
           p.slug === action.postSlug ? PostUtil.computePostAfterUpvote(p) : p
         ),
+        searchPosts: state.searchPosts.map((p) =>
+          p.slug === action.postSlug ? PostUtil.computePostAfterUpvote(p) : p
+        ),
         post:
           Object.keys(state.post).length !== 0 &&
           (state.post as Post).slug === action.postSlug
@@ -345,6 +373,9 @@ export default function forum(
           p.slug === action.postSlug ? PostUtil.computePostAfterDownvote(p) : p
         ),
         categoryPosts: state.categoryPosts.map((p) =>
+          p.slug === action.postSlug ? PostUtil.computePostAfterDownvote(p) : p
+        ),
+        searchPosts: state.searchPosts.map((p) =>
           p.slug === action.postSlug ? PostUtil.computePostAfterDownvote(p) : p
         ),
         post:

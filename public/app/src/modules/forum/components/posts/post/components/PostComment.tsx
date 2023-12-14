@@ -38,6 +38,8 @@ const PostComment: React.FC<PostCommentProps> = ({ onAction, ...props }) => {
             <Link to={`/comment/${props.commentId}`}>reply</Link>
             {onAction ? (
               <EntityActions
+                width={24}
+                height={24}
                 actions={['delete', 'edit']}
                 onAction={(action) => onAction(action, props)}
               />

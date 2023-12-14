@@ -3,7 +3,6 @@ import { PostId } from "../../domain/postId";
 import { Tag } from "../../domain/tag";
 import { TagMap } from "../../mappers/TagMap";
 import { TagTitle } from "../../domain/tagTitle";
-import { Tags } from "../../domain/tags";
 import { UniqueEntityID } from "../../../../shared/domain/UniqueEntityID";
 
 export class TagRepo implements ITagRepo {

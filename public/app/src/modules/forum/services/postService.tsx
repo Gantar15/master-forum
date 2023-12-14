@@ -21,6 +21,7 @@ export interface IPostService {
   getRecentPosts(offset?: number): Promise<APIResponse<Post[]>>;
   getPopularPosts(offset?: number): Promise<APIResponse<Post[]>>;
   getPostsByCategory(categtory: string): Promise<APIResponse<Post[]>>;
+  searchPosts(searchString: string): Promise<APIResponse<Post[]>>;
   deletePost(slug: string): Promise<APIResponse<Post>>;
   updatePost(
     slug: string,
@@ -61,6 +62,7 @@ export class PostService extends BaseAPI implements IPostService {
       );
     }
   }
+
   async updatePost(
     slug: string,
     title: string,
@@ -89,6 +91,7 @@ export class PostService extends BaseAPI implements IPostService {
       );
     }
   }
+
   async getPostsByCategory(categtory: string): Promise<APIResponse<Post[]>> {
     try {
       const accessToken = this.authService.getToken('access-token');
@@ -100,6 +103,32 @@ export class PostService extends BaseAPI implements IPostService {
       const response = await this.get(
         '/posts',
         { categoryTitle: categtory },
+        isAuthenticated ? auth : null
+      );
+
+      return right(
+        Result.ok<Post[]>(
+          response.data.posts.map((p: PostDTO) => PostUtil.toViewModel(p))
+        )
+      );
+    } catch (err: any) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
+  async searchPosts(searchString: string): Promise<APIResponse<Post[]>> {
+    try {
+      const accessToken = this.authService.getToken('access-token');
+      const isAuthenticated = !!accessToken === true;
+      const auth = {
+        authorization: accessToken
+      };
+
+      const response = await this.get(
+        '/posts/search',
+        { searchString: searchString },
         isAuthenticated ? auth : null
       );
 
