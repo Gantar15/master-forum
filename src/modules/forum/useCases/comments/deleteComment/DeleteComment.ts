@@ -61,8 +61,8 @@ export class DeleteComment
       if (postResult.isFailure) {
         return left(new AppError.UnexpectedError(postResult.getValue()));
       }
-      await this.postRepo.save(post);
       await this.commentRepo.deleteComment(commentIdModel);
+      await this.postRepo.updateTotalNumberComments(comment.postId);
 
       return right(Result.ok<void>());
     } catch (err) {

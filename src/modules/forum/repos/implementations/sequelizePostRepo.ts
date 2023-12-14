@@ -13,7 +13,7 @@ import { PostTitle } from "../../domain/postTitle";
 import { MemberId } from "../../domain/memberId";
 import { UniqueEntityID } from "../../../../shared/domain/UniqueEntityID";
 import { SearchString } from "../../domain/SearchString";
-import { Op } from "sequelize";
+import sequelize, { Op } from "sequelize";
 import { ESPostService } from "../../domain/services/esPostService";
 
 export class PostRepo implements IPostRepo {
@@ -302,6 +302,15 @@ export class PostRepo implements IPostRepo {
     detailsQuery.where["post_id"] = postId.getStringValue();
     const postInstance = await PostModel.findOne(detailsQuery);
     return postInstance.setTags(tagsIds);
+  }
+
+  public async updateTotalNumberComments(postId: PostId): Promise<void> {
+    const PostModel = this.models.Post;
+    const post = await PostModel.findOne({
+      where: { post_id: postId.getStringValue() },
+    });
+    const count = await post.countComments();
+    return post.update({ total_num_comments: count });
   }
 
   public async save(post: Post): Promise<PostDetails> {

@@ -3,7 +3,7 @@ import { deleteUserController } from "../../../useCases/deleteUser";
 import express from "express";
 import { getCurrentUserController } from "../../../useCases/getCurrentUser";
 import { getUserByUserNameController } from "../../../useCases/getUserByUserName";
-import { getUsersController } from "../../../useCases/getCategories";
+import { getUsersController } from "../../../useCases/getUsers";
 import { loginController } from "../../../useCases/login";
 import { logoutController } from "../../../useCases/logout";
 import { middleware } from "../../../../../shared/infra/http";

@@ -47,7 +47,11 @@ export class SequelizeUserRepo implements IUserRepo {
 
   async getUsers(): Promise<User[]> {
     const BaseUserModel = this.models.BaseUser;
-    const baseUsers = await BaseUserModel.findAll();
+    const baseUsers = await BaseUserModel.findAll({
+      where: {
+        is_admin_user: false,
+      },
+    });
     return baseUsers.map(UserMap.toDomain);
   }
 

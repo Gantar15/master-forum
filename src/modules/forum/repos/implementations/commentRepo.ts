@@ -105,7 +105,10 @@ export class CommentRepo implements ICommentRepo {
 
   async deleteComment(commentId: CommentId): Promise<void> {
     const CommentModel = this.models.Comment;
-    return CommentModel.destroy({
+    await CommentModel.destroy({
+      where: { parent_comment_id: commentId.getStringValue() },
+    });
+    await CommentModel.destroy({
       where: { comment_id: commentId.getStringValue() },
     });
   }

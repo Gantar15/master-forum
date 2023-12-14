@@ -28,6 +28,7 @@ export interface IPostRepo {
     memberId?: MemberId
   ): Promise<PostDetails[]>;
   exists(postId: PostId): Promise<boolean>;
+  updateTotalNumberComments(postId: PostId): Promise<void>;
   save(post: Post): Promise<PostDetails>;
   deleteBySlug(slug: string): Promise<PostDetails>;
   delete(postId: string): Promise<void>;

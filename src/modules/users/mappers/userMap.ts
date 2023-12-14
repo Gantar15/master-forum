@@ -9,11 +9,13 @@ import { UserPassword } from "../domain/userPassword";
 export class UserMap implements Mapper<User> {
   public static toDTO(user: User): UserDTO {
     return {
+      userId: user.userId.getStringValue(),
       username: user.username.value,
       isEmailVerified: user.isEmailVerified,
       isAdminUser: user.isAdminUser,
       isManagerUser: user.isManagerUser,
       isDeleted: user.isDeleted,
+      email: user.email.value,
     };
   }
 

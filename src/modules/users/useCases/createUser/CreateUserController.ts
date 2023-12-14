@@ -3,9 +3,11 @@ import * as express from "express";
 import { BaseController } from "../../../../shared/infra/http/models/BaseController";
 import { CreateUserDTO } from "./CreateUserDTO";
 import { CreateUserErrors } from "./CreateUserErrors";
+import { CreateUserResponseDTO } from "./CreateUserResponseDTO";
 import { CreateUserUseCase } from "./CreateUserUseCase";
 import { DecodedExpressRequest } from "../../infra/http/models/decodedRequest";
 import { TextUtils } from "../../../../shared/utils/TextUtils";
+import { UserMap } from "../../mappers/userMap";
 
 export class CreateUserController extends BaseController {
   private useCase: CreateUserUseCase;
@@ -48,7 +50,10 @@ export class CreateUserController extends BaseController {
             return this.fail(res, error.getErrorValue().message);
         }
       } else {
-        return this.ok(res);
+        const user = result.value.getValue();
+        return this.ok<CreateUserResponseDTO>(res, {
+          user: UserMap.toDTO(user),
+        });
       }
     } catch (err) {
       return this.fail(res, err);

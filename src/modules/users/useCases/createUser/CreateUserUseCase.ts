@@ -14,8 +14,8 @@ type Response = Either<
   | CreateUserErrors.EmailAlreadyExistsError
   | CreateUserErrors.UsernameTakenError
   | AppError.UnexpectedError
-  | Result<any>,
-  Result<void>
+  | AppError.MessageError,
+  Result<User>
 >;
 
 export class CreateUserUseCase
@@ -39,7 +39,9 @@ export class CreateUserUseCase
     ]);
 
     if (dtoResult.isFailure) {
-      return left(Result.fail<void>(dtoResult.getErrorValue())) as Response;
+      return left(
+        new AppError.MessageError(dtoResult.getErrorValue().toString())
+      );
     }
 
     const email: UserEmail = emailOrError.getValue();
@@ -78,15 +80,15 @@ export class CreateUserUseCase
 
       if (userOrError.isFailure) {
         return left(
-          Result.fail<User>(userOrError.getErrorValue().toString())
-        ) as Response;
+          new AppError.MessageError(userOrError.getErrorValue().toString())
+        );
       }
 
       const user: User = userOrError.getValue();
 
       await this.userRepo.save(user);
 
-      return right(Result.ok<void>());
+      return right(Result.ok<User>(user));
     } catch (err) {
       return left(new AppError.UnexpectedError(err)) as Response;
     }

@@ -76,6 +76,7 @@ export default (sequelize, DataTypes) => {
       as: "Category",
     });
     Post.hasMany(models.PostVote, { foreignKey: "post_id", as: "Votes" });
+    Post.hasMany(models.Comment, { foreignKey: "post_id", as: "Comments" });
     Post.belongsToMany(models.Tag, {
       through: "posts_tags",
       foreignKey: "post_id",
