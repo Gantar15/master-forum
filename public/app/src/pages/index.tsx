@@ -126,6 +126,7 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
             onLogout={() => this.props.logout()}
           />
         </div>
+        <br />
         <Search
           onSearch={(text) => this.props.history.push('/search/' + text)}
         />

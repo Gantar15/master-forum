@@ -1,3 +1,5 @@
+import './styles/category.scss';
+
 import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
@@ -7,7 +9,6 @@ import { Layout } from '../shared/layout';
 import { PostRow } from '../modules/forum/components/posts/postRow';
 import { ProfileButton } from '../modules/users/components/profileButton';
 import React from 'react';
-import Search from '../shared/components/header/components/Search';
 import { User } from '../modules/users/models/user';
 import { UsersState } from '../modules/users/redux/states';
 import { bindActionCreators } from 'redux';
@@ -16,7 +17,7 @@ import { connect } from 'react-redux';
 import withLogoutHandling from '../modules/users/hocs/withLogoutHandling';
 import withVoting from '../modules/forum/hocs/withVoting';
 
-interface SearchPageProps
+interface CategoryPageProps
   extends usersOperators.IUserOperators,
     forumOperators.IForumOperations {
   users: UsersState;
@@ -25,54 +26,60 @@ interface SearchPageProps
   history: any;
 }
 
-interface SearchPageState {
-  searchString: string;
+interface CategoryPageState {
+  categoryString: string;
 }
 
-class SearchPage extends React.Component<SearchPageProps, SearchPageState> {
-  constructor(props: SearchPageProps) {
+class CategoryPage extends React.Component<
+  CategoryPageProps,
+  CategoryPageState
+> {
+  constructor(props: CategoryPageProps) {
     super(props);
 
     this.state = {
-      searchString: ''
+      categoryString: ''
     };
   }
 
-  getSearchStringFromWindow(): string {
+  getCategoryStringFromWindow(): string {
     if (typeof window !== 'undefined') {
       const pathname = window.location.pathname;
-      const searchString = pathname.substring(pathname.lastIndexOf('/') + 1);
-      return decodeURI(searchString);
+      const categoryString = pathname.substring(pathname.lastIndexOf('/') + 1);
+      return decodeURI(categoryString);
     } else {
       return '';
     }
   }
 
-  setSearchString(searchString: string) {
+  setCategoryString(categoryString: string) {
     this.setState({
       ...this.state,
-      searchString
+      categoryString
     });
   }
 
-  getPosts(searchString: string) {
-    this.props.searchPosts(searchString);
+  getPosts(categoryString: string) {
+    this.props.getPostsByCategory(categoryString);
   }
 
-  componentDidUpdate(prevProps: SearchPageProps, prevState: SearchPageState) {
-    const searchString = this.getSearchStringFromWindow();
+  componentDidUpdate(
+    prevProps: CategoryPageProps,
+    prevState: CategoryPageState
+  ) {
+    const categoryString = this.getCategoryStringFromWindow();
     if (
-      !this.props.forum.isSearchPosts &&
-      prevState.searchString !== searchString
+      !this.props.forum.isGetPostsByCategory &&
+      prevState.categoryString !== categoryString
     ) {
-      this.getPosts(searchString);
+      this.getPosts(categoryString);
     }
   }
 
   componentDidMount() {
-    const searchString = this.getSearchStringFromWindow();
-    this.setSearchString(searchString);
-    this.getPosts(searchString);
+    const categoryString = this.getCategoryStringFromWindow();
+    this.setCategoryString(categoryString);
+    this.getPosts(categoryString);
   }
 
   render() {
@@ -93,15 +100,15 @@ class SearchPage extends React.Component<SearchPageProps, SearchPageState> {
             onLogout={() => this.props.logout()}
           />
         </div>
-        <Search
-          onSearch={(text) => this.props.history.push('/search/' + text)}
-          value={this.state.searchString}
-        />
+        <br />
+        <div className="category__category-title">
+          <h2>{this.state.categoryString}</h2>
+        </div>
         <br />
         <br />
 
-        {this.props.forum.searchPosts.length > 0 ? (
-          this.props.forum.searchPosts.map((p, i) => (
+        {this.props.forum.categoryPosts.length > 0 ? (
+          this.props.forum.categoryPosts.map((p, i) => (
             <PostRow
               key={i}
               isDownvoted={p.wasDownvotedByMe}
@@ -114,7 +121,7 @@ class SearchPage extends React.Component<SearchPageProps, SearchPageState> {
           ))
         ) : (
           <div className="header-container flex flex-row flex-center flex-justify-center">
-            No posts found
+            No posts in this category
           </div>
         )}
       </Layout>
@@ -148,4 +155,4 @@ function mapActionCreatorsToProps(dispatch: any) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withLogoutHandling(withVoting(SearchPage)));
+)(withLogoutHandling(withVoting(CategoryPage)));

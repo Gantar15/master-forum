@@ -3,6 +3,7 @@ import './App.scss';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 
 import AuthenticatedRoute from './shared/infra/router/AuthenticatedRoute';
+import CategoryPage from './pages/category';
 import CommentPage from './pages/comment';
 import DiscussionPage from './pages/discussion';
 import IndexPage from './pages';
@@ -21,7 +22,7 @@ const App: React.FC = () => {
       <Route path="/comment/:commentId" component={CommentPage} />
       <Route path="/member/:username" component={MemberPage} />
       <Route path="/search/:searchString" component={SearchPage} />
-      {/* <Route path="/category/:category" component={CategoryPage} /> */}
+      <Route path="/category/:category" component={CategoryPage} />
       <AuthenticatedRoute path="/submit" component={SubmitPage} />
       <Route path="/join" component={JoinPage} />
       <Route path="/login" component={LoginPage} />

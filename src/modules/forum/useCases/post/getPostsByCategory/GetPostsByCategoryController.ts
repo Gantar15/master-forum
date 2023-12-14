@@ -21,7 +21,7 @@ export class GetPostsByCategoryController extends BaseController {
     res: express.Response
   ): Promise<any> {
     const dto: GetPostsByCategoryRequestDTO = {
-      categoryTitle: req.body.categoryTitle,
+      categoryTitle: req.query.categoryTitle,
       userId: !!req.decoded === true ? req.decoded.userId : null,
     };
 

@@ -38,11 +38,11 @@ function getPostsByCategory(): ForumAction {
 }
 
 function getPostsByCategorySuccess(
-  posts: Post[]
-): ForumAction & { posts: Post[] } {
+  categoryPosts: Post[]
+): ForumAction & { categoryPosts: Post[] } {
   return {
     type: actions.GET_POSTS_BY_CATEGORY_SUCCESS,
-    posts
+    categoryPosts
   };
 }
 

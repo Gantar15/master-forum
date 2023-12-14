@@ -101,7 +101,7 @@ export class PostService extends BaseAPI implements IPostService {
       };
 
       const response = await this.get(
-        '/posts',
+        '/posts/category',
         { categoryTitle: categtory },
         isAuthenticated ? auth : null
       );
