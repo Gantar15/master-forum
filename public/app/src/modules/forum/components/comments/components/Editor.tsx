@@ -8,6 +8,7 @@ interface EditorProps {
   maxLength: number;
   placeholder: string;
   handleChange: (html: string) => void;
+  disabled?: boolean;
 }
 
 interface EditorState {}
@@ -56,6 +57,7 @@ class Editor extends React.Component<EditorProps, EditorState> {
       <div className="editor">
         {typeof window !== 'undefined' ? (
           <ReactQuill
+            readOnly={this.props.disabled}
             placeholder={this.props.placeholder}
             ref={(el) => {
               this.reactQuillRef = el;

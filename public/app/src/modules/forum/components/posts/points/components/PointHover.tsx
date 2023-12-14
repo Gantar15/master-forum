@@ -5,12 +5,13 @@ import React from 'react';
 
 interface PostPointsProps {
   isHover: boolean;
+  text?: string;
 }
 
 const PointHover: React.FC<PostPointsProps> = (props) => (
   <div className={`post-points-hover ${props.isHover && 'is-hover'}`}>
     <p>
-      Want to vote? You need to sign up
+      {props.text || 'Want to do that? You need to sign up'}
       <Link to="/login"> Here</Link>
     </p>
   </div>

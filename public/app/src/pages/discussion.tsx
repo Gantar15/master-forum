@@ -11,6 +11,7 @@ import { FullPageLoader } from '../shared/components/loader';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
 import ModalWindow from '../shared/components/modal-window/components/ModalWindow';
+import PointHover from '../modules/forum/components/posts/points/components/PointHover';
 import { Post } from '../modules/forum/models/Post';
 import PostComment from '../modules/forum/components/posts/post/components/PostComment';
 import PostSummary from '../modules/forum/components/posts/post/components/PostSummary';
@@ -41,6 +42,7 @@ interface DiscussionState {
   isDeletePostModalOpen: boolean;
   isDeleteCommentModalOpen: boolean;
   commentToDelete?: Comment;
+  editorHover: boolean;
 }
 
 class DiscussionPage extends React.Component<
@@ -55,7 +57,8 @@ class DiscussionPage extends React.Component<
       newCommentText: '',
       isDeletePostModalOpen: false,
       isDeleteCommentModalOpen: false,
-      commentToDelete: undefined
+      commentToDelete: undefined,
+      editorHover: false
     };
   }
 
@@ -329,21 +332,38 @@ class DiscussionPage extends React.Component<
             ) : null}
 
             <h3>Leave a comment</h3>
-            <Editor
-              text={this.state.newCommentText}
-              maxLength={CommentUtil.maxCommentLength}
-              placeholder="Post your reply"
-              handleChange={(v: any) => this.updateValue('newCommentText', v)}
-            />
-            <SubmitButton
-              text="Post comment"
-              onClick={() => this.onSubmitComment()}
-            />
+            <div
+              className="editor-container"
+              onMouseEnter={() => this.setState({ editorHover: true })}
+              onMouseLeave={() => this.setState({ editorHover: false })}
+            >
+              <Editor
+                text={this.state.newCommentText}
+                maxLength={CommentUtil.maxCommentLength}
+                placeholder="Post your reply"
+                handleChange={(v: any) => this.updateValue('newCommentText', v)}
+                disabled={!this.props.users.isAuthenticated}
+              />
+              {!this.props.users.isAuthenticated && (
+                <PointHover
+                  isHover={this.state.editorHover}
+                  text="Want to comment? You need to sign up"
+                />
+              )}
+            </div>
+            {this.props.users.isAuthenticated && (
+              <>
+                <SubmitButton
+                  text="Post comment"
+                  onClick={() => this.onSubmitComment()}
+                />
+                <br />
+                <br />
+              </>
+            )}
           </>
         )}
 
-        <br />
-        <br />
         <br />
         {comments.map((c, i) => (
           <PostComment
