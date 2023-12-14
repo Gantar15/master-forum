@@ -1,4 +1,5 @@
 import { Client } from "@elastic/elasticsearch";
+import { TextUtils } from "../../../../shared/utils/TextUtils";
 
 export class ESPostService {
   private esConnection: Client;
@@ -119,6 +120,7 @@ export class ESPostService {
   }
 
   async search(text: string) {
+    const searchText = TextUtils.escapeRegExp(text);
     const body = await this.esConnection.search<any>({
       index: process.env.ELASTICSEARCH_INDEX,
       body: {
@@ -127,17 +129,17 @@ export class ESPostService {
             should: [
               {
                 regexp: {
-                  title: `.*${text.toLowerCase()}.*`,
+                  title: `.*${searchText.toLowerCase()}.*`,
                 },
               },
               {
                 regexp: {
-                  text: `.*${text.toLowerCase()}.*`,
+                  text: `.*${searchText.toLowerCase()}.*`,
                 },
               },
               {
                 regexp: {
-                  link: `.*${text.toLowerCase()}.*`,
+                  link: `.*${searchText.toLowerCase()}.*`,
                 },
               },
             ],
