@@ -1,8 +1,9 @@
 import * as actionCreators from '../actionCreators';
 
 import { commentService } from '../../services';
+import { getPostBySlug } from './getPostBySlug';
 
-function deleteComment(commentId: string) {
+function deleteComment(commentId: string, postSlug?: string) {
   return async (dispatch: any) => {
     dispatch(actionCreators.deleteComment());
 
@@ -13,6 +14,7 @@ function deleteComment(commentId: string) {
       dispatch(actionCreators.deleteCommentFailure(error));
     } else {
       dispatch(actionCreators.deleteCommentSuccess(commentId));
+      postSlug && getPostBySlug(postSlug)(dispatch);
     }
   };
 }

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Logo } from '..';
 import { Points } from '../../../../modules/forum/components/posts/points';
 import React from 'react';
+import { User } from '../../../../modules/users/models/user';
 
 interface HeaderProps {
   title: string;
@@ -15,6 +16,7 @@ interface HeaderProps {
   isLoggedIn?: boolean;
   isDownvoted?: boolean;
   isUpvoted?: boolean;
+  user?: User;
 }
 
 const Header: React.FC<HeaderProps> = (props) => (
@@ -40,7 +42,10 @@ const Header: React.FC<HeaderProps> = (props) => (
         <b>{props.subtitle}</b>
       </p>
       <div className="header-links">
-        <Link to="/submit">submit</Link>
+        {props.user?.isManagerUser || props.user?.isAdminUser ? (
+          <Link to="/manager">manager panel</Link>
+        ) : null}
+        <Link to="/submit">submit post</Link>
       </div>
       <br />
     </div>

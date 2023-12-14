@@ -49,24 +49,6 @@ export default function forum(
         ...ReduxUtils.reportEventStatus('isGetPostsByCategory', false),
         error: action.error
       };
-    case actions.GET_CATEGORIES:
-      return {
-        ...state,
-        ...ReduxUtils.reportEventStatus('isGetCategories'),
-        error: ''
-      };
-    case actions.GET_CATEGORIES_SUCCESS:
-      return {
-        ...state,
-        ...ReduxUtils.reportEventStatus('isGetCategories', true),
-        categories: action.categories
-      };
-    case actions.GET_CATEGORIES_FAILURE:
-      return {
-        ...state,
-        ...ReduxUtils.reportEventStatus('isGetCategories', false),
-        error: action.error
-      };
     case actions.DELETE_COMMENT:
       return {
         ...state,

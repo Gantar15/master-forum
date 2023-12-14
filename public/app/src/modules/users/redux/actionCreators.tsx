@@ -1,80 +1,201 @@
+import * as actions from './actions';
 
-import * as actions from "./actions";
-import { User } from "../models/user";
+import { User } from '../models/user';
 
 export type UsersAction = { [key: string]: actions.UsersActionType | any };
 
-function gettingUserProfile (): UsersAction {
+// create category
+
+function createCategory(): UsersAction {
+  return {
+    type: actions.CREATE_CATEGORY
+  };
+}
+
+function createCategorySuccess(
+  category: string
+): UsersAction & { category: string } {
+  return {
+    type: actions.CREATE_CATEGORY_SUCCESS,
+    category
+  };
+}
+
+function createCategoryFailure(error: string): UsersAction & { error: string } {
+  return {
+    type: actions.CREATE_CATEGORY_FAILURE,
+    error
+  };
+}
+
+// delete category
+
+function deleteCategory(): UsersAction {
+  return {
+    type: actions.DELETE_CATEGORY
+  };
+}
+
+function deleteCategorySuccess(
+  category: string
+): UsersAction & { category: string } {
+  return {
+    type: actions.DELETE_CATEGORY_SUCCESS,
+    category
+  };
+}
+
+function deleteCategoryFailure(error: string): UsersAction & { error: string } {
+  return {
+    type: actions.DELETE_CATEGORY_FAILURE,
+    error
+  };
+}
+
+//get categories
+
+function getCategories(): UsersAction {
+  return {
+    type: actions.GET_CATEGORIES
+  };
+}
+
+function getCategoriesSuccess(
+  categories: string[]
+): UsersAction & { categories: string[] } {
+  return {
+    type: actions.GET_CATEGORIES_SUCCESS,
+    categories
+  };
+}
+
+function getCategoriesFailure(error: string): UsersAction & { error: string } {
+  return {
+    type: actions.GET_CATEGORIES_FAILURE,
+    error
+  };
+}
+
+// delete user
+
+function deleteUser(): UsersAction {
+  return {
+    type: actions.DELETE_USER
+  };
+}
+
+function deleteUserSuccess(userId: string): UsersAction & { userId: string } {
+  return {
+    type: actions.DELETE_USER_SUCCESS,
+    userId
+  };
+}
+
+function deleteUserFailure(error: string): UsersAction & { error: string } {
+  return {
+    type: actions.DELETE_USER_FAILURE,
+    error
+  };
+}
+
+// get users
+
+function getUsers(): UsersAction {
+  return {
+    type: actions.GET_USERS
+  };
+}
+
+function getUsersSuccess(users: User[]): UsersAction & { users: User[] } {
+  return {
+    type: actions.GET_USERS_SUCCESS,
+    users
+  };
+}
+
+function getUsersFailure(error: string): UsersAction & { error: string } {
+  return {
+    type: actions.GET_USERS_FAILURE,
+    error
+  };
+}
+
+//getting user profile
+
+function gettingUserProfile(): UsersAction {
   return {
     type: actions.GETTING_USER_PROFILE
   };
 }
 
-function gettingUserProfileSuccess (user: User): UsersAction & { user: User } {
+function gettingUserProfileSuccess(user: User): UsersAction & { user: User } {
   return {
     type: actions.GETTING_USER_PROFILE_SUCCESS,
     user
   };
 }
 
-function gettingUserProfileFailure (errorMessage: string): UsersAction & { errorMessage: string } {
+function gettingUserProfileFailure(
+  errorMessage: string
+): UsersAction & { errorMessage: string } {
   return {
     type: actions.GETTING_USER_PROFILE_FAILURE,
     errorMessage
   };
 }
 
-function loggingIn (): UsersAction {
+function loggingIn(): UsersAction {
   return {
     type: actions.LOGGING_IN
   };
 }
 
-function loggingInSuccess (): UsersAction {
+function loggingInSuccess(): UsersAction {
   return {
     type: actions.LOGGING_IN_SUCCESS
   };
 }
 
-function loggingInFailure (error: string): UsersAction {
+function loggingInFailure(error: string): UsersAction {
   return {
     type: actions.LOGGING_IN_FAILURE,
     error
   };
 }
 
-function loggingOut (): UsersAction {
+function loggingOut(): UsersAction {
   return {
     type: actions.LOGGING_OUT
   };
 }
 
-function loggingOutSuccess (): UsersAction {
+function loggingOutSuccess(): UsersAction {
   return {
     type: actions.LOGGING_OUT_SUCCESS
   };
 }
 
-function loggingOutFailure (error: string): UsersAction {
+function loggingOutFailure(error: string): UsersAction {
   return {
     type: actions.LOGGING_OUT_FAILURE,
     error
   };
 }
 
-function creatingUser (): UsersAction {
+function creatingUser(): UsersAction {
   return {
     type: actions.CREATING_USER
   };
 }
 
-function creatingUserSuccess (): UsersAction {
+function creatingUserSuccess(user: User): UsersAction & { user: User } {
   return {
-    type: actions.CREATING_USER_SUCCESS
+    type: actions.CREATING_USER_SUCCESS,
+    user
   };
 }
 
-function creatingUserFailure (error: string): UsersAction {
+function creatingUserFailure(error: string): UsersAction {
   return {
     type: actions.CREATING_USER_FAILURE,
     error
@@ -82,19 +203,31 @@ function creatingUserFailure (error: string): UsersAction {
 }
 
 export {
+  createCategory,
+  createCategorySuccess,
+  createCategoryFailure,
+  deleteCategory,
+  deleteCategorySuccess,
+  deleteCategoryFailure,
+  getCategories,
+  getCategoriesSuccess,
+  getCategoriesFailure,
+  deleteUser,
+  deleteUserSuccess,
+  deleteUserFailure,
+  getUsers,
+  getUsersSuccess,
+  getUsersFailure,
   gettingUserProfile,
   gettingUserProfileSuccess,
   gettingUserProfileFailure,
-
   loggingIn,
   loggingInSuccess,
   loggingInFailure,
-
   loggingOut,
   loggingOutSuccess,
   loggingOutFailure,
-
   creatingUser,
   creatingUserSuccess,
   creatingUserFailure
-}
+};

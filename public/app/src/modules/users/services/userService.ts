@@ -13,7 +13,7 @@ export interface IUsersService {
     email: string,
     username: string,
     password: string
-  ): Promise<APIResponse<void>>;
+  ): Promise<APIResponse<User>>;
   login(username: string, password: string): Promise<APIResponse<LoginDTO>>;
   logout(): Promise<APIResponse<void>>;
 }
@@ -66,10 +66,10 @@ export class UsersService extends BaseAPI implements IUsersService {
     email: string,
     username: string,
     password: string
-  ): Promise<APIResponse<void>> {
+  ): Promise<APIResponse<User>> {
     try {
-      await this.post('/users', { email, username, password });
-      return right(Result.ok<void>());
+      const response = await this.post('/users', { email, username, password });
+      return right(Result.ok<User>(response));
     } catch (err) {
       return left(
         err.response ? err.response.data.message : 'Connection failed'

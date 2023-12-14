@@ -304,8 +304,7 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
           onCancel={() => this.setState({ isDeleteCommentModalOpen: false })}
           okTitle="Yes, delete"
         />
-        <div className="header-container flex flex-row flex-center flex-even">
-          <Header title={``} />
+        <div className="header-container flex flex-row flex-center flex-between">
           {!isCommentFetched ? (
             <Loader />
           ) : (
@@ -324,6 +323,14 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
             onLogout={() => this.props.logout()}
           />
         </div>
+        <Header
+          user={
+            'username' in this.props.users.user
+              ? this.props.users.user
+              : undefined
+          }
+          title={``}
+        />
         <br />
         {!isCommentFetched ? (
           <div style={{ margin: '0 auto', textAlign: 'center' }}>

@@ -21,7 +21,7 @@ import { connect } from 'react-redux';
 import withLogoutHandling from '../modules/users/hocs/withLogoutHandling';
 import withVoting from '../modules/forum/hocs/withVoting';
 
-interface IndexPageProps
+interface UsersManagmentPageProps
   extends usersOperators.IUserOperators,
     forumOperators.IForumOperations {
   users: UsersState;
@@ -30,85 +30,36 @@ interface IndexPageProps
   history: any;
 }
 
-interface IndexPageState {
-  activeFilter: PostFilterType;
-}
+interface UsersManagmentPageState {}
 
-class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
-  constructor(props: IndexPageProps) {
+class UsersManagmentPage extends React.Component<
+  UsersManagmentPageProps,
+  UsersManagmentPageState
+> {
+  constructor(props: UsersManagmentPageProps) {
     super(props);
 
-    this.state = {
-      activeFilter: 'POPULAR'
-    };
+    this.state = {};
   }
 
   onClickJoinButton() {}
 
-  setActiveFilter(filter: PostFilterType) {
-    this.setState({
-      ...this.state,
-      activeFilter: filter
-    });
+  getUsers() {
+    this.props.getPopularPosts();
   }
 
-  getPosts() {
-    const activeFilter = this.state.activeFilter;
-
-    if (activeFilter === 'NEW') {
-      this.props.getRecentPosts();
-    } else {
-      this.props.getPopularPosts();
-    }
-  }
-
-  onFilterChanged(prevState: IndexPageState) {
-    const currentState: IndexPageState = this.state;
-    if (prevState.activeFilter !== currentState.activeFilter) {
-      this.getPosts();
-    }
-  }
-
-  setActiveFilterOnLoad() {
-    const showNewFilter = (this.props.location.search as string).includes(
-      'show=new'
-    );
-    const showPopularFilter = (this.props.location.search as string).includes(
-      'show=popular'
-    );
-
-    let activeFilter = this.state.activeFilter;
-
-    if (showNewFilter) {
-      activeFilter = 'NEW';
-    }
-
-    this.setState({
-      ...this.state,
-      activeFilter
-    });
-  }
-
-  getPostsFromActiveFilterGroup(): Post[] {
-    if (this.state.activeFilter === 'NEW') {
-      return this.props.forum.recentPosts;
-    } else {
-      return this.props.forum.popularPosts;
-    }
-  }
-
-  componentDidUpdate(prevProps: IndexPageProps, prevState: IndexPageState) {
-    this.onFilterChanged(prevState);
+  componentDidUpdate(
+    prevProps: UsersManagmentPageProps,
+    prevState: UsersManagmentPageState
+  ) {
+    this.getUsers();
   }
 
   componentDidMount() {
-    this.setActiveFilterOnLoad();
-    this.getPosts();
+    this.getUsers();
   }
 
   render() {
-    const { activeFilter } = this.state;
-
     return (
       <Layout>
         <div className="header-container flex flex-row flex-center flex-even">
@@ -120,7 +71,7 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
             }
             title="Master-Forum Community"
             subtitle="Where awesome Peoples can communicate"
-          />{' '}
+          />
           <ProfileButton
             isLoggedIn={this.props.users.isAuthenticated}
             username={
@@ -138,12 +89,7 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
         />
         <br />
 
-        <PostFilters
-          activeFilter={activeFilter}
-          onClick={(filter) => this.setActiveFilter(filter)}
-        />
-
-        {this.getPostsFromActiveFilterGroup().map((p, i) => (
+        {/* {this.getPostsFromActiveFilterGroup().map((p, i) => (
           <PostRow
             key={i}
             isDownvoted={p.wasDownvotedByMe}
@@ -153,7 +99,7 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
             isLoggedIn={this.props.users.isAuthenticated}
             {...p}
           />
-        ))}
+        ))} */}
       </Layout>
     );
   }
@@ -185,4 +131,4 @@ function mapActionCreatorsToProps(dispatch: any) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withLogoutHandling(withVoting(IndexPage)));
+)(withLogoutHandling(withVoting(UsersManagmentPage)));

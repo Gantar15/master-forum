@@ -29,7 +29,7 @@ export interface IForumOperations {
   getPostsByCategory(category: string): void;
   getCategories(): void;
   updateComment(slug: string, text: string): void;
-  deleteComment(commentId: string): void;
+  deleteComment(commentId: string, postSlug?: string): void;
   updatePost(
     slug: string,
     title: string,

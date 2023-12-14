@@ -55,30 +55,6 @@ function getPostsByCategoryFailure(
   };
 }
 
-//get categories
-
-function getCategories(): ForumAction {
-  return {
-    type: actions.GET_CATEGORIES
-  };
-}
-
-function getCategoriesSuccess(
-  categories: string[]
-): ForumAction & { categories: string[] } {
-  return {
-    type: actions.GET_CATEGORIES_SUCCESS,
-    categories
-  };
-}
-
-function getCategoriesFailure(error: string): ForumAction & { error: string } {
-  return {
-    type: actions.GET_CATEGORIES_FAILURE,
-    error
-  };
-}
-
 //delete post
 
 function deletePost(): ForumAction {
@@ -470,9 +446,6 @@ export {
   searchPosts,
   searchPostsSuccess,
   searchPostsFailure,
-  getCategories,
-  getCategoriesSuccess,
-  getCategoriesFailure,
   setEditComment,
   setEditPost,
   submittingPost,

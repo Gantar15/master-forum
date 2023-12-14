@@ -1,16 +1,38 @@
-
-import { User } from "../models/user";
+import { User } from '../models/user';
 
 export interface UsersState {
   user: User | {};
+  users: User[];
+  categories: string[];
+
+  isGetUsers: boolean;
+  isGetUsersSuccess: boolean;
+  isGetUsersFailure: boolean;
+
+  isDeleteUser: boolean;
+  isDeleteUserSuccess: boolean;
+  isDeleteUserFailure: boolean;
+
+  isCreateCategory: boolean;
+  isCreateCategorySuccess: boolean;
+  isCreateCategoryFailure: boolean;
+
+  isDeleteCategory: boolean;
+  isDeleteCategorySuccess: boolean;
+  isDeleteCategoryFailure: boolean;
+
+  isGetCategories: boolean;
+  isGetCategoriesSuccess: boolean;
+  isGetCategoriesFailure: boolean;
+
   isAuthenticated: boolean;
   isFetchingUser: boolean;
   isFetchingUserSuccess: boolean;
   isFetchingUserFailure: boolean;
 
-  isLoggingIn: boolean,
-  isLoggingInSuccess: boolean,
-  isLoggingInFailure: boolean,
+  isLoggingIn: boolean;
+  isLoggingInSuccess: boolean;
+  isLoggingInFailure: boolean;
 
   isLoggingOut: boolean;
   isLoggingOutSuccess: boolean;
@@ -25,6 +47,29 @@ export interface UsersState {
 
 const initialUserState: UsersState = {
   user: {},
+  users: [],
+  categories: [],
+
+  isGetUsers: false,
+  isGetUsersSuccess: false,
+  isGetUsersFailure: false,
+
+  isDeleteUser: false,
+  isDeleteUserSuccess: false,
+  isDeleteUserFailure: false,
+
+  isCreateCategory: false,
+  isCreateCategorySuccess: false,
+  isCreateCategoryFailure: false,
+
+  isDeleteCategory: false,
+  isDeleteCategorySuccess: false,
+  isDeleteCategoryFailure: false,
+
+  isGetCategories: false,
+  isGetCategoriesSuccess: false,
+  isGetCategoriesFailure: false,
+
   isAuthenticated: false,
   isFetchingUser: false,
   isFetchingUserSuccess: false,
@@ -43,6 +88,6 @@ const initialUserState: UsersState = {
   isCreatingUserFailure: false,
 
   error: ''
-}
+};
 
 export default initialUserState;

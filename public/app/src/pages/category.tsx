@@ -99,6 +99,11 @@ class CategoryPage extends React.Component<
           />
         </div>
         <Header
+          user={
+            'username' in this.props.users.user
+              ? this.props.users.user
+              : undefined
+          }
           title="Master-Forum Community"
           subtitle="Where awesome Peoples can communicate"
         />

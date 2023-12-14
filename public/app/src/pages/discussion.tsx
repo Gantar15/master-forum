@@ -197,9 +197,6 @@ class DiscussionPage extends React.Component<
       toast.success(`Done-zo! 🤠`, {
         autoClose: 2000
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
     }
   }
 
@@ -285,7 +282,10 @@ class DiscussionPage extends React.Component<
           text="Are you sure you want to delete this comment?"
           isOpen={this.state.isDeleteCommentModalOpen}
           onOk={() =>
-            this.props.deleteComment(this.state.commentToDelete!.commentId)
+            this.props.deleteComment(
+              this.state.commentToDelete!.commentId,
+              this.state.commentToDelete!.postSlug
+            )
           }
           onCancel={() => this.setState({ isDeleteCommentModalOpen: false })}
           okTitle="Yes, delete"
@@ -308,6 +308,11 @@ class DiscussionPage extends React.Component<
         ) : (
           <>
             <Header
+              user={
+                'username' in this.props.users.user
+                  ? this.props.users.user
+                  : undefined
+              }
               isDownvoted={post.wasDownvotedByMe}
               isUpvoted={post.wasUpvotedByMe}
               title={`"${post.title}"`}

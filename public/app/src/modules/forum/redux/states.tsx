@@ -10,10 +10,6 @@ export interface ForumState {
   isGetPostsByCategorySuccess: boolean;
   isGetPostsByCategoryFailure: boolean;
 
-  isGetCategories: boolean;
-  isGetCategoriesSuccess: boolean;
-  isGetCategoriesFailure: boolean;
-
   isDeleteComment: boolean;
   isDeleteCommentSuccess: boolean;
   isDeleteCommentFailure: boolean;
@@ -93,8 +89,6 @@ export interface ForumState {
 
   comment: Comment | {};
 
-  categories: string[];
-
   error: string;
 }
 
@@ -106,10 +100,6 @@ const initialForumState: ForumState = {
   isGetPostsByCategory: false,
   isGetPostsByCategorySuccess: false,
   isGetPostsByCategoryFailure: false,
-
-  isGetCategories: false,
-  isGetCategoriesSuccess: false,
-  isGetCategoriesFailure: false,
 
   isDeleteComment: false,
   isDeleteCommentSuccess: false,
@@ -189,8 +179,6 @@ const initialForumState: ForumState = {
   editComment: undefined,
 
   comment: {},
-
-  categories: [],
 
   error: ''
 };

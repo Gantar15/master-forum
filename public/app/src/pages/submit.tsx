@@ -211,11 +211,7 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
 
     return (
       <Layout>
-        <div className="header-container flex flex-row flex-center flex-even">
-          <Header
-            title={isUpdatePage ? 'Edit submission' : 'New submission'}
-            subtitle=""
-          />
+        <div className="header-container flex flex-row flex-center flex-between">
           {isUpdatePage && (
             <BackNavigation
               to={`/discuss/${this.props.forum.editPost!.slug}`}
@@ -232,6 +228,15 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
             onLogout={() => this.props.logout()}
           />
         </div>
+        <Header
+          user={
+            'username' in this.props.users.user
+              ? this.props.users.user
+              : undefined
+          }
+          title={isUpdatePage ? 'Edit submission' : 'New submission'}
+          subtitle=""
+        />
         <br />
         <br />
         <PostSubmission
