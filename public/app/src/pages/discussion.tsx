@@ -1,16 +1,18 @@
 import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
+import { FullPageLoader, Loader } from '../shared/components/loader';
+
 import { BackNavigation } from '../shared/components/header';
 import { Comment } from '../modules/forum/models/Comment';
 import { CommentUtil } from '../modules/forum/utils/CommentUtil';
 import Editor from '../modules/forum/components/comments/components/Editor';
 import EntityActions from '../shared/components/entity-actions/components/EntityActions';
 import { ForumState } from '../modules/forum/redux/states';
-import { FullPageLoader } from '../shared/components/loader';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
 import ModalWindow from '../shared/components/modal-window/components/ModalWindow';
+import NotFound from '../shared/components/not-found/components/NotFound';
 import PointHover from '../modules/forum/components/posts/points/components/PointHover';
 import { Post } from '../modules/forum/models/Post';
 import PostComment from '../modules/forum/components/posts/post/components/PostComment';
@@ -255,16 +257,22 @@ class DiscussionPage extends React.Component<
   }
 
   render() {
-    const post = this.props.forum.post as Post;
+    const post = this.props.forum.post;
     const user = this.props.users.user;
     const comments = this.props.forum.comments;
     let isPostAuthor = false;
-    if ('username' in user) {
+    if ('username' in user && 'slug' in post) {
       const postAuthorUsername = post.postAuthor;
       isPostAuthor =
         postAuthorUsername === user.username ||
         user.isAdminUser ||
         user.isManagerUser;
+    }
+
+    if (!('slug' in post) && this.props.forum.isGettingPostBySlug) {
+      return <FullPageLoader />;
+    } else if (!('slug' in post)) {
+      return <NotFound />;
     }
 
     return (

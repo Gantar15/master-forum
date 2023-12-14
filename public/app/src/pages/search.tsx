@@ -9,6 +9,7 @@ import { PostRow } from '../modules/forum/components/posts/postRow';
 import { ProfileButton } from '../modules/users/components/profileButton';
 import React from 'react';
 import Search from '../shared/components/header/components/Search';
+import { UriUtil } from '../shared/utils/UriUtil';
 import { User } from '../modules/users/models/user';
 import { UsersState } from '../modules/users/redux/states';
 import { bindActionCreators } from 'redux';
@@ -42,8 +43,8 @@ class SearchPage extends React.Component<SearchPageProps, SearchPageState> {
   getSearchStringFromWindow(): string {
     if (typeof window !== 'undefined') {
       const pathname = window.location.pathname;
-      const searchString = pathname.substring(pathname.lastIndexOf('/') + 1);
-      return decodeURI(searchString);
+      const searchString = pathname.replace('/search/', '');
+      return UriUtil.decodeURI(searchString);
     } else {
       return '';
     }
@@ -66,6 +67,7 @@ class SearchPage extends React.Component<SearchPageProps, SearchPageState> {
       !this.props.forum.isSearchPosts &&
       prevState.searchString !== searchString
     ) {
+      this.setSearchString(searchString);
       this.getPosts(searchString);
     }
   }
@@ -103,7 +105,9 @@ class SearchPage extends React.Component<SearchPageProps, SearchPageState> {
         <br />
         <br />
         <Search
-          onSearch={(text) => this.props.history.push('/search/' + text)}
+          onSearch={(text) =>
+            this.props.history.push('/search/' + UriUtil.encodeText(text))
+          }
           value={this.state.searchString}
         />
         <br />

@@ -13,6 +13,7 @@ import { PostRow } from '../modules/forum/components/posts/postRow';
 import { ProfileButton } from '../modules/users/components/profileButton';
 import React from 'react';
 import Search from '../shared/components/header/components/Search';
+import { UriUtil } from '../shared/utils/UriUtil';
 import { User } from '../modules/users/models/user';
 import { UsersState } from '../modules/users/redux/states';
 import { bindActionCreators } from 'redux';
@@ -134,7 +135,9 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
         <br />
         <br />
         <Search
-          onSearch={(text) => this.props.history.push('/search/' + text)}
+          onSearch={(text) =>
+            this.props.history.push('/search/' + UriUtil.encodeText(text))
+          }
         />
         <br />
 

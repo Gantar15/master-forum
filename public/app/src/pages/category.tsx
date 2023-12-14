@@ -5,8 +5,10 @@ import * as usersOperators from '../modules/users/redux/operators';
 
 import { BackNavigation } from '../shared/components/header';
 import { ForumState } from '../modules/forum/redux/states';
+import { FullPageLoader } from '../shared/components/loader';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
+import NotFound from '../shared/components/not-found/components/NotFound';
 import { PostRow } from '../modules/forum/components/posts/postRow';
 import { ProfileButton } from '../modules/users/components/profileButton';
 import React from 'react';
@@ -84,6 +86,8 @@ class CategoryPage extends React.Component<
   }
 
   render() {
+    if (this.props.forum.isGetPostsByCategory) return <FullPageLoader />;
+    if (this.props.forum.isGetPostsByCategoryFailure) return <NotFound />;
     return (
       <Layout>
         <div className="header-container flex flex-row flex-center flex-between">

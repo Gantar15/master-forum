@@ -1,6 +1,8 @@
 import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
+import { FullPageLoader, Loader } from '../shared/components/loader';
+
 import { BackNavigation } from '../shared/components/header';
 import { Comment } from '../modules/forum/models/Comment';
 import { CommentUtil } from '../modules/forum/utils/CommentUtil';
@@ -9,8 +11,8 @@ import EntityActions from '../shared/components/entity-actions/components/Entity
 import { ForumState } from '../modules/forum/redux/states';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
-import { Loader } from '../shared/components/loader';
 import ModalWindow from '../shared/components/modal-window/components/ModalWindow';
+import NotFound from '../shared/components/not-found/components/NotFound';
 import PointHover from '../modules/forum/components/posts/points/components/PointHover';
 import { Post } from '../modules/forum/models/Post';
 import PostComment from '../modules/forum/components/posts/post/components/PostComment';
@@ -276,7 +278,7 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
   }
 
   render() {
-    const comment = this.props.forum.comment as Comment;
+    const comment = this.props.forum.comment;
     const user = this.props.users.user;
     const isCommentFetched =
       this.props.forum.isGettingCommentByCommentIdSuccess &&
@@ -291,6 +293,15 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
         user.isManagerUser;
     }
     const isEditMode = !!editComment && isCommentAuthor;
+
+    if (
+      !('member' in comment) &&
+      this.props.forum.isGettingCommentByCommentId
+    ) {
+      return <FullPageLoader />;
+    } else if (!('member' in comment)) {
+      return <NotFound />;
+    }
 
     return (
       <Layout>

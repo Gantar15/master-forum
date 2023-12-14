@@ -20,7 +20,7 @@ const ManagerHeader: React.FC<HeaderProps> = (props) => (
         <b>{props.subtitle}</b>
       </p>
       <div className="header-links">
-        <Link to="/manager/users">users</Link>
+        {props.user.isAdminUser && <Link to="/manager/users">users</Link>}
         <Link to="/manager/categories">categories</Link>
       </div>
       <br />
