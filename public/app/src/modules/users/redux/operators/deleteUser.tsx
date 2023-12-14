@@ -12,7 +12,6 @@ function deleteUser(userId: string) {
       const error: string = result.value;
       dispatch(actionCreators.deleteUserFailure(error));
     } else {
-      result.value.getValue();
       dispatch(actionCreators.deleteUserSuccess(userId));
     }
   };

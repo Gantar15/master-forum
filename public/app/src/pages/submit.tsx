@@ -212,11 +212,13 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
     return (
       <Layout>
         <div className="header-container flex flex-row flex-center flex-between">
-          {isUpdatePage && (
+          {isUpdatePage ? (
             <BackNavigation
               to={`/discuss/${this.props.forum.editPost!.slug}`}
               text={`Back to "${this.props.forum.editPost!.title}"`}
             />
+          ) : (
+            <BackNavigation to={`/`} text={'Back to all discussions'} />
           )}
           <ProfileButton
             isLoggedIn={this.props.users.isAuthenticated}

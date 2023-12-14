@@ -69,13 +69,92 @@ export class UsersService extends BaseAPI implements IUsersService {
     role?: 'admin' | 'manager'
   ): Promise<APIResponse<User>> {
     try {
-      const response = await this.post('/users', {
-        email,
-        username,
-        password,
+      const response = await this.post(
+        '/users',
+        {
+          email,
+          username,
+          password,
+          role
+        },
+        null,
         role
+          ? {
+              authorization: this.authService.getToken('access-token')
+            }
+          : null
+      );
+      return right(Result.ok<User>(response.data.user));
+    } catch (err) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
+  async getUsers(): Promise<APIResponse<User[]>> {
+    try {
+      const response = await this.get('/users', null, {
+        authorization: this.authService.getToken('access-token')
       });
-      return right(Result.ok<User>(response));
+      return right(Result.ok<User[]>(response.data.users));
+    } catch (err) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
+  async deleteUser(userId: string): Promise<APIResponse<void>> {
+    try {
+      await this.delete(`/users/${userId}`, null, null, {
+        authorization: this.authService.getToken('access-token')
+      });
+      return right(Result.ok<void>());
+    } catch (err) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
+  async createCategory(category: string): Promise<APIResponse<void>> {
+    try {
+      await this.post(
+        '/categories',
+        {
+          title: category
+        },
+        null,
+        {
+          authorization: this.authService.getToken('access-token')
+        }
+      );
+      return right(Result.ok<void>());
+    } catch (err) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
+  async getCategories(): Promise<APIResponse<string[]>> {
+    try {
+      const response = await this.get('/categories');
+      return right(Result.ok<string[]>(response.data.categories));
+    } catch (err) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
+  async deleteCategory(category: string): Promise<APIResponse<void>> {
+    try {
+      await this.delete(`/categories/${category}`, null, null, {
+        authorization: this.authService.getToken('access-token')
+      });
+      return right(Result.ok<void>());
     } catch (err) {
       return left(
         err.response ? err.response.data.message : 'Connection failed'

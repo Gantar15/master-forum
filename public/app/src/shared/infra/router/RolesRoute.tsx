@@ -2,6 +2,7 @@ import * as usersOperators from '../../../modules/users/redux/operators';
 
 import { Redirect, Route } from 'react-router-dom';
 
+import { FullPageLoader } from '../../components/loader';
 import React from 'react';
 import { UsersState } from '../../../modules/users/redux/states';
 import { bindActionCreators } from 'redux';
@@ -32,6 +33,7 @@ const RolesRoute: React.FC<RolesRouteProps> = ({
     }
   }
 
+  if (users.isFetchingUser) return <FullPageLoader />;
   return (
     <Route
       {...rest}

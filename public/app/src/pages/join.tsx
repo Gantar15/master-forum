@@ -52,10 +52,17 @@ class JoinPage extends React.Component<JoinPageProps, JoinPageState> {
       return false;
     }
 
-    if (!!username === false) {
-      toast.error('Yeahhhhh, you forgot your username. 🤠', {
-        autoClose: 3000
-      });
+    if (
+      !!username === false ||
+      TextUtil.atLeast(username, 2) ||
+      TextUtil.atMost(username, 50)
+    ) {
+      toast.error(
+        'Yeahhhhh, username should be at least 2 chars and at most 50. 🤠',
+        {
+          autoClose: 3000
+        }
+      );
       return false;
     }
 

@@ -55,8 +55,8 @@ function withLoginHandling(WrappedComponent: any) {
     render() {
       return (
         <WrappedComponent
-          login={(u: string, p: string) => this.handleLogin(u, p)}
           {...this.props}
+          login={(u: string, p: string) => this.handleLogin(u, p)}
         />
       );
     }

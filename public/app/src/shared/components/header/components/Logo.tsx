@@ -1,12 +1,12 @@
 import '../styles/Logo.scss';
 
 import React from 'react';
-import logo from '../../../../assets/img/logo/brick.png';
+import logo from '../../../../assets/img/logo/main-logo.png';
 
-const Logo = () => (
+const Logo = ({ href = logo }: { href?: string }) => (
   <div className="logo-container">
     <a href="/">
-      <img src={logo} />
+      <img src={href} />
     </a>
   </div>
 );

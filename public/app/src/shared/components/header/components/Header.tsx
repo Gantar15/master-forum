@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = (props) => (
       </p>
       <div className="header-links">
         {props.user?.isManagerUser || props.user?.isAdminUser ? (
-          <Link to="/manager">manager panel</Link>
+          <Link to="/manager/users">manager panel</Link>
         ) : null}
         <Link to="/submit">submit post</Link>
       </div>

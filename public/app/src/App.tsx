@@ -1,8 +1,9 @@
 import './App.scss';
 
-import { Redirect, Route, BrowserRouter as Router } from 'react-router-dom';
+import { Route, BrowserRouter as Router } from 'react-router-dom';
 
 import AuthenticatedRoute from './shared/infra/router/AuthenticatedRoute';
+import CategoriesManagmentPage from './pages/categories-managment';
 import CategoryPage from './pages/category';
 import CommentPage from './pages/comment';
 import DiscussionPage from './pages/discussion';
@@ -14,6 +15,7 @@ import React from 'react';
 import RolesRoute from './shared/infra/router/RolesRoute';
 import SearchPage from './pages/search';
 import SubmitPage from './pages/submit';
+import UsersManagmentPage from './pages/users-managment';
 
 const App: React.FC = () => {
   return (
@@ -25,21 +27,17 @@ const App: React.FC = () => {
       <Route path="/search/:searchString" component={SearchPage} />
       <Route path="/category/:category" component={CategoryPage} />
       <AuthenticatedRoute path="/submit" component={SubmitPage} />
-      <Route
-        path="/manager"
-        component={() => <Redirect to="/manager/users" />}
-      />
-      {/* <RolesRoute
-        roles={['manager', 'admin']}
+      <RolesRoute
+        roles={['admin']}
         path="/manager/users"
         redirect="/manager/categories"
         component={UsersManagmentPage}
-      /> */}
-      {/* <RolesRoute
+      />
+      <RolesRoute
         roles={['manager', 'admin']}
         path="/manager/categories"
         component={CategoriesManagmentPage}
-      /> */}
+      />
       <Route path="/join" component={JoinPage} />
       <Route path="/login" component={LoginPage} />
     </Router>

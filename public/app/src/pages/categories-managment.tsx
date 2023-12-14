@@ -1,7 +1,10 @@
+import './styles/categories-managment.scss';
+
 import * as usersOperators from '../modules/users/redux/operators';
 
 import { BackNavigation } from '../shared/components/header';
-import CreateUserForm from '../modules/users/components/users/createUserForm/components/CreateUserForm';
+import CategoryRow from '../modules/users/components/categories/categoryRow/components/CategoryRow';
+import CreateCategoryForm from '../modules/users/components/categories/createCategoryForm/components/CreateCategoryForm';
 import { Layout } from '../shared/layout';
 import ManagerHeader from '../shared/components/header/components/ManagerHeader';
 import ModalWindow from '../shared/components/modal-window/components/ModalWindow';
@@ -9,7 +12,6 @@ import { ProfileButton } from '../modules/users/components/profileButton';
 import React from 'react';
 import { TextUtil } from '../shared/utils/TextUtil';
 import { User } from '../modules/users/models/user';
-import UserRow from '../modules/users/components/users/userRow/components/UserRow';
 import { UsersState } from '../modules/users/redux/states';
 import { bindActionCreators } from 'redux';
 //@ts-ignore
@@ -17,35 +19,29 @@ import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import withLogoutHandling from '../modules/users/hocs/withLogoutHandling';
 
-interface UsersManagmentPageProps extends usersOperators.IUserOperators {
+interface CategoriesManagmentPageProps extends usersOperators.IUserOperators {
   users: UsersState;
   location: any;
   history: any;
 }
 
-interface UsersManagmentPageState {
+interface CategoriesManagmentPageState {
   isDeleteModalOpen: boolean;
-  userToDelete?: User;
-  email: string;
-  username: string;
-  password: string;
-  role: 'user' | 'manager';
+  categoryToDelete?: string;
+  category: string;
 }
 
-class UsersManagmentPage extends React.Component<
-  UsersManagmentPageProps,
-  UsersManagmentPageState
+class CategoriesManagmentPage extends React.Component<
+  CategoriesManagmentPageProps,
+  CategoriesManagmentPageState
 > {
-  constructor(props: UsersManagmentPageProps) {
+  constructor(props: CategoriesManagmentPageProps) {
     super(props);
 
     this.state = {
       isDeleteModalOpen: false,
-      userToDelete: undefined,
-      email: '',
-      username: '',
-      password: '',
-      role: 'user'
+      categoryToDelete: undefined,
+      category: ''
     };
   }
 
@@ -57,22 +53,15 @@ class UsersManagmentPage extends React.Component<
   }
 
   isFormValid = () => {
-    const { email, username, role, password } = this.state;
-
-    if (email === '' || email === undefined || !TextUtil.validateEmail(email)) {
-      toast.error('Yeahhhhh, Want to try that again with a valid email? 🤠', {
-        autoClose: 3000
-      });
-      return false;
-    }
-
+    const { category } = this.state;
+    console.log(category);
     if (
-      !!username === false ||
-      TextUtil.atLeast(username, 2) ||
-      TextUtil.atMost(username, 50)
+      category === '' ||
+      TextUtil.atLeast(category, 1) ||
+      TextUtil.atMost(category, 50)
     ) {
       toast.error(
-        'Yeahhhhh, username should be at least 2 chars and at most 50. 🤠',
+        'Yeahhhhh, category should be at least 1 chars and at most 50. 🤠',
         {
           autoClose: 3000
         }
@@ -80,38 +69,24 @@ class UsersManagmentPage extends React.Component<
       return false;
     }
 
-    if (role !== 'manager' && role !== 'user') {
-      toast.error('Yeahhhhh, your role should be either manager or user 🤠', {
-        autoClose: 3000
-      });
-      return false;
-    }
-
-    if (!!password === false || TextUtil.atLeast(password, 6)) {
-      toast.error('Yeahhhhh, your password should be at least 6 chars 🤠', {
-        autoClose: 3000
-      });
-      return false;
-    }
-
     return true;
   };
 
-  onAction(action: string, user: User) {
+  onAction(action: string, category: string) {
     if (action === 'delete') {
       this.setState((state) => ({
         ...state,
         isDeleteModalOpen: !state.isDeleteModalOpen,
-        userToDelete: user
+        categoryToDelete: category
       }));
     }
   }
 
-  afterSuccessfulCreate(prevProps: UsersManagmentPageProps) {
-    const currentProps: UsersManagmentPageProps = this.props;
+  afterSuccessfulCreate(prevProps: CategoriesManagmentPageProps) {
+    const currentProps: CategoriesManagmentPageProps = this.props;
     if (
-      currentProps.users.isCreatingUserSuccess ===
-      !prevProps.users.isCreatingUserSuccess
+      currentProps.users.isCreateCategorySuccess ===
+      !prevProps.users.isCreateCategorySuccess
     ) {
       this.setState({
         ...this.state,
@@ -123,11 +98,11 @@ class UsersManagmentPage extends React.Component<
     }
   }
 
-  afterFailedCreate(prevProps: UsersManagmentPageProps) {
-    const currentProps: UsersManagmentPageProps = this.props;
+  afterFailedCreate(prevProps: CategoriesManagmentPageProps) {
+    const currentProps: CategoriesManagmentPageProps = this.props;
     if (
-      currentProps.users.isCreatingUserFailure ===
-      !prevProps.users.isCreatingUserFailure
+      currentProps.users.isCreateCategoryFailure ===
+      !prevProps.users.isCreateCategoryFailure
     ) {
       this.setState({
         ...this.state,
@@ -140,11 +115,11 @@ class UsersManagmentPage extends React.Component<
     }
   }
 
-  afterSuccessfulDelete(prevProps: UsersManagmentPageProps) {
-    const currentProps: UsersManagmentPageProps = this.props;
+  afterSuccessfulDelete(prevProps: CategoriesManagmentPageProps) {
+    const currentProps: CategoriesManagmentPageProps = this.props;
     if (
-      currentProps.users.isDeleteUserSuccess ===
-      !prevProps.users.isDeleteUserSuccess
+      currentProps.users.isDeleteCategorySuccess ===
+      !prevProps.users.isDeleteCategorySuccess
     ) {
       this.setState({
         ...this.state,
@@ -156,11 +131,11 @@ class UsersManagmentPage extends React.Component<
     }
   }
 
-  afterFailedDelete(prevProps: UsersManagmentPageProps) {
-    const currentProps: UsersManagmentPageProps = this.props;
+  afterFailedDelete(prevProps: CategoriesManagmentPageProps) {
+    const currentProps: CategoriesManagmentPageProps = this.props;
     if (
-      currentProps.users.isDeleteUserFailure ===
-      !prevProps.users.isDeleteUserFailure
+      currentProps.users.isDeleteCategoryFailure ===
+      !prevProps.users.isDeleteCategoryFailure
     ) {
       this.setState({
         ...this.state,
@@ -175,19 +150,14 @@ class UsersManagmentPage extends React.Component<
 
   async onSubmit() {
     if (this.isFormValid()) {
-      const { email, username, role, password } = this.state;
-      this.props.createUser(
-        email,
-        username,
-        password,
-        role === 'manager' ? 'manager' : undefined
-      );
+      const { category } = this.state;
+      this.props.createCategory(category);
     }
   }
 
   componentDidUpdate(
-    prevProps: UsersManagmentPageProps,
-    prevState: UsersManagmentPageState
+    prevProps: CategoriesManagmentPageProps,
+    prevState: CategoriesManagmentPageState
   ) {
     this.afterSuccessfulDelete(prevProps);
     this.afterFailedDelete(prevProps);
@@ -196,7 +166,7 @@ class UsersManagmentPage extends React.Component<
   }
 
   componentDidMount() {
-    this.props.getUsers();
+    this.props.getCategories();
   }
 
   render() {
@@ -204,11 +174,11 @@ class UsersManagmentPage extends React.Component<
       <Layout>
         <ModalWindow
           title="Confirmation!"
-          text="Are you sure you want to delete this user?"
+          text="Are you sure you want to delete this category?"
           isOpen={this.state.isDeleteModalOpen}
           onOk={() =>
-            this.state.userToDelete &&
-            this.props.deleteUser(this.state.userToDelete.userId)
+            this.state.categoryToDelete &&
+            this.props.deleteCategory(this.state.categoryToDelete)
           }
           onCancel={() => this.setState({ isDeleteModalOpen: false })}
           okTitle="Yes, delete"
@@ -233,26 +203,25 @@ class UsersManagmentPage extends React.Component<
         <br />
         <br />
 
-        <CreateUserForm
+        <CreateCategoryForm
           onSubmit={() => this.onSubmit()}
           updateFormField={(fieldName, value) =>
             this.updateFormField(fieldName, value)
           }
         />
 
-        {this.props.users.users.map((user) => (
-          <>
-            <UserRow
-              key={user.userId}
-              onAction={(action, user) => this.onAction(action, user)}
-              onUserClick={(user) =>
-                this.props.history.push(`/member/${user.username}`)
+        <div className="categories-managment__categories">
+          {this.props.users.categories.map((category) => (
+            <CategoryRow
+              key={category}
+              onAction={(action, category) => this.onAction(action, category)}
+              onCategoryClick={(category) =>
+                this.props.history.push(`/category/${category}`)
               }
-              {...user}
+              category={category}
             />
-            <br />
-          </>
-        ))}
+          ))}
+        </div>
       </Layout>
     );
   }
@@ -276,4 +245,4 @@ function mapActionCreatorsToProps(dispatch: any) {
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withLogoutHandling(UsersManagmentPage));
+)(withLogoutHandling(CategoriesManagmentPage));

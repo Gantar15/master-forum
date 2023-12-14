@@ -36,6 +36,25 @@ export default function users(
         error: action.error
       };
 
+    case actions.CREATE_CATEGORY:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isCreateCategory'),
+        error: ''
+      };
+    case actions.CREATE_CATEGORY_SUCCESS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isCreateCategory', true),
+        categories: [action.category, ...state.categories]
+      };
+    case actions.CREATE_CATEGORY_FAILURE:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isCreateCategory', false),
+        error: action.error
+      };
+
     case actions.GET_CATEGORIES:
       return {
         ...state,
@@ -166,7 +185,7 @@ export default function users(
       return {
         ...state,
         ...ReduxUtils.reportEventStatus('isCreatingUser', true),
-        user: action.user
+        users: [action.user, ...state.users]
       };
     case actions.CREATING_USER_FAILURE:
       return {
