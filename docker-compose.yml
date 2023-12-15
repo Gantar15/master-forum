@@ -72,22 +72,23 @@ services:
     networks:
       - forum_net
 
-  # app:
-  #   build:
-  #     context: .
-  #     dockerfile: ./Dockerfile
-  #   container_name: app
-  #   restart: always
-  #   ports:
-  #     - 5500:5500
-  #   volumes:
-  #     - ./.env:/usr/src/ddd/.env
-  #   depends_on:
-  #     - mysql
-  #     - redis
-  #     - elasticsearch
-  #   networks:
-  #     - forum_net
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: app
+    restart: always
+    ports:
+      - 5500:5500
+      - 3000:3000
+    volumes:
+      - ./.env:/usr/src/ddd/.env
+    depends_on:
+      - mysql
+      - redis
+      - elasticsearch
+    networks:
+      - forum_net
 
 networks:
   forum_net:

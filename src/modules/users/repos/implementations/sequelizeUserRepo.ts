@@ -24,10 +24,11 @@ export class SequelizeUserRepo implements IUserRepo {
 
   async getUserByUserName(userName: UserName | string): Promise<User> {
     const BaseUserModel = this.models.BaseUser;
+    const nameString =
+      userName instanceof UserName ? (<UserName>userName).value : userName;
     const baseUser = await BaseUserModel.findOne({
       where: {
-        username:
-          userName instanceof UserName ? (<UserName>userName).value : userName,
+        username: nameString,
       },
     });
     if (!!baseUser === false) throw new Error("User not found.");

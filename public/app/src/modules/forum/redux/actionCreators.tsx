@@ -154,8 +154,8 @@ function updateCommentFailure(error: string): ForumAction & { error: string } {
 }
 
 function setEditComment(
-  editComment: Comment
-): ForumAction & { editComment: Comment } {
+  editComment: Comment | undefined
+): ForumAction & { editComment: Comment | undefined } {
   return {
     type: actions.SET_EDIT_COMMENT,
     editComment

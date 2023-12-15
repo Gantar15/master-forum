@@ -277,6 +277,10 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
     }
   }
 
+  componentWillUnmount(): void {
+    this.props.setEditComment(undefined);
+  }
+
   render() {
     const comment = this.props.forum.comment;
     const user = this.props.users.user;

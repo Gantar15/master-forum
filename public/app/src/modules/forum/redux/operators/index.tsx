@@ -40,7 +40,7 @@ export interface IForumOperations {
     tags?: string[]
   ): void;
   deletePost(postSlug: string): void;
-  setEditComment(comment: Comment): void;
+  setEditComment(comment: Comment | undefined): void;
   setEditPost(post: Post): void;
   submitPost: (
     title: string,
