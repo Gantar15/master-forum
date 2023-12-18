@@ -151,6 +151,7 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
   }
 
   onSubmit() {
+    console.log(this.state.category);
     if (this.isFormValid()) {
       const { title, postType, text, link, category, tags } = this.state;
       if (this.props.forum.editPost) {
@@ -206,6 +207,10 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
     this.afterFailedPost(prevProps);
   }
 
+  componentDidMount() {
+    this.props.getCategories();
+  }
+
   render() {
     const isUpdatePage = !!this.props.forum.editPost;
 
@@ -252,6 +257,7 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
           linkValue={this.state.link}
           categoryValue={this.state.category}
           tagsValue={this.state.tags}
+          categories={this.props.users.categories}
           onSubmit={() => this.onSubmit()}
         />
 

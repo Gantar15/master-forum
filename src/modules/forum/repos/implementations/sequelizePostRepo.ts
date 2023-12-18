@@ -241,9 +241,10 @@ export class PostRepo implements IPostRepo {
     memberId?: MemberId
   ): Promise<PostDetails[]> {
     const PostModel = this.models.Post;
+    const searchStringValue = searchString.value;
     const detailsQuery = this.createBaseDetailsQuery();
 
-    const results = await this.esPostService.search(searchString.value);
+    const results = await this.esPostService.search(searchStringValue);
     detailsQuery.where["post_id"] = {
       [Op.in]: results.reduce((acc, curr) => {
         acc.push(curr.post_id);

@@ -15,8 +15,8 @@ services:
       - MYSQL_DATABASE=${DDD_FORUM_DB_DEV_DB_NAME}
       - MYSQL_USER=${DDD_FORUM_DB_USER}
       - MYSQL_PASSWORD=${DDD_FORUM_DB_PASS}
-    # networks:
-    #   - forum_net
+    networks:
+      - forum_net
 
   adminer:
     image: adminer
@@ -24,8 +24,8 @@ services:
       - mysql
     ports:
       - 8080:8080
-    # networks:
-    #   - forum_net
+    networks:
+      - forum_net
 
   redis:
     container_name: forum_redis
@@ -33,8 +33,8 @@ services:
     restart: always
     ports:
       - 6379:6379
-    # networks:
-    #   - forum_net
+    networks:
+      - forum_net
 
   elasticsearch:
     container_name: forum_elasticsearch
@@ -43,6 +43,7 @@ services:
       ES_JAVA_OPTS: "-Xms1g -Xmx1g"
       discovery.type: single-node
       xpack.security.enabled: false
+    mem_limit: 0.8g
     volumes:
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - elastic_data:/usr/share/elasticsearch/data
@@ -54,8 +55,8 @@ services:
       interval: 10s
       timeout: 10s
       retries: 10
-    # networks:
-    #   - forum_net
+    networks:
+      - forum_net
 
   # kibana:
   #   image: docker.elastic.co/kibana/kibana:8.8.2
@@ -85,12 +86,15 @@ services:
       - mysql
       - redis
       - elasticsearch
-    # networks:
-    #   - forum_net
+    volumes:
+      - .:/usr/src/ddd/
+      - ./docker.env:/usr/src/ddd/.env
+    networks:
+      - forum_net
 
-# networks:
-#   forum_net:
-#     driver: bridge
+networks:
+  forum_net:
+    driver: bridge
 
 volumes:
   elastic_data:
