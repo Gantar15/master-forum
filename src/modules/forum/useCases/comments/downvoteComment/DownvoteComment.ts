@@ -12,7 +12,7 @@ import { IMemberRepo } from "../../../repos/memberRepo";
 import { IPostRepo } from "../../../repos/postRepo";
 import { Member } from "../../../domain/member";
 import { Post } from "../../../domain/post";
-import { PostService } from "../../../domain/services/PostService";
+import { PostService } from "../../../domain/services/postService";
 import { UseCase } from "../../../../../shared/core/UseCase";
 
 export class DownvoteComment

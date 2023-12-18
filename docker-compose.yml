@@ -15,8 +15,8 @@ services:
       - MYSQL_DATABASE=${DDD_FORUM_DB_DEV_DB_NAME}
       - MYSQL_USER=${DDD_FORUM_DB_USER}
       - MYSQL_PASSWORD=${DDD_FORUM_DB_PASS}
-    networks:
-      - forum_net
+    # networks:
+    #   - forum_net
 
   adminer:
     image: adminer
@@ -24,8 +24,8 @@ services:
       - mysql
     ports:
       - 8080:8080
-    networks:
-      - forum_net
+    # networks:
+    #   - forum_net
 
   redis:
     container_name: forum_redis
@@ -33,8 +33,8 @@ services:
     restart: always
     ports:
       - 6379:6379
-    networks:
-      - forum_net
+    # networks:
+    #   - forum_net
 
   elasticsearch:
     container_name: forum_elasticsearch
@@ -54,23 +54,23 @@ services:
       interval: 10s
       timeout: 10s
       retries: 10
-    networks:
-      - forum_net
+    # networks:
+    #   - forum_net
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.8.2
-    container_name: kibana
-    volumes:
-      - ./kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-    environment:
-      SERVER_HOST: "0.0.0.0"
-      ELASTICSEARCH_HOSTS: "http://localhost:9200"
-    depends_on:
-      - elasticsearch
-    ports:
-      - 5601:5601
-    networks:
-      - forum_net
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.8.2
+  #   container_name: kibana
+  #   volumes:
+  #     - ./kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+  #   environment:
+  #     SERVER_HOST: "0.0.0.0"
+  #     ELASTICSEARCH_HOSTS: "http://localhost:9200"
+  #   depends_on:
+  #     - elasticsearch
+  #   ports:
+  #     - 5601:5601
+  #   networks:
+  #     - forum_net
 
   app:
     build:
@@ -79,20 +79,18 @@ services:
     container_name: app
     restart: always
     ports:
-      - 5500:5500
       - 3000:3000
-    volumes:
-      - ./.env:/usr/src/ddd/.env
+      - 5550:5550
     depends_on:
       - mysql
       - redis
       - elasticsearch
-    networks:
-      - forum_net
+    # networks:
+    #   - forum_net
 
-networks:
-  forum_net:
-    driver: bridge
+# networks:
+#   forum_net:
+#     driver: bridge
 
 volumes:
   elastic_data:

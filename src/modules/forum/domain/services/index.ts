@@ -1,5 +1,5 @@
 import { ESPostService } from "./esPostService";
-import { PostService } from "./PostService";
+import { PostService } from "./postService";
 import { esConnection } from "./esConnection";
 
 const postService = new PostService();

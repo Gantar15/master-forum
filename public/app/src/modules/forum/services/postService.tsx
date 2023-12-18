@@ -7,7 +7,6 @@ import { IAuthService } from '../../users/services/authService';
 import { PostDTO } from '../dtos/postDTO';
 import { PostUtil } from '../utils/PostUtil';
 import { Result } from '../../../shared/core/Result';
-import { result } from 'lodash';
 
 export interface IPostService {
   createPost(

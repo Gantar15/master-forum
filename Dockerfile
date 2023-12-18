@@ -1,21 +1,22 @@
-FROM node:12.18.4
+FROM node:16.0.0
 
 WORKDIR /usr/src/ddd
 
 ENV path node_modules/.bin:$PATH
 
 COPY package.json package.json
+COPY package-lock.json package-lock.json
 COPY public/app/package.json public/app/package.json
+COPY public/app/package-lock.json public/app/package-lock.json
 
 RUN npm i -g dotenv-cli
-RUN npm i
+RUN npm ci --force
+RUN cd public/app && npm ci --force
 
 COPY . .
-COPY public/app/public public/app/public
-
-RUN cd public/app && npm i
+COPY docker.env .env
 
 CMD ["./entrypoint.sh"]
 
-EXPOSE 5550
 EXPOSE 3000
+EXPOSE 5550

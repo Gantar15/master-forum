@@ -8,7 +8,6 @@ import { MemberId } from "./memberId";
 import { PostId } from "./postId";
 import { Result } from "../../../shared/core/Result";
 import { UniqueEntityID } from "../../../shared/domain/UniqueEntityID";
-import { has } from "lodash";
 
 export interface CommentProps {
   memberId: MemberId;
@@ -114,7 +113,7 @@ export class Comment extends Entity<CommentProps> {
 
       const defaultCommentProps: CommentProps = {
         ...props,
-        points: has(props, "points") ? props.points : 0,
+        points: props.points ? props.points : 0,
         votes: props.votes ? props.votes : CommentVotes.create([]),
       };
 

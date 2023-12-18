@@ -6,7 +6,7 @@ import { IPostRepo } from "../../../repos/postRepo";
 import { IPostVotesRepo } from "../../../repos/postVotesRepo";
 import { Member } from "../../../domain/member";
 import { Post } from "../../../domain/post";
-import { PostService } from "../../../domain/services/PostService";
+import { PostService } from "../../../domain/services/postService";
 import { PostVote } from "../../../domain/postVote";
 import { UpvotePostDTO } from "./UpvotePostDTO";
 import { UpvotePostErrors } from "./UpvotePostErrors";

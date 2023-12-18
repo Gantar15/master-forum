@@ -21,7 +21,6 @@ import { PostVotes } from "./postVotes";
 import { PostVotesChanged } from "./events/postVotesChanged";
 import { Tags } from "./tags";
 import { UniqueEntityID } from "../../../shared/domain/UniqueEntityID";
-import { has } from "lodash";
 
 export type UpdatePostOrLinkResult = Either<
   EditPostErrors.InvalidPostTypeOperationError | Result<any>,
@@ -317,7 +316,7 @@ export class Post extends AggregateRoot<PostProps> {
     const defaultValues: PostProps = {
       ...props,
       comments: props.comments ? props.comments : Comments.create([]),
-      points: has(props, "points") ? props.points : 0,
+      points: props.points ? props.points : 0,
       dateTimePosted: props.dateTimePosted ? props.dateTimePosted : new Date(),
       totalNumComments: props.totalNumComments ? props.totalNumComments : 0,
       votes: props.votes ? props.votes : PostVotes.create([]),
