@@ -98,7 +98,9 @@ function updatePostFailure(error: string): ForumAction & { error: string } {
   };
 }
 
-function setEditPost(editPost: Post): ForumAction & { editPost: Post } {
+function setEditPost(
+  editPost: Post | undefined
+): ForumAction & { editPost: Post | undefined } {
   return {
     type: actions.SET_EDIT_POST,
     editPost

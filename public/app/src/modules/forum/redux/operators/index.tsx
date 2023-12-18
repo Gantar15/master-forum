@@ -41,7 +41,7 @@ export interface IForumOperations {
   ): void;
   deletePost(postSlug: string): void;
   setEditComment(comment: Comment | undefined): void;
-  setEditPost(post: Post): void;
+  setEditPost(post: Post | undefined): void;
   submitPost: (
     title: string,
     type: PostType,

@@ -25,12 +25,7 @@ function withLoginHandling(WrappedComponent: any) {
         !prevProps.users.isLoggingInSuccess
       ) {
         this.props.getUserProfile();
-        setTimeout(() => {
-          this.props.history.push('/');
-        }, 3000);
-        return toast.success('Logged in! 🤠', {
-          autoClose: 3000
-        });
+        this.props.history.push('/');
       }
     }
 

@@ -23,9 +23,8 @@ function withLogoutHandling(WrappedComponent: any) {
         currentProps.users.isLoggingOutSuccess &&
         !prevProps.users.isLoggingOutSuccess
       ) {
-        return toast.success('Logged out! 🤠', {
-          autoClose: 3000
-        });
+        window.location.href = '/';
+        return;
       }
     }
 

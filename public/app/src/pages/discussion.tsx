@@ -1,14 +1,13 @@
 import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
-import { FullPageLoader, Loader } from '../shared/components/loader';
-
 import { BackNavigation } from '../shared/components/header';
 import { Comment } from '../modules/forum/models/Comment';
 import { CommentUtil } from '../modules/forum/utils/CommentUtil';
 import Editor from '../modules/forum/components/comments/components/Editor';
 import EntityActions from '../shared/components/entity-actions/components/EntityActions';
 import { ForumState } from '../modules/forum/redux/states';
+import { FullPageLoader } from '../shared/components/loader';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
 import ModalWindow from '../shared/components/modal-window/components/ModalWindow';

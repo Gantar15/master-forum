@@ -151,7 +151,6 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
   }
 
   onSubmit() {
-    console.log(this.state.category);
     if (this.isFormValid()) {
       const { title, postType, text, link, category, tags } = this.state;
       if (this.props.forum.editPost) {
@@ -209,6 +208,10 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
 
   componentDidMount() {
     this.props.getCategories();
+  }
+
+  componentWillUnmount() {
+    this.props.setEditPost(undefined);
   }
 
   render() {
