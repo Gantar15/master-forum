@@ -2,6 +2,7 @@ import '../styles/CreateUserForm.scss';
 
 import { Button } from '../../../../../../shared/components/button';
 import React from 'react';
+import Select from '../../../../../../shared/components/select/components/Select';
 import { TextInput } from '../../../../../../shared/components/text-input';
 
 type CreateUserFormProps = {
@@ -36,11 +37,17 @@ const CreateUserForm = (props: CreateUserFormProps) => {
           onChange={(val: string) => props.updateFormField('username', val)}
           type="text"
         />
-        <TextInput
-          placeholder="role"
-          onChange={(val: string) => props.updateFormField('role', val)}
-          type="text"
+        <Select
+          options={[
+            { label: 'User', value: 'user' },
+            { label: 'Manager', value: 'manager' }
+          ]}
+          placeHolder="role"
+          onChange={(val: { label: string; value: string }) =>
+            props.updateFormField('role', val.value)
+          }
         />
+
         <TextInput
           placeholder="password"
           onChange={(val: string) => props.updateFormField('password', val)}

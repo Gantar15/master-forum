@@ -7,6 +7,7 @@ import { ProfileButton } from '../modules/users/components/profileButton';
 import React from 'react';
 import { User } from '../modules/users/models/user';
 import { UsersState } from '../modules/users/redux/states';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import withLogoutHandling from '../modules/users/hocs/withLogoutHandling';
 
@@ -50,12 +51,20 @@ export class MemberPage extends React.Component<MemberPageProps, any> {
           subtitle=""
         />
         <br />
-        <h1>Member</h1>
         <h2>{username}</h2>
-        <p>Nothing here just yet :p</p>
+        <p>Just a regular user, nothing interesting :p</p>
       </Layout>
     );
   }
+}
+
+function mapActionCreatorsToProps(dispatch: any) {
+  return bindActionCreators(
+    {
+      ...usersOperators
+    },
+    dispatch
+  );
 }
 
 function mapStateToProps({ users }: { users: UsersState }) {
@@ -64,4 +73,7 @@ function mapStateToProps({ users }: { users: UsersState }) {
   };
 }
 
-export default connect(mapStateToProps)(withLogoutHandling(MemberPage));
+export default connect(
+  mapStateToProps,
+  mapActionCreatorsToProps
+)(withLogoutHandling(MemberPage));
