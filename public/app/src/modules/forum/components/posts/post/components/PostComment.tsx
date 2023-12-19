@@ -22,7 +22,6 @@ const PostComment: React.FC<PostCommentProps> = ({
   loggedInUser,
   ...props
 }) => {
-  console.log(props);
   return (
     <div className="comment">
       <Points
@@ -63,14 +62,10 @@ const PostComment: React.FC<PostCommentProps> = ({
                 isUpvoted={c.wasUpvotedByMe}
                 isDownvoted={c.wasDownvotedByMe}
                 key={c.commentId}
-                onDownvoteClicked={() =>
-                  props.onDownvoteClicked(c.commentId, c.postSlug)
-                }
-                onUpvoteClicked={() =>
-                  props.onUpvoteClicked(c.commentId, c.postSlug)
-                }
+                onDownvoteClicked={props.onDownvoteClicked}
+                onUpvoteClicked={props.onUpvoteClicked}
                 loggedInUser={loggedInUser}
-                onAction={(action) => onAction(action, c)}
+                onAction={onAction}
               />
             ))}
         </div>

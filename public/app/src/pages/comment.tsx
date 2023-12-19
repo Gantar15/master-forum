@@ -108,6 +108,7 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
       }));
     } else if (action === 'edit') {
       this.props.setEditComment(comment);
+      this.props.history.push(`/comment/${comment.commentId}`);
     }
   }
 
@@ -120,7 +121,7 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
         !prevProps.forum.isUpdateCommentSuccess
     ) {
       toast.success(`Done-zo! 🤠`, {
-        autoClose: 2000
+        autoClose: 500
       });
       setTimeout(() => {
         window.location.reload();
@@ -172,9 +173,9 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
         ...this.state,
         isDeleteCommentModalOpen: false
       });
-      this.props.history.push(
-        `/discuss/${(this.props.forum.post as Post).slug}`
-      );
+      toast.success(`Done-zo! 🤠`, {
+        autoClose: 2000
+      });
     }
   }
 
@@ -278,7 +279,9 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
   }
 
   componentWillUnmount(): void {
-    this.props.setEditComment(undefined);
+    if (this.props.forum.editComment) {
+      this.props.setEditComment(undefined);
+    }
   }
 
   render() {
@@ -421,24 +424,20 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
         {!isEditMode &&
           this.props.forum.comments.map((c) => (
             <PostComment
+              {...c}
               key={c.commentId}
               isDownvoted={c.wasDownvotedByMe}
               isUpvoted={c.wasUpvotedByMe}
-              onUpvoteClicked={() =>
-                this.props.upvoteComment(c.commentId, c.postSlug)
-              }
-              onDownvoteClicked={() =>
-                this.props.downvoteComment(c.commentId, c.postSlug)
-              }
+              onUpvoteClicked={this.props.upvoteComment}
+              onDownvoteClicked={this.props.downvoteComment}
               loggedInUser={
                 'username' in this.props.users.user
                   ? this.props.users.user
                   : undefined
               }
-              onAction={(actions, comment) =>
-                this.onCommentAction(actions, comment)
+              onAction={(action, comment) =>
+                this.onCommentAction(action, comment)
               }
-              {...c}
             />
           ))}
       </Layout>

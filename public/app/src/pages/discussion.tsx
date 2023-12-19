@@ -160,7 +160,7 @@ class DiscussionPage extends React.Component<
         isDeletePostModalOpen: false
       });
       toast.success(`Done-zo! 🤠`, {
-        autoClose: 2000
+        autoClose: 1000
       });
       setTimeout(() => {
         this.props.history.push('/');
@@ -225,7 +225,7 @@ class DiscussionPage extends React.Component<
       !prevProps.forum.isCreatingReplyToPostSuccess
     ) {
       toast.success(`Done-zo! 🤠`, {
-        autoClose: 2000
+        autoClose: 500
       });
       setTimeout(() => {
         window.location.reload();
@@ -379,6 +379,7 @@ class DiscussionPage extends React.Component<
         <br />
         {comments.map((c) => (
           <PostComment
+            {...c}
             key={c.commentId}
             isDownvoted={c.wasDownvotedByMe}
             isUpvoted={c.wasUpvotedByMe}
@@ -389,10 +390,9 @@ class DiscussionPage extends React.Component<
                 ? this.props.users.user
                 : undefined
             }
-            onAction={(actions, comment) =>
-              this.onCommentAction(actions, comment)
+            onAction={(action, comment) =>
+              this.onCommentAction(action, comment)
             }
-            {...c}
           />
         ))}
 
