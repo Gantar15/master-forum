@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { Points } from '../../points';
 import PostCommentAuthorAndText from './PostCommentAuthorAndText';
 import React from 'react';
+import { User } from '../../../../../users/models/user';
 
 interface PostCommentProps extends Comment {
   isDownvoted: boolean;
@@ -13,10 +14,15 @@ interface PostCommentProps extends Comment {
   onUpvoteClicked: (commentId: string, postSlug: string) => void;
   onDownvoteClicked: (commentId: string, postSlug: string) => void;
   onAction?: (action: string, comment: Comment) => void;
-  isLoggedIn: boolean;
+  loggedInUser?: User;
 }
 
-const PostComment: React.FC<PostCommentProps> = ({ onAction, ...props }) => {
+const PostComment: React.FC<PostCommentProps> = ({
+  onAction = () => {},
+  loggedInUser,
+  ...props
+}) => {
+  console.log(props);
   return (
     <div className="comment">
       <Points
@@ -29,14 +35,17 @@ const PostComment: React.FC<PostCommentProps> = ({ onAction, ...props }) => {
         onDownvoteClicked={() =>
           props.onDownvoteClicked(props.commentId, props.postSlug)
         }
-        isLoggedIn={props.isLoggedIn}
+        isLoggedIn={!!loggedInUser}
       />
       <div className="post-comment-container">
         <div className="post-comment">
           <PostCommentAuthorAndText {...props} />
           <div className="comment__actions">
             <Link to={`/comment/${props.commentId}`}>reply</Link>
-            {onAction ? (
+            {loggedInUser?.username &&
+            (loggedInUser.username === props.member.username ||
+              loggedInUser.isAdminUser ||
+              loggedInUser.isManagerUser) ? (
               <EntityActions
                 width={24}
                 height={24}
@@ -48,22 +57,20 @@ const PostComment: React.FC<PostCommentProps> = ({ onAction, ...props }) => {
         </div>
         <div className="indent">
           {props.childComments.length !== 0 &&
-            props.childComments.map((c, i) => (
+            props.childComments.map((c) => (
               <PostComment
                 {...c}
                 isUpvoted={c.wasUpvotedByMe}
                 isDownvoted={c.wasDownvotedByMe}
-                key={i}
+                key={c.commentId}
                 onDownvoteClicked={() =>
                   props.onDownvoteClicked(c.commentId, c.postSlug)
                 }
                 onUpvoteClicked={() =>
                   props.onUpvoteClicked(c.commentId, c.postSlug)
                 }
-                isLoggedIn={props.isLoggedIn}
-                onAction={
-                  onAction ? (action) => onAction(action, c) : undefined
-                }
+                loggedInUser={loggedInUser}
+                onAction={(action) => onAction(action, c)}
               />
             ))}
         </div>

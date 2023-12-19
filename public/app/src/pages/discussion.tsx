@@ -229,7 +229,7 @@ class DiscussionPage extends React.Component<
       });
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 500);
     }
   }
 
@@ -377,18 +377,20 @@ class DiscussionPage extends React.Component<
         )}
 
         <br />
-        {comments.map((c, i) => (
+        {comments.map((c) => (
           <PostComment
-            key={i}
+            key={c.commentId}
             isDownvoted={c.wasDownvotedByMe}
             isUpvoted={c.wasUpvotedByMe}
             onDownvoteClicked={this.props.downvoteComment}
             onUpvoteClicked={this.props.upvoteComment}
-            isLoggedIn={this.props.users.isAuthenticated}
-            onAction={
-              isPostAuthor
-                ? (actions, comment) => this.onCommentAction(actions, comment)
+            loggedInUser={
+              'username' in this.props.users.user
+                ? this.props.users.user
                 : undefined
+            }
+            onAction={(actions, comment) =>
+              this.onCommentAction(actions, comment)
             }
             {...c}
           />

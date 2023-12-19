@@ -124,7 +124,7 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
       });
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 500);
     }
   }
 
@@ -419,9 +419,9 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
         )}
 
         {!isEditMode &&
-          this.props.forum.comments.map((c, i) => (
+          this.props.forum.comments.map((c) => (
             <PostComment
-              key={i}
+              key={c.commentId}
               isDownvoted={c.wasDownvotedByMe}
               isUpvoted={c.wasUpvotedByMe}
               onUpvoteClicked={() =>
@@ -430,11 +430,13 @@ class CommentPage extends React.Component<CommentPageProps, CommentState> {
               onDownvoteClicked={() =>
                 this.props.downvoteComment(c.commentId, c.postSlug)
               }
-              isLoggedIn={this.props.users.isAuthenticated}
-              onAction={
-                isCommentAuthor
-                  ? (actions, comment) => this.onCommentAction(actions, comment)
+              loggedInUser={
+                'username' in this.props.users.user
+                  ? this.props.users.user
                   : undefined
+              }
+              onAction={(actions, comment) =>
+                this.onCommentAction(actions, comment)
               }
               {...c}
             />

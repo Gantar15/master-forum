@@ -35,7 +35,7 @@ export default (sequelize, DataTypes) => {
           model: "comment",
           key: "comment_id",
         },
-        onDelete: "set null",
+        onDelete: "cascade",
         onUpdate: "cascade",
       },
       text: {
