@@ -92,6 +92,19 @@ export class UsersService extends BaseAPI implements IUsersService {
     }
   }
 
+  async verifyEmail(code: string): Promise<APIResponse<void>> {
+    try {
+      await this.patch('/users/verify', {
+        code
+      });
+      return right(Result.ok());
+    } catch (err) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
   async getUsers(): Promise<APIResponse<User[]>> {
     try {
       const response = await this.get('/users', null, {

@@ -64,4 +64,4 @@ module.exports.connection =
         logging: false,
       });
 
-// module.exports.connection.sync({ force: true });
+// module.exports.connection.sync({ alter: true });

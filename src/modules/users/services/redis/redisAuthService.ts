@@ -1,5 +1,4 @@
 import * as jwt from "jsonwebtoken";
-import * as uuid from "uuid";
 
 import { JWTClaims, JWTToken, RefreshToken } from "../../domain/jwt";
 

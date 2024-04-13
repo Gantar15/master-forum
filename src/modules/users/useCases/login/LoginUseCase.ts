@@ -14,6 +14,7 @@ import { UserPassword } from "../../domain/userPassword";
 type Response = Either<
   | LoginUseCaseErrors.PasswordDoesntMatchError
   | LoginUseCaseErrors.UserNameDoesntExistError
+  | LoginUseCaseErrors.NotVerifiedEmailError
   | AppError.UnexpectedError,
   Result<LoginDTOResponse>
 >;
@@ -48,6 +49,10 @@ export class LoginUserUseCase implements UseCase<LoginDTO, Promise<Response>> {
         user = await this.userRepo.getUserByUserName(userName);
       } catch (err) {
         return left(new LoginUseCaseErrors.UserNameDoesntExistError());
+      }
+
+      if (!user.isEmailVerified) {
+        return left(new LoginUseCaseErrors.NotVerifiedEmailError());
       }
 
       const passwordValid = await user.password.comparePassword(password.value);

@@ -1,13 +1,9 @@
-
-import { redisConnection } from "./redis/redisConnection";
+import { MailerEmailService } from "./mailer/mailerEmailService";
 import { RedisAuthService } from "./redis/redisAuthService";
+import { mailerConnection } from "./mailer/mailerConnection";
+import { redisConnection } from "./redis/redisConnection";
 
-const authService = new RedisAuthService(
-  redisConnection
-)
+const authService = new RedisAuthService(redisConnection);
+const emailService = new MailerEmailService(mailerConnection);
 
-// authService.getTokens('khalilstemmler@gmail.com')
-// .then((t) => console.log(t))
-// .catch((err) => console.log(err))
-
-export { authService }
+export { authService, emailService };

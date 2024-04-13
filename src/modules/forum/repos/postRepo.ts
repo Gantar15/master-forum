@@ -23,10 +23,6 @@ export interface IPostRepo {
     searchString: SearchString,
     memberId?: MemberId
   ): Promise<PostDetails[]>;
-  searchByEs(
-    searchString: SearchString,
-    memberId?: MemberId
-  ): Promise<PostDetails[]>;
   exists(postId: PostId): Promise<boolean>;
   updateTotalNumberComments(postId: PostId): Promise<void>;
   save(post: Post): Promise<PostDetails>;

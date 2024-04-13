@@ -13,25 +13,21 @@ import { PostTitle } from "../../domain/postTitle";
 import { MemberId } from "../../domain/memberId";
 import { UniqueEntityID } from "../../../../shared/domain/UniqueEntityID";
 import { SearchString } from "../../domain/SearchString";
-import sequelize, { Op } from "sequelize";
-import { ESPostService } from "../../domain/services/esPostService";
+import { Op } from "sequelize";
 
 export class PostRepo implements IPostRepo {
   private models: any;
   private commentRepo: ICommentRepo;
   private postVotesRepo: IPostVotesRepo;
-  private esPostService: ESPostService;
 
   constructor(
     models: any,
     commentRepo: ICommentRepo,
-    postVotesRepo: IPostVotesRepo,
-    esPostService: ESPostService
+    postVotesRepo: IPostVotesRepo
   ) {
     this.models = models;
     this.commentRepo = commentRepo;
     this.postVotesRepo = postVotesRepo;
-    this.esPostService = esPostService;
   }
 
   private createBaseQuery(): any {
@@ -236,35 +232,6 @@ export class PostRepo implements IPostRepo {
     return posts.map((p) => PostDetailsMap.toDomain(p));
   }
 
-  async searchByEs(
-    searchString: SearchString,
-    memberId?: MemberId
-  ): Promise<PostDetails[]> {
-    const PostModel = this.models.Post;
-    const searchStringValue = searchString.value;
-    const detailsQuery = this.createBaseDetailsQuery();
-
-    const results = await this.esPostService.search(searchStringValue);
-    detailsQuery.where["post_id"] = {
-      [Op.in]: results.reduce((acc, curr) => {
-        acc.push(curr.post_id);
-        return acc;
-      }, []),
-    };
-
-    if (!!memberId === true) {
-      detailsQuery.include.push({
-        model: this.models.PostVote,
-        as: "Votes",
-        where: { member_id: memberId.getStringValue() },
-        required: false,
-      });
-    }
-
-    const posts = await PostModel.findAll(detailsQuery);
-    return posts.map((p) => PostDetailsMap.toDomain(p));
-  }
-
   public async exists(postId: PostId): Promise<boolean> {
     const PostModel = this.models.Post;
     const baseQuery = this.createBaseQuery();
@@ -279,7 +246,6 @@ export class PostRepo implements IPostRepo {
     await PostModel.destroy({
       where: { post_id: postId },
     });
-    return await this.esPostService.removeIndex(postId);
   }
 
   public async deleteBySlug(slug: string): Promise<PostDetails> {
@@ -326,7 +292,6 @@ export class PostRepo implements IPostRepo {
         await this.saveComments(post.comments);
         await this.savePostVotes(post.getVotes());
         await this.setTagsToPost(post.postId, post.tags);
-        await this.esPostService.indexPost(rawSequelizePost);
       } catch (err) {
         await this.delete(post.postId.getStringValue());
         throw new Error(err.toString());

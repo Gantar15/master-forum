@@ -18,6 +18,11 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: false,
       },
+      email_verification_code: {
+        type: DataTypes.STRING(250),
+        allowNull: true,
+        defaultValue: null,
+      },
       is_manager_user: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

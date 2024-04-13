@@ -46,6 +46,17 @@ export class SequelizeUserRepo implements IUserRepo {
     return UserMap.toDomain(baseUser);
   }
 
+  async getUserByEmailVerifyCode(code: string) {
+    const BaseUserModel = this.models.BaseUser;
+    const baseUser = await BaseUserModel.findOne({
+      where: {
+        email_verification_code: code,
+      },
+    });
+    if (!!baseUser === false) throw new Error("User not found.");
+    return UserMap.toDomain(baseUser);
+  }
+
   async getUsers(): Promise<User[]> {
     const BaseUserModel = this.models.BaseUser;
     const baseUsers = await BaseUserModel.findAll({

@@ -77,6 +77,17 @@ export class Middleware {
     };
   }
 
+  public ensureEmailVerified() {
+    return async (req, res, next) => {
+      this.ensureAuthenticated()(req, res, () => {
+        if (!req.decoded.isEmailVerified) {
+          return this.endRequest(403, "Need email verification.", res);
+        }
+        next();
+      });
+    };
+  }
+
   public ensureRole(roles: UserRole[] | UserRole) {
     return async (req, res, next) => {
       const token = req.headers["authorization"];

@@ -16,7 +16,6 @@ RUN npm ci --force
 RUN cd public/app && npm ci --force
 
 COPY . .
-COPY docker.env .env
 
 CMD ["./entrypoint.sh"]
 

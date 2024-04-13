@@ -32,6 +32,8 @@ export class LoginController extends BaseController {
             return this.notFound(res, error.getErrorValue().message);
           case LoginUseCaseErrors.PasswordDoesntMatchError:
             return this.clientError(res, error.getErrorValue().message);
+          case LoginUseCaseErrors.NotVerifiedEmailError:
+            return this.forbidden(res, error.getErrorValue().message);
           default:
             return this.fail(res, error.getErrorValue().message);
         }

@@ -17,6 +17,7 @@ interface UserProps {
   username: UserName;
   password: UserPassword;
   isEmailVerified?: boolean;
+  emailVerificationCode?: string;
   isAdminUser?: boolean;
   isManagerUser?: boolean;
   accessToken?: JWTToken;
@@ -54,6 +55,10 @@ export class User extends AggregateRoot<UserProps> {
     return this.props.isEmailVerified;
   }
 
+  get emailVerificationCode(): string {
+    return this.props.emailVerificationCode;
+  }
+
   get isAdminUser(): boolean {
     return this.props.isAdminUser;
   }
@@ -72,6 +77,10 @@ export class User extends AggregateRoot<UserProps> {
 
   public isLoggedIn(): boolean {
     return !!this.props.accessToken && !!this.props.refreshToken;
+  }
+
+  public setIsEmailVerified(isVerified: boolean) {
+    this.props.isEmailVerified = isVerified;
   }
 
   public setAccessToken(token: JWTToken, refreshToken: RefreshToken): void {

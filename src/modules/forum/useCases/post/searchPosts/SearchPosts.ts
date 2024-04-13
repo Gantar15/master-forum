@@ -44,7 +44,7 @@ export class SearchPosts
         );
       }
 
-      const posts = await this.postRepo.searchByEs(
+      const posts = await this.postRepo.search(
         searchStringOrError.getValue(),
         memberId
       );

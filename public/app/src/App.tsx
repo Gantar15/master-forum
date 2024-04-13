@@ -7,6 +7,7 @@ import CategoriesManagmentPage from './pages/categories-managment';
 import CategoryPage from './pages/category';
 import CommentPage from './pages/comment';
 import DiscussionPage from './pages/discussion';
+import { EmailVerifyPage } from './pages/email-verify';
 import IndexPage from './pages';
 import JoinPage from './pages/join';
 import LoginPage from './pages/login';
@@ -39,6 +40,7 @@ const App: React.FC = () => {
         component={CategoriesManagmentPage}
       />
       <Route path="/join" component={JoinPage} />
+      <Route path="/verify/:code" component={EmailVerifyPage} />
       <Route path="/login" component={LoginPage} />
     </Router>
   );

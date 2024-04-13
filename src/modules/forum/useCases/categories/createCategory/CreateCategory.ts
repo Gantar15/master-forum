@@ -2,7 +2,6 @@ import { Either, Result, left, right } from "../../../../../shared/core/Result";
 
 import { AppError } from "../../../../../shared/core/AppError";
 import { Category } from "../../../domain/category";
-import { CategoryMap } from "../../../mappers/categoryMap";
 import { CategoryTitle } from "../../../domain/categoryTitle";
 import { CreateCategoryDTO } from "./CreateCategoryDTO";
 import { ICategoryRepo } from "../../../repos/categoryRepo";

@@ -25,4 +25,12 @@ export namespace LoginUseCaseErrors {
       } as UseCaseError);
     }
   }
+
+  export class NotVerifiedEmailError extends Result<UseCaseError> {
+    constructor() {
+      super(false, {
+        message: `Sorry, but you need to confirm your email in order to log in.`,
+      } as UseCaseError);
+    }
+  }
 }
