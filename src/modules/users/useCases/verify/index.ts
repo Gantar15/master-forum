@@ -1,9 +1,8 @@
-import { LoginController } from "./VerifyController";
-import { LoginUserUseCase } from "./VerifyUseCase";
-import { authService } from "../../services";
+import { VerifyController } from "./VerifyController";
+import { VerifyUseCase } from "./VerifyUseCase";
 import { userRepo } from "../../repos";
 
-const loginUseCase = new LoginUserUseCase(userRepo, authService);
-const loginController = new LoginController(loginUseCase);
+const verifyUseCase = new VerifyUseCase(userRepo);
+const verifyController = new VerifyController(verifyUseCase);
 
-export { loginController, loginUseCase };
+export { verifyUseCase, verifyController };

@@ -82,11 +82,9 @@ class JoinPage extends React.Component<JoinPageProps, JoinPageState> {
       currentProps.users.isCreatingUserSuccess ===
       !prevProps.users.isCreatingUserSuccess
     ) {
-      toast.success(`You're all signed up! Logging you in. 🤠`, {
+      toast.success(`You're all signed up! Confirm mail 🤠`, {
         autoClose: 3000
       });
-      // Now login
-      this.props.login(this.state.username, this.state.password);
     }
   }
 

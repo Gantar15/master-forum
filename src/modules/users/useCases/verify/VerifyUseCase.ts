@@ -26,8 +26,7 @@ export class VerifyUseCase implements UseCase<VerifyDTO, Promise<Response>> {
       }
 
       user.setIsEmailVerified(true);
-
-      this.userRepo.save(user);
+      await this.userRepo.save(user);
 
       return right(Result.ok<void>());
     } catch (err) {

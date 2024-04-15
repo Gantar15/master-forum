@@ -98,8 +98,8 @@ export class CreateUserUseCase
           from: process.env.EMAIL_USER,
           to: user.email.value,
           html: verifyEmailTemplate(
-            process.env.DDD_FORUM_VERIFY_FRONTEND_URL +
-              "\\" +
+            process.env.DDD_FORUM_FRONTEND_URL +
+              "\\verify\\" +
               emailVerificationCode
           ),
         });

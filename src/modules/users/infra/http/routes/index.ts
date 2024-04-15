@@ -8,6 +8,7 @@ import { loginController } from "../../../useCases/login";
 import { logoutController } from "../../../useCases/logout";
 import { middleware } from "../../../../../shared/infra/http";
 import { refreshAccessTokenController } from "../../../useCases/refreshAccessToken";
+import { verifyController } from "../../../useCases/verify";
 
 const userRouter = express.Router();
 
@@ -24,6 +25,8 @@ userRouter.get("/me", middleware.ensureAuthenticated(), (req, res) =>
 );
 
 userRouter.post("/login", (req, res) => loginController.execute(req, res));
+
+userRouter.patch("/verify", (req, res) => verifyController.execute(req, res));
 
 userRouter.post("/logout", middleware.ensureAuthenticated(), (req, res) =>
   logoutController.execute(req, res)
