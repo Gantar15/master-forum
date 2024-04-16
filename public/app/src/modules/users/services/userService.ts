@@ -62,6 +62,22 @@ export class UsersService extends BaseAPI implements IUsersService {
     }
   }
 
+  async oauthPulluser(username: string): Promise<APIResponse<LoginDTO>> {
+    try {
+      const response = await this.post('/users/oauth/google/tokens', {
+        username
+      });
+      const dto: LoginDTO = response.data as LoginDTO;
+      this.authService.setToken('access-token', dto.accessToken);
+      this.authService.setToken('refresh-token', dto.refreshToken);
+      return right(Result.ok<LoginDTO>(dto));
+    } catch (err) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
   async createUser(
     email: string,
     username: string,

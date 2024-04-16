@@ -6,6 +6,7 @@ import { Layout } from '../shared/layout';
 import { OnboardTemplate } from '../modules/users/components/onboarding/onboardTemplate';
 import React from 'react';
 import { UsersState } from '../modules/users/redux/states';
+import { apiConfig } from '../config/api';
 import { bindActionCreators } from 'redux';
 //@ts-ignore
 import { connect } from 'react-redux';
@@ -14,7 +15,6 @@ import withLoginHandling from '../modules/users/hocs/withLoginHandling';
 
 interface LoginPageProps extends IUserOperators {
   users: UsersState;
-  history: any;
 }
 
 interface LoginPageState {
@@ -66,6 +66,10 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
     }
   }
 
+  async onGoogleOauth() {
+    window.location.href = apiConfig.baseUrl + '/users/oauth/google';
+  }
+
   render() {
     return (
       <Layout>
@@ -81,6 +85,7 @@ class LoginPage extends React.Component<LoginPageProps, LoginPageState> {
             this.updateFormField(fieldName, val)
           }
           onSubmit={() => this.onSubmit()}
+          onGoogleOauth={() => this.onGoogleOauth()}
         />
       </Layout>
     );

@@ -7,6 +7,7 @@ import { OnboardTemplate } from '../modules/users/components/onboarding/onboardT
 import React from 'react';
 import { TextUtil } from '../shared/utils/TextUtil';
 import { UsersState } from '../modules/users/redux/states';
+import { apiConfig } from '../config/api';
 import { bindActionCreators } from 'redux';
 //@ts-ignore
 import { connect } from 'react-redux';
@@ -116,6 +117,10 @@ class JoinPage extends React.Component<JoinPageProps, JoinPageState> {
     }
   }
 
+  async onGoogleOauth() {
+    window.location.href = apiConfig.baseUrl + '/users/oauth/google';
+  }
+
   render() {
     return (
       <Layout>
@@ -131,6 +136,7 @@ class JoinPage extends React.Component<JoinPageProps, JoinPageState> {
             this.updateFormField(fieldName, val)
           }
           onSubmit={() => this.onSubmit()}
+          onGoogleOauth={() => this.onGoogleOauth()}
         />
       </Layout>
     );

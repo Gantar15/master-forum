@@ -13,6 +13,7 @@ interface OnboardTemplateProps {
   type: TemplateType;
   updateFormField: (fieldName: string, value: string) => void;
   onSubmit: () => void;
+  onGoogleOauth: () => void;
 }
 
 function getRedirectTextName(type: TemplateType): string {
@@ -56,7 +57,7 @@ const OnboardTemplate: React.FC<OnboardTemplateProps> = (props) => (
     />
     <br />
     <div className="submit-container">
-      {props.type === 'signup' && <IconButton icon={GoogleIcon} width={45} />}
+      <IconButton onClick={props.onGoogleOauth} icon={GoogleIcon} width={35} />
       <div className="submit-container__block">
         <div className="message">
           <p>{getRedirectText(props.type)}</p>

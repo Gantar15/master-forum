@@ -12,6 +12,7 @@ import IndexPage from './pages';
 import JoinPage from './pages/join';
 import LoginPage from './pages/login';
 import MemberPage from './pages/member';
+import OauthPulluser from './pages/oauth-pulluser';
 import React from 'react';
 import RolesRoute from './shared/infra/router/RolesRoute';
 import SearchPage from './pages/search';
@@ -41,6 +42,7 @@ const App: React.FC = () => {
       />
       <Route path="/join" component={JoinPage} />
       <Route path="/verify/:code" component={EmailVerifyPage} />
+      <Route path="/oauth/pulluser/:username" component={OauthPulluser} />
       <Route path="/login" component={LoginPage} />
     </Router>
   );

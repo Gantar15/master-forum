@@ -7,10 +7,12 @@ import { getUserProfile } from './getUserProfile';
 import { getUsers } from './getUsers';
 import { login } from './login';
 import { logout } from './logout';
+import { oauthPulluser } from './oauthPulluser';
 
 export interface IUserOperators {
   getUserProfile(): void;
   login(username: string, password: string): void;
+  oauthPulluser(username: string): void;
   logout(): void;
   createUser(
     email: string,
@@ -29,6 +31,7 @@ export {
   getUserProfile,
   login,
   logout,
+  oauthPulluser,
   createUser,
   deleteUser,
   getUsers,
