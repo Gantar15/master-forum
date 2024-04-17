@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 
 import { Button } from '../shared/components/button';
+import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
 import { Loader } from '../shared/components/loader';
 import { toast } from 'react-toastify';
@@ -34,6 +35,12 @@ export const EmailVerifyPage = () => {
 
   return (
     <Layout>
+      <div className="header-container flex flex-row flex-center flex-even">
+        <Header
+          title="Master-Forum Community"
+          subtitle="Where awesome Peoples can communicate"
+        />
+      </div>
       {!isSuccessVerified ? (
         <div className="email-verify">
           <p>Await confirmation please</p>

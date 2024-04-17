@@ -32,6 +32,7 @@ export class MemberPage extends React.Component<MemberPageProps, any> {
         <div className="header-container flex flex-row flex-center flex-between">
           <BackNavigation to={`/`} text={'Back to all discussions'} />
           <ProfileButton
+            userId={(this.props.users.user as User)?.userId}
             isLoggedIn={this.props.users.isAuthenticated}
             username={
               this.props.users.isAuthenticated

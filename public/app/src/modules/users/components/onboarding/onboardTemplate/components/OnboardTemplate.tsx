@@ -4,6 +4,7 @@ import { Button } from '../../../../../../shared/components/button';
 import GoogleIcon from '../../../../../../assets/img/google-icon.png';
 import { IconButton } from '../../../../../../shared/components/button/components/IconButton';
 import { Link } from 'react-router-dom';
+import { Loader } from '../../../../../../shared/components/loader';
 import React from 'react';
 import { TextInput } from '../../../../../../shared/components/text-input';
 
@@ -14,6 +15,8 @@ interface OnboardTemplateProps {
   updateFormField: (fieldName: string, value: string) => void;
   onSubmit: () => void;
   onGoogleOauth: () => void;
+  isLoggingIn?: boolean;
+  isCreatingUser?: boolean;
 }
 
 function getRedirectTextName(type: TemplateType): string {
@@ -65,7 +68,13 @@ const OnboardTemplate: React.FC<OnboardTemplateProps> = (props) => (
             {getRedirectTextName(props.type)}
           </Link>
         </div>
-        <Button text="Submit" onClick={() => props.onSubmit()} />
+        {(
+          props.type === 'signup' ? props.isCreatingUser : props.isLoggingIn
+        ) ? (
+          <Loader />
+        ) : (
+          <Button text="Submit" onClick={() => props.onSubmit()} />
+        )}
       </div>
     </div>
   </div>

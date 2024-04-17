@@ -137,6 +137,7 @@ class JoinPage extends React.Component<JoinPageProps, JoinPageState> {
           }
           onSubmit={() => this.onSubmit()}
           onGoogleOauth={() => this.onGoogleOauth()}
+          isCreatingUser={this.props.users.isCreatingUser}
         />
       </Layout>
     );

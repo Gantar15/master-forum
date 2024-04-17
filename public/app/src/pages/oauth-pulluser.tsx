@@ -1,7 +1,5 @@
 import * as usersOperators from '../modules/users/redux/operators';
 
-import { useHistory, useParams } from 'react-router-dom';
-
 import { IUserOperators } from '../modules/users/redux/operators';
 import { Layout } from '../shared/layout';
 import { Loader } from '../shared/components/loader';
@@ -10,6 +8,7 @@ import { UsersState } from '../modules/users/redux/states';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 interface LoginPageProps extends IUserOperators {
   users: UsersState;
