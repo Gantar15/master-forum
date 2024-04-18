@@ -6,6 +6,7 @@ import express from "express";
 import { getPopularPostsController } from "../../../useCases/post/getPopularPosts";
 import { getPostBySlugController } from "../../../useCases/post/getPostBySlug";
 import { getPostsByCategoryController } from "../../../useCases/post/getPostsByCategory";
+import { getPostsByUserController } from "../../../useCases/post/getPostsByUser";
 import { getRecentPostsController } from "../../../useCases/post/getRecentPosts";
 import { middleware } from "../../../../../shared/infra/http";
 import { searchPostsController } from "../../../useCases/post/searchPosts";
@@ -33,6 +34,10 @@ postRouter.get(
   "/category",
   middleware.includeDecodedTokenIfExists(),
   (req, res) => getPostsByCategoryController.execute(req, res)
+);
+
+postRouter.get("/user", (req, res) =>
+  getPostsByUserController.execute(req, res)
 );
 
 postRouter.get(

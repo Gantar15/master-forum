@@ -54,7 +54,7 @@ class CategoriesManagmentPage extends React.Component<
 
   isFormValid = () => {
     const { category } = this.state;
-    console.log(category);
+
     if (
       category === '' ||
       TextUtil.atLeast(category, 1) ||
@@ -186,7 +186,6 @@ class CategoriesManagmentPage extends React.Component<
         <div className="header-container flex flex-row flex-center flex-between">
           <BackNavigation text="Back to user mode" to="/" />
           <ProfileButton
-            userId={(this.props.users.user as User)?.userId}
             isLoggedIn={this.props.users.isAuthenticated}
             username={
               this.props.users.isAuthenticated

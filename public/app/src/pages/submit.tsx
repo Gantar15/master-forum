@@ -229,7 +229,6 @@ class SubmitPage extends React.Component<SubmitPageProps, SubmitPageState> {
             <BackNavigation to={`/`} text={'Back to all discussions'} />
           )}
           <ProfileButton
-            userId={(this.props.users.user as User)?.userId}
             isLoggedIn={this.props.users.isAuthenticated}
             username={
               this.props.users.isAuthenticated

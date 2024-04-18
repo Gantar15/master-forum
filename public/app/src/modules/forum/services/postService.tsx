@@ -93,6 +93,24 @@ export class PostService extends BaseAPI implements IPostService {
 
   async getPostsByCategory(categtory: string): Promise<APIResponse<Post[]>> {
     try {
+      const response = await this.get('/posts/category', {
+        categoryTitle: categtory
+      });
+
+      return right(
+        Result.ok<Post[]>(
+          response.data.posts.map((p: PostDTO) => PostUtil.toViewModel(p))
+        )
+      );
+    } catch (err: any) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
+  async getPostsByUser(username: string): Promise<APIResponse<Post[]>> {
+    try {
       const accessToken = this.authService.getToken('access-token');
       const isAuthenticated = !!accessToken === true;
       const auth = {
@@ -100,8 +118,8 @@ export class PostService extends BaseAPI implements IPostService {
       };
 
       const response = await this.get(
-        '/posts/category',
-        { categoryTitle: categtory },
+        '/posts/user',
+        { username },
         isAuthenticated ? auth : null
       );
 

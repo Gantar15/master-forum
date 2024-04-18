@@ -123,7 +123,6 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
             subtitle="Where awesome Peoples can communicate"
           />{' '}
           <ProfileButton
-            userId={(this.props.users.user as User)?.userId}
             isLoggedIn={this.props.users.isAuthenticated}
             username={
               this.props.users.isAuthenticated

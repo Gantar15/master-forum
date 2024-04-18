@@ -14,14 +14,14 @@ const ProfileButton: React.FC<ProfileButtonProps> = (props) => {
     <Button
       text={
         <>
-          <Link to={`/member/${props.userId}`}>{props.username}</Link>
+          <Link to={`/member/${props.username}`}>{props.username}</Link>
           {' / '}
           <u style={{ cursor: 'pointer' }} onClick={props.onLogout}>
             logout
           </u>
         </>
       }
-      style={{ cursor: 'auto' }}
+      style={{ cursor: 'auto', whiteSpace: 'nowrap' }}
     />
   ) : (
     <Button

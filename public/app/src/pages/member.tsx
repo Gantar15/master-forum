@@ -1,28 +1,79 @@
+import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
 import { BackNavigation } from '../shared/components/header';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
+import { Loader } from '../shared/components/loader';
+import { Post } from '../modules/forum/models/Post';
+import { PostRow } from '../modules/forum/components/posts/postRow';
 import { ProfileButton } from '../modules/users/components/profileButton';
 import React from 'react';
 import { User } from '../modules/users/models/user';
+import { UserSectionType } from '../modules/users/components/users/filters/components/UserSections';
+import { UserSections } from '../modules/users/components/users/filters';
 import { UsersState } from '../modules/users/redux/states';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { postService } from '../modules/forum/services';
 import withLogoutHandling from '../modules/users/hocs/withLogoutHandling';
 
-interface MemberPageProps extends usersOperators.IUserOperators {
+interface MemberPageProps
+  extends usersOperators.IUserOperators,
+    forumOperators.IForumOperations {
   match: any;
   users: UsersState;
 }
 
-export class MemberPage extends React.Component<MemberPageProps, any> {
+interface MemberPageState {
+  posts: Post[];
+  isPostsLoading: boolean;
+  activeUserSection: UserSectionType;
+}
+
+export class MemberPage extends React.Component<
+  MemberPageProps,
+  MemberPageState
+> {
   constructor(props: any) {
     super(props);
+    this.state = {
+      posts: [],
+      isPostsLoading: false,
+      activeUserSection: 'POSTS'
+    };
+  }
+
+  componentDidMount(): void {
+    const username = this.getUserName();
+    this.setState({
+      isPostsLoading: true
+    });
+    postService.getPostsByUser(username).then((response) => {
+      if (response.isLeft()) {
+        this.setState({
+          isPostsLoading: false
+        });
+        return;
+      }
+
+      const posts = response.value.getValue();
+      this.setState({
+        posts,
+        isPostsLoading: false
+      });
+    });
   }
 
   getUserName() {
     return this.props.match.params.username;
+  }
+
+  setActiveUserSection(section: UserSectionType) {
+    this.setState({
+      ...this.state,
+      activeUserSection: section
+    });
   }
 
   render() {
@@ -32,7 +83,6 @@ export class MemberPage extends React.Component<MemberPageProps, any> {
         <div className="header-container flex flex-row flex-center flex-between">
           <BackNavigation to={`/`} text={'Back to all discussions'} />
           <ProfileButton
-            userId={(this.props.users.user as User)?.userId}
             isLoggedIn={this.props.users.isAuthenticated}
             username={
               this.props.users.isAuthenticated
@@ -53,7 +103,27 @@ export class MemberPage extends React.Component<MemberPageProps, any> {
         />
         <br />
         <h2>{username}</h2>
-        <p>Just a regular user, nothing interesting :p</p>
+
+        <UserSections
+          activeFilter={this.state.activeUserSection}
+          onClick={(section) => this.setActiveUserSection(section)}
+        />
+
+        {this.state.isPostsLoading ? (
+          <Loader />
+        ) : (
+          this.state.posts.map((p, i) => (
+            <PostRow
+              key={i}
+              isDownvoted={p.wasDownvotedByMe}
+              isUpvoted={p.wasUpvotedByMe}
+              onUpvoteClicked={() => this.props.upvotePost(p.slug)}
+              onDownvoteClicked={() => this.props.downvotePost(p.slug)}
+              isLoggedIn={this.props.users.isAuthenticated}
+              {...p}
+            />
+          ))
+        )}
       </Layout>
     );
   }
@@ -62,7 +132,8 @@ export class MemberPage extends React.Component<MemberPageProps, any> {
 function mapActionCreatorsToProps(dispatch: any) {
   return bindActionCreators(
     {
-      ...usersOperators
+      ...usersOperators,
+      ...forumOperators
     },
     dispatch
   );
