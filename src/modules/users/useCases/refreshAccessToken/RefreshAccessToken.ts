@@ -1,9 +1,9 @@
 import { Either, Result, left, right } from "../../../../shared/core/Result";
-import { JWTToken, RefreshToken } from "../../domain/jwt";
 
 import { AppError } from "../../../../shared/core/AppError";
 import { IAuthService } from "../../services/authService";
 import { IUserRepo } from "../../repos/userRepo";
+import { JWTToken } from "../../domain/jwt";
 import { RefreshAccessTokenDTO } from "./RefreshAccessTokenDTO";
 import { RefreshAccessTokenErrors } from "./RefreshAccessTokenErrors";
 import { UseCase } from "../../../../shared/core/UseCase";

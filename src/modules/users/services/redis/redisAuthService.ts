@@ -172,6 +172,13 @@ export class RedisAuthService
     return keyValues.map((kv) => kv.value);
   }
 
+  public async getRefreshToken(username: string) {
+    const keys = await this.findKeysByPattern(
+      `*${this.jwtHashName}.${username}`
+    );
+    return keys[0].match(/refresh-(.+?)\./)[1];
+  }
+
   /**
    * @method getToken
    * @desc Gets a single token for the user.

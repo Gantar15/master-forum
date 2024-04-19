@@ -36,9 +36,8 @@ userRouter.get("/oauth/google/callback", (req, res) =>
 );
 
 userRouter.post("/oauth/google/tokens", async (req, res) => {
-  const [accessToken, refreshToken] = await authService.getTokens(
-    req.body.username
-  );
+  const [accessToken] = await authService.getTokens(req.body.username);
+  const refreshToken = await authService.getRefreshToken(req.body.username);
   return res.status(200).json({
     accessToken,
     refreshToken,
