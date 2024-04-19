@@ -18,7 +18,7 @@
       opacity: 1;
     }
 
-    &:nth-child(1) {
+    &:nth-last-of-type(n+2) {
       border-right: solid 2px black;
 
       padding-right: 1rem;

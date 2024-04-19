@@ -2,7 +2,7 @@ import '../styles/UserSections.scss';
 
 import React from 'react';
 
-export type UserSectionType = 'POSTS' | 'VOTES';
+export type UserSectionType = 'POSTS' | 'VOTES' | 'COMMENTS';
 
 interface FilterProps {
   activeFilter: UserSectionType;
@@ -39,6 +39,12 @@ const UserSections: React.FC<UserSectionProps> = (props) => (
       activeFilter={props.activeFilter}
       filterType={'VOTES'}
       text="Votes"
+      onClick={props.onClick}
+    />
+    <Filter
+      activeFilter={props.activeFilter}
+      filterType={'COMMENTS'}
+      text="Comments"
       onClick={props.onClick}
     />
   </div>

@@ -1,10 +1,12 @@
+import './styles/member.scss';
+
 import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
 import { BackNavigation } from '../shared/components/header';
-import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
 import { Loader } from '../shared/components/loader';
+import MemberIcon from '../assets/img/member-icon.png';
 import { Post } from '../modules/forum/models/Post';
 import { PostRow } from '../modules/forum/components/posts/postRow';
 import { ProfileButton } from '../modules/users/components/profileButton';
@@ -45,6 +47,18 @@ export class MemberPage extends React.Component<
   }
 
   componentDidMount(): void {
+    this.getUserPosts();
+  }
+
+  componentDidUpdate(
+    prevProps: Readonly<MemberPageProps>,
+    prevState: Readonly<MemberPageState>
+  ) {
+    if (prevProps.match.params.username === this.getUserName()) return;
+    this.getUserPosts();
+  }
+
+  getUserPosts() {
     const username = this.getUserName();
     this.setState({
       isPostsLoading: true
@@ -92,17 +106,11 @@ export class MemberPage extends React.Component<
             onLogout={() => this.props.logout()}
           />
         </div>
-        <Header
-          user={
-            'username' in this.props.users.user
-              ? this.props.users.user
-              : undefined
-          }
-          title={'Member'}
-          subtitle=""
-        />
         <br />
-        <h2>{username}</h2>
+        <div className="member__presentation">
+          <img src={MemberIcon} alt="Member icon" />
+          <h2>{username}</h2>
+        </div>
 
         <UserSections
           activeFilter={this.state.activeUserSection}
