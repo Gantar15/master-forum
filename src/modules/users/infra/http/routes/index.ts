@@ -21,7 +21,7 @@ const userRouter = express.Router();
 userRouter.get("/oauth/google/", (req, res) => {
   const params = {
     client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
-    redirect_uri: `${process.env.APP_URL}:${process.env.PORT}/api/v1/users/oauth/google/callback`,
+    redirect_uri: `${process.env.APP_URL}/api/v1/users/oauth/google/callback`,
     scope:
       "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
     response_type: "code",
