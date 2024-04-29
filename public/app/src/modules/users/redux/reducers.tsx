@@ -89,7 +89,10 @@ export default function users(
           const index = users.findIndex(
             (user) => user.userId === action.userId
           );
-          users.splice(index, 1);
+          users.splice(index, 1, {
+            ...users[index],
+            isDeleted: true
+          });
           return users;
         })()
       };
@@ -97,6 +100,64 @@ export default function users(
       return {
         ...state,
         ...ReduxUtils.reportEventStatus('isDeleteUser', false),
+        error: action.error
+      };
+
+    case actions.BAN_USER:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isBanUser'),
+        error: ''
+      };
+    case actions.BAN_USER_SUCCESS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isBanUser', true),
+        users: (() => {
+          const users = [...state.users];
+          const index = users.findIndex(
+            (user) => user.userId === action.userId
+          );
+          users.splice(index, 1, {
+            ...users[index],
+            isBanned: true
+          });
+          return users;
+        })()
+      };
+    case actions.BAN_USER_FAILURE:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isBanUser', false),
+        error: action.error
+      };
+
+    case actions.UNBAN_USER:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isUnbanUser'),
+        error: ''
+      };
+    case actions.UNBAN_USER_SUCCESS:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isUnbanUser', true),
+        users: (() => {
+          const users = [...state.users];
+          const index = users.findIndex(
+            (user) => user.userId === action.userId
+          );
+          users.splice(index, 1, {
+            ...users[index],
+            isBanned: false
+          });
+          return users;
+        })()
+      };
+    case actions.UNBAN_USER_FAILURE:
+      return {
+        ...state,
+        ...ReduxUtils.reportEventStatus('isUnbanUser', false),
         error: action.error
       };
 

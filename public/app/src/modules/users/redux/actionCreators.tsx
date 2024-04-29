@@ -98,6 +98,50 @@ function deleteUserFailure(error: string): UsersAction & { error: string } {
   };
 }
 
+// ban user
+
+function banUser(): UsersAction {
+  return {
+    type: actions.BAN_USER
+  };
+}
+
+function banUserSuccess(userId: string): UsersAction & { userId: string } {
+  return {
+    type: actions.BAN_USER_SUCCESS,
+    userId
+  };
+}
+
+function banUserFailure(error: string): UsersAction & { error: string } {
+  return {
+    type: actions.BAN_USER_FAILURE,
+    error
+  };
+}
+
+// unban user
+
+function unbanUser(): UsersAction {
+  return {
+    type: actions.UNBAN_USER
+  };
+}
+
+function unbanUserSuccess(userId: string): UsersAction & { userId: string } {
+  return {
+    type: actions.UNBAN_USER_SUCCESS,
+    userId
+  };
+}
+
+function unbanUserFailure(error: string): UsersAction & { error: string } {
+  return {
+    type: actions.UNBAN_USER_FAILURE,
+    error
+  };
+}
+
 // get users
 
 function getUsers(): UsersAction {
@@ -215,6 +259,12 @@ export {
   deleteUser,
   deleteUserSuccess,
   deleteUserFailure,
+  banUser,
+  banUserSuccess,
+  banUserFailure,
+  unbanUser,
+  unbanUserSuccess,
+  unbanUserFailure,
   getUsers,
   getUsersSuccess,
   getUsersFailure,

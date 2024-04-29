@@ -6,4 +6,5 @@ export interface User {
   isAdminUser: boolean;
   isManagerUser: boolean;
   isDeleted?: boolean;
+  isBanned?: boolean;
 }

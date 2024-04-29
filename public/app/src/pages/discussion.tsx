@@ -343,6 +343,8 @@ class DiscussionPage extends React.Component<
               </div>
             ) : null}
 
+            <br />
+
             <h3>Leave a comment</h3>
             <div
               className="editor-container"

@@ -70,9 +70,14 @@ export class SequelizeUserRepo implements IUserRepo {
 
   async delete(userId: UserId): Promise<void> {
     const UserModel = this.models.BaseUser;
-    return UserModel.destroy({
-      where: { base_user_id: userId.getStringValue() },
-    });
+    return UserModel.update(
+      {
+        is_deleted: true,
+      },
+      {
+        where: { base_user_id: userId.getStringValue() },
+      }
+    );
   }
 
   async save(user: User): Promise<void> {

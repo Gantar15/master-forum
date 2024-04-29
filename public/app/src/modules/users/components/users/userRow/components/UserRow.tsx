@@ -14,6 +14,7 @@ type Props = {
   isAdminUser: boolean;
   isManagerUser: boolean;
   isDeleted?: boolean;
+  isBanned?: boolean;
 };
 
 const UserRow = ({ onAction, onUserClick, ...props }: Props) => {
@@ -40,12 +41,25 @@ const UserRow = ({ onAction, onUserClick, ...props }: Props) => {
                 : 'user'}
             </span>
           </p>
+          <p className="user-row__parameter user-row__is-email-verified">
+            email verification status:{' '}
+            <span>{props.isEmailVerified ? 'verified' : 'not verified'}</span>
+          </p>
+          <p className="user-row__parameter user-row__is-deleted">
+            status of existence:{' '}
+            <span>{props.isDeleted ? 'deleted' : 'exists'}</span>
+          </p>
+          <p className="user-row__parameter user-row__is-banned">
+            ban status: <span>{props.isBanned ? 'banned' : 'no ban'}</span>
+          </p>
         </div>
       </div>
-      <EntityActions
-        actions={['delete']}
-        onAction={(action) => onAction(action, props)}
-      />
+      {!props.isDeleted ? (
+        <EntityActions
+          actions={['delete', props.isBanned ? 'unban' : 'ban']}
+          onAction={(action) => onAction(action, props)}
+        />
+      ) : null}
     </div>
   );
 };

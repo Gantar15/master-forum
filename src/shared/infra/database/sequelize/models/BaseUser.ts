@@ -38,6 +38,11 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: false,
       },
+      is_banned: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       username: {
         type: DataTypes.STRING(250),
         allowNull: false,

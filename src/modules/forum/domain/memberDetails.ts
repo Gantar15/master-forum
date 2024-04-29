@@ -9,6 +9,7 @@ interface MemberDetailsProps {
   isAdminUser?: boolean;
   isManagerUser?: boolean;
   isDeleted?: boolean;
+  isBanned?: boolean;
 }
 
 /**
@@ -36,6 +37,10 @@ export class MemberDetails extends ValueObject<MemberDetailsProps> {
     return this.props.isDeleted;
   }
 
+  get isBanned(): boolean {
+    return this.props.isBanned;
+  }
+
   private constructor(props: MemberDetailsProps) {
     super(props);
   }
@@ -56,6 +61,7 @@ export class MemberDetails extends ValueObject<MemberDetailsProps> {
         isAdminUser: props.isAdminUser ? props.isAdminUser : false,
         isManagerUser: props.isManagerUser ? props.isManagerUser : false,
         isDeleted: props.isDeleted ? props.isDeleted : false,
+        isBanned: props.isBanned ? props.isBanned : false,
       })
     );
   }

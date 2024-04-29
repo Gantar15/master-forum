@@ -147,6 +147,32 @@ export class UsersService extends BaseAPI implements IUsersService {
     }
   }
 
+  async banUser(userId: string): Promise<APIResponse<void>> {
+    try {
+      await this.patch(`/users/ban/${userId}`, null, null, {
+        authorization: this.authService.getToken('access-token')
+      });
+      return right(Result.ok<void>());
+    } catch (err) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
+  async unbanUser(userId: string): Promise<APIResponse<void>> {
+    try {
+      await this.patch(`/users/unban/${userId}`, null, null, {
+        authorization: this.authService.getToken('access-token')
+      });
+      return right(Result.ok<void>());
+    } catch (err) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
   async createCategory(category: string): Promise<APIResponse<void>> {
     try {
       await this.post(

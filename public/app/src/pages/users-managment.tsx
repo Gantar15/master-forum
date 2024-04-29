@@ -104,6 +104,10 @@ class UsersManagmentPage extends React.Component<
         isDeleteModalOpen: !state.isDeleteModalOpen,
         userToDelete: user
       }));
+    } else if (action === 'ban') {
+      this.props.banUser(user.userId);
+    } else if (action === 'unban') {
+      this.props.unbanUser(user.userId);
     }
   }
 
@@ -173,6 +177,54 @@ class UsersManagmentPage extends React.Component<
     }
   }
 
+  afterSuccessfulBan(prevProps: UsersManagmentPageProps) {
+    const currentProps: UsersManagmentPageProps = this.props;
+    if (
+      currentProps.users.isBanUserSuccess === !prevProps.users.isBanUserSuccess
+    ) {
+      toast.success(`Done-zo! 🤠`, {
+        autoClose: 2000
+      });
+    }
+  }
+
+  afterFailedBan(prevProps: UsersManagmentPageProps) {
+    const currentProps: UsersManagmentPageProps = this.props;
+    if (
+      currentProps.users.isBanUserFailure === !prevProps.users.isBanUserFailure
+    ) {
+      const error: string = currentProps.users.error;
+      return toast.error(`Yeahhhhh, ${error} 🤠`, {
+        autoClose: 3000
+      });
+    }
+  }
+
+  afterSuccessfulUnban(prevProps: UsersManagmentPageProps) {
+    const currentProps: UsersManagmentPageProps = this.props;
+    if (
+      currentProps.users.isUnbanUserSuccess ===
+      !prevProps.users.isUnbanUserSuccess
+    ) {
+      toast.success(`Done-zo! 🤠`, {
+        autoClose: 2000
+      });
+    }
+  }
+
+  afterFailedUnban(prevProps: UsersManagmentPageProps) {
+    const currentProps: UsersManagmentPageProps = this.props;
+    if (
+      currentProps.users.isUnbanUserFailure ===
+      !prevProps.users.isUnbanUserFailure
+    ) {
+      const error: string = currentProps.users.error;
+      return toast.error(`Yeahhhhh, ${error} 🤠`, {
+        autoClose: 3000
+      });
+    }
+  }
+
   async onSubmit() {
     if (this.isFormValid()) {
       const { email, username, role, password } = this.state;
@@ -193,6 +245,10 @@ class UsersManagmentPage extends React.Component<
     this.afterFailedDelete(prevProps);
     this.afterSuccessfulCreate(prevProps);
     this.afterFailedCreate(prevProps);
+    this.afterSuccessfulBan(prevProps);
+    this.afterFailedBan(prevProps);
+    this.afterSuccessfulUnban(prevProps);
+    this.afterFailedUnban(prevProps);
   }
 
   componentDidMount() {

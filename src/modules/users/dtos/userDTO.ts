@@ -7,4 +7,5 @@ export interface UserDTO {
   isAdminUser?: boolean;
   isManagerUser?: boolean;
   isDeleted?: boolean;
+  isBanned?: boolean;
 }

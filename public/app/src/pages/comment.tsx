@@ -14,7 +14,6 @@ import { Layout } from '../shared/layout';
 import ModalWindow from '../shared/components/modal-window/components/ModalWindow';
 import NotFound from '../shared/components/not-found/components/NotFound';
 import PointHover from '../modules/forum/components/posts/points/components/PointHover';
-import { Post } from '../modules/forum/models/Post';
 import PostComment from '../modules/forum/components/posts/post/components/PostComment';
 import PostCommentAuthorAndText from '../modules/forum/components/posts/post/components/PostCommentAuthorAndText';
 import { ProfileButton } from '../modules/users/components/profileButton';

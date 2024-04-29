@@ -1,3 +1,4 @@
+import { banUser } from './banUser';
 import { createCategory } from './createCategory';
 import { createUser } from './createUser';
 import { deleteCategory } from './deleteCategory';
@@ -8,6 +9,7 @@ import { getUsers } from './getUsers';
 import { login } from './login';
 import { logout } from './logout';
 import { oauthPulluser } from './oauthPulluser';
+import { unbanUser } from './unbanUser';
 
 export interface IUserOperators {
   getUserProfile(): void;
@@ -21,6 +23,8 @@ export interface IUserOperators {
     role?: 'admin' | 'manager'
   ): void;
   deleteUser(userId: string): void;
+  banUser(userId: string): void;
+  unbanUser(userId: string): void;
   getUsers(): void;
   createCategory(category: string): void;
   deleteCategory(category: string): void;
@@ -34,6 +38,8 @@ export {
   oauthPulluser,
   createUser,
   deleteUser,
+  banUser,
+  unbanUser,
   getUsers,
   createCategory,
   deleteCategory,

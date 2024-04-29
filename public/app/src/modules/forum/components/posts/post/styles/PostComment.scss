@@ -12,6 +12,14 @@
     width: 100%;
   }
 
+  &-text {
+    font-weight: normal;
+
+    img {
+      max-width: 100%;
+    }
+  }
+
   .post-comment {
     background: white;
 
@@ -35,10 +43,8 @@
     .comment-text {
       font-weight: normal;
 
-      >b {
-        img {
-          max-width: 100%;
-        }
+      img {
+        max-width: 100%;
       }
     }
 

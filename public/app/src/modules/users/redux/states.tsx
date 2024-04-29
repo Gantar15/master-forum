@@ -13,6 +13,14 @@ export interface UsersState {
   isDeleteUserSuccess: boolean;
   isDeleteUserFailure: boolean;
 
+  isBanUser: boolean;
+  isBanUserSuccess: boolean;
+  isBanUserFailure: boolean;
+
+  isUnbanUser: boolean;
+  isUnbanUserSuccess: boolean;
+  isUnbanUserFailure: boolean;
+
   isCreateCategory: boolean;
   isCreateCategorySuccess: boolean;
   isCreateCategoryFailure: boolean;
@@ -57,6 +65,14 @@ const initialUserState: UsersState = {
   isDeleteUser: false,
   isDeleteUserSuccess: false,
   isDeleteUserFailure: false,
+
+  isBanUser: false,
+  isBanUserSuccess: false,
+  isBanUserFailure: false,
+
+  isUnbanUser: false,
+  isUnbanUserSuccess: false,
+  isUnbanUserFailure: false,
 
   isCreateCategory: false,
   isCreateCategorySuccess: false,

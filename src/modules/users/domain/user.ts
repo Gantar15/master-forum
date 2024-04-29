@@ -23,6 +23,7 @@ interface UserProps {
   accessToken?: JWTToken;
   refreshToken?: RefreshToken;
   isDeleted?: boolean;
+  isBanned?: boolean;
   lastLogin?: Date;
 }
 
@@ -49,6 +50,10 @@ export class User extends AggregateRoot<UserProps> {
 
   get isDeleted(): boolean {
     return this.props.isDeleted;
+  }
+
+  get isBanned(): boolean {
+    return this.props.isBanned;
   }
 
   get isEmailVerified(): boolean {
@@ -97,6 +102,18 @@ export class User extends AggregateRoot<UserProps> {
     }
   }
 
+  public ban(): void {
+    if (!this.props.isBanned) {
+      this.props.isBanned = true;
+    }
+  }
+
+  public unban(): void {
+    if (this.props.isBanned) {
+      this.props.isBanned = false;
+    }
+  }
+
   private constructor(props: UserProps, id?: UniqueEntityID) {
     super(props, id);
   }
@@ -116,6 +133,7 @@ export class User extends AggregateRoot<UserProps> {
       {
         ...props,
         isDeleted: props.isDeleted ? props.isDeleted : false,
+        isBanned: props.isBanned ? props.isBanned : false,
         isEmailVerified: props.isEmailVerified ? props.isEmailVerified : false,
         isAdminUser: props.isAdminUser ? props.isAdminUser : false,
         isManagerUser: props.isManagerUser ? props.isManagerUser : false,

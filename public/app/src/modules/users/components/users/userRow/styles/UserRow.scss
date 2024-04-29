@@ -16,9 +16,11 @@
     }
 
     &__info {
-        margin-top: 5px;
+        margin-top: 10px;
+        column-gap: 20px;
+        row-gap: 5px;
+        flex-direction: column;
         display: flex;
-        column-gap: 15px;
     }
 
     &__parameter {

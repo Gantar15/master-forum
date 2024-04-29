@@ -16,6 +16,7 @@ export class UserMap implements Mapper<User> {
       isAdminUser: user.isAdminUser,
       isManagerUser: user.isManagerUser,
       isDeleted: user.isDeleted,
+      isBanned: user.isBanned,
       email: user.email.value,
     };
   }
@@ -34,6 +35,7 @@ export class UserMap implements Mapper<User> {
         isAdminUser: raw.is_admin_user,
         isManagerUser: raw.is_manager_user,
         isDeleted: raw.is_deleted,
+        isBanned: raw.is_banned,
         isEmailVerified: raw.is_email_verified,
         emailVerificationCode: raw.email_verification_code,
         password: userPasswordOrError.getValue(),
@@ -67,6 +69,7 @@ export class UserMap implements Mapper<User> {
       is_admin_user: user.isAdminUser,
       is_manager_user: user.isManagerUser,
       is_deleted: user.isDeleted,
+      is_banned: user.isBanned,
     };
   }
 }
