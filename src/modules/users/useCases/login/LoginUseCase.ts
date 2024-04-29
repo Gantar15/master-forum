@@ -15,6 +15,8 @@ type Response = Either<
   | LoginUseCaseErrors.PasswordDoesntMatchError
   | LoginUseCaseErrors.UserNameDoesntExistError
   | LoginUseCaseErrors.NotVerifiedEmailError
+  | LoginUseCaseErrors.UserWasDeletedError
+  | LoginUseCaseErrors.UserWasBannedError
   | AppError.UnexpectedError,
   Result<LoginDTOResponse>
 >;
@@ -49,6 +51,14 @@ export class LoginUserUseCase implements UseCase<LoginDTO, Promise<Response>> {
         user = await this.userRepo.getUserByUserName(userName);
       } catch (err) {
         return left(new LoginUseCaseErrors.UserNameDoesntExistError());
+      }
+
+      if (user.isDeleted) {
+        return left(new LoginUseCaseErrors.UserWasDeletedError());
+      }
+
+      if (user.isBanned) {
+        return left(new LoginUseCaseErrors.UserWasBannedError());
       }
 
       if (!user.isEmailVerified) {

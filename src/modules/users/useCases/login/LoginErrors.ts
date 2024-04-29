@@ -21,7 +21,15 @@ export namespace LoginUseCaseErrors {
   export class UserWasDeletedError extends Result<UseCaseError> {
     constructor() {
       super(false, {
-        message: `Sorry, but this user was blocked.`,
+        message: `Sorry, but this user was deleted.`,
+      } as UseCaseError);
+    }
+  }
+
+  export class UserWasBannedError extends Result<UseCaseError> {
+    constructor() {
+      super(false, {
+        message: `Sorry, but this user was banned.`,
       } as UseCaseError);
     }
   }
