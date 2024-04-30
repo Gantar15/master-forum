@@ -202,6 +202,18 @@ export class PostRepo implements IPostRepo {
     return posts.map((p) => PostDetailsMap.toDomain(p));
   }
 
+  public async getPostsWithVotesByMemberId(memberId: MemberId) {
+    const PostModel = this.models.Post;
+    const detailsQuery = this.createBaseDetailsQuery();
+    detailsQuery.include.push({
+      model: this.models.PostVote,
+      as: "Votes",
+      where: { member_id: memberId.getStringValue() },
+    });
+    const posts = await PostModel.findAll(detailsQuery);
+    return posts.map((p) => PostDetailsMap.toDomain(p));
+  }
+
   public async getPostBySlug(slug: string): Promise<Post> {
     const post = await this.getPostRawBySlug(slug);
     return PostMap.toDomain(post);

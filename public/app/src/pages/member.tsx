@@ -4,6 +4,7 @@ import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
 import { BackNavigation } from '../shared/components/header';
+import { Comment } from '../modules/forum/models/Comment';
 import { Layout } from '../shared/layout';
 import { Loader } from '../shared/components/loader';
 import MemberIcon from '../assets/img/member-icon.png';
@@ -29,7 +30,11 @@ interface MemberPageProps
 
 interface MemberPageState {
   posts: Post[];
+  votesPosts: Post[];
+  comments: Comment[];
   isPostsLoading: boolean;
+  isVotesLoading: boolean;
+  isCommentsLoading: boolean;
   activeUserSection: UserSectionType;
 }
 
@@ -41,7 +46,11 @@ export class MemberPage extends React.Component<
     super(props);
     this.state = {
       posts: [],
+      votesPosts: [],
+      comments: [],
       isPostsLoading: false,
+      isVotesLoading: false,
+      isCommentsLoading: false,
       activeUserSection: 'POSTS'
     };
   }
@@ -54,8 +63,29 @@ export class MemberPage extends React.Component<
     prevProps: Readonly<MemberPageProps>,
     prevState: Readonly<MemberPageState>
   ) {
+    this.afterUserChange(prevProps);
+    this.afterUserSectionChange(prevState);
+  }
+
+  afterUserChange(prevProps: Readonly<MemberPageProps>) {
     if (prevProps.match.params.username === this.getUserName()) return;
     this.getUserPosts();
+  }
+
+  afterUserSectionChange(prevState: Readonly<MemberPageState>) {
+    if (prevState.activeUserSection === this.state.activeUserSection) return;
+
+    switch (this.state.activeUserSection) {
+      case 'POSTS':
+        this.getUserPosts();
+        break;
+      case 'VOTES':
+        this.getUserVotes();
+        break;
+      case 'COMMENTS':
+        this.getUserComments();
+        break;
+    }
   }
 
   getUserPosts() {
@@ -76,6 +106,42 @@ export class MemberPage extends React.Component<
         posts,
         isPostsLoading: false
       });
+    });
+  }
+
+  getUserVotes() {
+    const username = this.getUserName();
+    this.setState({
+      isVotesLoading: true
+    });
+    postService.getVotesByUser(username).then((response) => {
+      if (response.isLeft()) {
+        this.setState({
+          isVotesLoading: false
+        });
+        return;
+      }
+
+      const votesPosts = response.value.getValue();
+      this.setState({
+        votesPosts,
+        isVotesLoading: false
+      });
+    });
+  }
+
+  getUserComments() {
+    const username = this.getUserName();
+    this.setState({
+      isCommentsLoading: true
+    });
+    postService.getCommentsByUser(username).then((response) => {
+      if (response.isLeft()) {
+        this.setState({
+          isCommentsLoading: false
+        });
+        return;
+      }
     });
   }
 
@@ -117,21 +183,41 @@ export class MemberPage extends React.Component<
           onClick={(section) => this.setActiveUserSection(section)}
         />
 
-        {this.state.isPostsLoading ? (
-          <Loader />
-        ) : (
-          this.state.posts.map((p, i) => (
-            <PostRow
-              key={i}
-              isDownvoted={p.wasDownvotedByMe}
-              isUpvoted={p.wasUpvotedByMe}
-              onUpvoteClicked={() => this.props.upvotePost(p.slug)}
-              onDownvoteClicked={() => this.props.downvotePost(p.slug)}
-              isLoggedIn={this.props.users.isAuthenticated}
-              {...p}
-            />
-          ))
-        )}
+        {this.state.activeUserSection === 'POSTS' ? (
+          this.state.isPostsLoading ? (
+            <Loader />
+          ) : (
+            this.state.posts.map((p) => (
+              <PostRow
+                key={p.slug}
+                isDownvoted={p.wasDownvotedByMe}
+                isUpvoted={p.wasUpvotedByMe}
+                onUpvoteClicked={() => this.props.upvotePost(p.slug)}
+                onDownvoteClicked={() => this.props.downvotePost(p.slug)}
+                isLoggedIn={this.props.users.isAuthenticated}
+                {...p}
+              />
+            ))
+          )
+        ) : null}
+
+        {this.state.activeUserSection === 'VOTES' ? (
+          this.state.isVotesLoading ? (
+            <Loader />
+          ) : (
+            this.state.votesPosts.map((p) => (
+              <PostRow
+                key={p.slug}
+                isDownvoted={p.wasDownvotedByMe}
+                isUpvoted={p.wasUpvotedByMe}
+                onUpvoteClicked={() => this.props.upvotePost(p.slug)}
+                onDownvoteClicked={() => this.props.downvotePost(p.slug)}
+                isLoggedIn={this.props.users.isAuthenticated}
+                {...p}
+              />
+            ))
+          )
+        ) : null}
       </Layout>
     );
   }

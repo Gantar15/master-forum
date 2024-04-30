@@ -17,6 +17,7 @@ export interface IPostRepo {
     memberId?: MemberId
   ): Promise<PostDetails[]>;
   getPostsByMemberId(memberId: MemberId): Promise<PostDetails[]>;
+  getPostsWithVotesByMemberId(memberId: MemberId): Promise<PostDetails[]>;
   getNumberOfCommentsByPostId(postId: PostId | string): Promise<number>;
   getPostByPostId(postId: PostId | string): Promise<Post>;
   getPostByTitle(postTitle: PostTitle): Promise<Post>;

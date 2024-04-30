@@ -135,6 +135,48 @@ export class PostService extends BaseAPI implements IPostService {
     }
   }
 
+  async getVotesByUser(username: string): Promise<APIResponse<Post[]>> {
+    try {
+      const response = await this.get('/posts/votes', { username });
+
+      return right(
+        Result.ok<Post[]>(
+          response.data.posts.map((p: PostDTO) => PostUtil.toViewModel(p))
+        )
+      );
+    } catch (err: any) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
+  async getCommentsByUser(username: string): Promise<APIResponse<Post[]>> {
+    try {
+      const accessToken = this.authService.getToken('access-token');
+      const isAuthenticated = !!accessToken === true;
+      const auth = {
+        authorization: accessToken
+      };
+
+      const response = await this.get(
+        '/posts/user',
+        { username },
+        isAuthenticated ? auth : null
+      );
+
+      return right(
+        Result.ok<Post[]>(
+          response.data.posts.map((p: PostDTO) => PostUtil.toViewModel(p))
+        )
+      );
+    } catch (err: any) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
   async searchPosts(searchString: string): Promise<APIResponse<Post[]>> {
     try {
       const accessToken = this.authService.getToken('access-token');

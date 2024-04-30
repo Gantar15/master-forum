@@ -1,5 +1,4 @@
 import { authService } from "../../../services";
-import axios from "axios";
 import { banUserController } from "../../../useCases/banUser";
 import { createUserController } from "../../../useCases/createUser";
 import { deleteUserController } from "../../../useCases/deleteUser";

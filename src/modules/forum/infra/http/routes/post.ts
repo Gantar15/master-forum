@@ -8,6 +8,7 @@ import { getPostBySlugController } from "../../../useCases/post/getPostBySlug";
 import { getPostsByCategoryController } from "../../../useCases/post/getPostsByCategory";
 import { getPostsByUserController } from "../../../useCases/post/getPostsByUser";
 import { getRecentPostsController } from "../../../useCases/post/getRecentPosts";
+import { getVotesByUserController } from "../../../useCases/post/getVotesByUser";
 import { middleware } from "../../../../../shared/infra/http";
 import { searchPostsController } from "../../../useCases/post/searchPosts";
 import { upvotePostController } from "../../../useCases/post/upvotePost";
@@ -38,6 +39,10 @@ postRouter.get(
 
 postRouter.get("/user", (req, res) =>
   getPostsByUserController.execute(req, res)
+);
+
+postRouter.get("/votes", (req, res) =>
+  getVotesByUserController.execute(req, res)
 );
 
 postRouter.get(
