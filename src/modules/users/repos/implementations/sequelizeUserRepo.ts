@@ -62,6 +62,7 @@ export class SequelizeUserRepo implements IUserRepo {
     const baseUsers = await BaseUserModel.findAll({
       where: {
         is_admin_user: false,
+        is_deleted: false,
       },
       order: [["created_at", "DESC"]],
     });
