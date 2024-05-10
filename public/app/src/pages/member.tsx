@@ -9,6 +9,7 @@ import { Layout } from '../shared/layout';
 import { Loader } from '../shared/components/loader';
 import MemberIcon from '../assets/img/member-icon.png';
 import { Post } from '../modules/forum/models/Post';
+import PostComment from '../modules/forum/components/posts/post/components/PostComment';
 import { PostRow } from '../modules/forum/components/posts/postRow';
 import { ProfileButton } from '../modules/users/components/profileButton';
 import React from 'react';
@@ -142,6 +143,12 @@ export class MemberPage extends React.Component<
         });
         return;
       }
+
+      const comments = response.value.getValue();
+      this.setState({
+        comments,
+        isCommentsLoading: false
+      });
     });
   }
 
@@ -210,12 +217,35 @@ export class MemberPage extends React.Component<
                 key={p.slug}
                 isDownvoted={p.wasDownvotedByMe}
                 isUpvoted={p.wasUpvotedByMe}
-                onUpvoteClicked={() => this.props.upvotePost(p.slug)}
-                onDownvoteClicked={() => this.props.downvotePost(p.slug)}
                 isLoggedIn={this.props.users.isAuthenticated}
                 {...p}
               />
             ))
+          )
+        ) : null}
+
+        {this.state.activeUserSection === 'COMMENTS' ? (
+          this.state.isCommentsLoading ? (
+            <Loader />
+          ) : (
+            <>
+              <br />
+              {this.state.comments.map((c) => (
+                <PostComment
+                  {...c}
+                  key={c.commentId}
+                  isDownvoted={c.wasDownvotedByMe}
+                  isUpvoted={c.wasUpvotedByMe}
+                  onDownvoteClicked={this.props.downvoteComment}
+                  onUpvoteClicked={this.props.upvoteComment}
+                  loggedInUser={
+                    'username' in this.props.users.user
+                      ? this.props.users.user
+                      : undefined
+                  }
+                />
+              ))}
+            </>
           )
         ) : null}
       </Layout>

@@ -3,6 +3,9 @@ import { left, right } from '../../../shared/core/Either';
 
 import { APIResponse } from '../../../shared/infra/services/APIResponse';
 import { BaseAPI } from '../../../shared/infra/services/BaseAPI';
+import { Comment } from '../models/Comment';
+import { CommentDTO } from '../dtos/commentDTO';
+import { CommentUtil } from '../utils/CommentUtil';
 import { IAuthService } from '../../users/services/authService';
 import { PostDTO } from '../dtos/postDTO';
 import { PostUtil } from '../utils/PostUtil';
@@ -151,23 +154,15 @@ export class PostService extends BaseAPI implements IPostService {
     }
   }
 
-  async getCommentsByUser(username: string): Promise<APIResponse<Post[]>> {
+  async getCommentsByUser(username: string): Promise<APIResponse<Comment[]>> {
     try {
-      const accessToken = this.authService.getToken('access-token');
-      const isAuthenticated = !!accessToken === true;
-      const auth = {
-        authorization: accessToken
-      };
-
-      const response = await this.get(
-        '/posts/user',
-        { username },
-        isAuthenticated ? auth : null
-      );
+      const response = await this.get('/comments/user', { username });
 
       return right(
-        Result.ok<Post[]>(
-          response.data.posts.map((p: PostDTO) => PostUtil.toViewModel(p))
+        Result.ok<Comment[]>(
+          response.data.comments.map((c: CommentDTO) =>
+            CommentUtil.toViewModel(c)
+          )
         )
       );
     } catch (err: any) {

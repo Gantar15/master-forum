@@ -4,6 +4,7 @@ import { editCommentController } from "../../../useCases/comments/editComment";
 import express from "express";
 import { getCommentByCommentIdController } from "../../../useCases/comments/getCommentByCommentId";
 import { getCommentsByPostSlugController } from "../../../useCases/comments/getCommentsByPostSlug";
+import { getCommentsByUserController } from "../../../useCases/comments/getCommentsByUser";
 import { middleware } from "../../../../../shared/infra/http";
 import { replyToCommentController } from "../../../useCases/comments/replyToComment";
 import { replyToPostController } from "../../../useCases/comments/replyToPost";
@@ -17,6 +18,12 @@ commentRouter.get("/", middleware.includeDecodedTokenIfExists(), (req, res) =>
 
 commentRouter.post("/", middleware.ensureAuthenticated(), (req, res) =>
   replyToPostController.execute(req, res)
+);
+
+commentRouter.get(
+  "/user",
+  middleware.includeDecodedTokenIfExists(),
+  (req, res) => getCommentsByUserController.execute(req, res)
 );
 
 commentRouter.post(

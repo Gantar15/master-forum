@@ -6,11 +6,11 @@ import PostMeta from '../../post/components/PostMeta';
 import React from 'react';
 
 interface PostRowProps extends Post {
-  onUpvoteClicked: () => void;
-  onDownvoteClicked: () => void;
+  onUpvoteClicked?: () => void;
+  onDownvoteClicked?: () => void;
   isLoggedIn: boolean;
-  isDownvoted: boolean;
-  isUpvoted: boolean;
+  isDownvoted?: boolean;
+  isUpvoted?: boolean;
 }
 
 const PostRow: React.FC<PostRowProps> = (props) => (
@@ -18,8 +18,8 @@ const PostRow: React.FC<PostRowProps> = (props) => (
     <Points
       isDownvoted={props.isDownvoted}
       isUpvoted={props.isUpvoted}
-      onUpvoteClicked={() => props.onUpvoteClicked()}
-      onDownvoteClicked={() => props.onDownvoteClicked()}
+      onUpvoteClicked={() => props.onUpvoteClicked?.()}
+      onDownvoteClicked={() => props.onDownvoteClicked?.()}
       points={props.points}
       isLoggedIn={props.isLoggedIn}
     />
