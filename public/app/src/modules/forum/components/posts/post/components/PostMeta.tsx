@@ -5,8 +5,10 @@ import { Post } from '../../../../models/Post';
 import React from 'react';
 import moment from 'moment';
 
-interface PostMetaProps extends Post {
+interface PostMetaProps extends Omit<Post, 'category' | 'tags'> {
   includeLink?: boolean;
+  tags?: Post['tags'];
+  category?: Post['category'];
 }
 
 const PostMeta: React.FC<PostMetaProps> = (props) => (
@@ -24,16 +26,20 @@ const PostMeta: React.FC<PostMetaProps> = (props) => (
       {`${props.numComments} comments`}
     </div>
     <div className="post-row-classification">
-      <Link
-        className="post-row-classification__category"
-        to={`/category/${props.category}`}
-      >
-        {props.category}
-      </Link>
-      <div className="post-row-classification__tags">
-        {props.tags?.length > 0 &&
-          props.tags.map((tag) => <div key={tag}>#{tag}</div>)}
-      </div>
+      {props.category ? (
+        <Link
+          className="post-row-classification__category"
+          to={`/category/${props.category}`}
+        >
+          {props.category}
+        </Link>
+      ) : null}
+      {props.tags ? (
+        <div className="post-row-classification__tags">
+          {props.tags?.length > 0 &&
+            props.tags.map((tag) => <div key={tag}>#{tag}</div>)}
+        </div>
+      ) : null}
     </div>
   </div>
 );

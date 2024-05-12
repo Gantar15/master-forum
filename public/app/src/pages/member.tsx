@@ -17,6 +17,7 @@ import { User } from '../modules/users/models/user';
 import { UserSectionType } from '../modules/users/components/users/filters/components/UserSections';
 import { UserSections } from '../modules/users/components/users/filters';
 import { UsersState } from '../modules/users/redux/states';
+import { VoteRow } from '../modules/forum/components/votes/voteRow';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { postService } from '../modules/forum/services';
@@ -71,6 +72,8 @@ export class MemberPage extends React.Component<
   afterUserChange(prevProps: Readonly<MemberPageProps>) {
     if (prevProps.match.params.username === this.getUserName()) return;
     this.getUserPosts();
+    this.getUserVotes();
+    this.getUserComments();
   }
 
   afterUserSectionChange(prevState: Readonly<MemberPageState>) {
@@ -213,11 +216,10 @@ export class MemberPage extends React.Component<
             <Loader />
           ) : (
             this.state.votesPosts.map((p) => (
-              <PostRow
+              <VoteRow
                 key={p.slug}
                 isDownvoted={p.wasDownvotedByMe}
                 isUpvoted={p.wasUpvotedByMe}
-                isLoggedIn={this.props.users.isAuthenticated}
                 {...p}
               />
             ))

@@ -2,8 +2,8 @@ import '../styles/Point.scss';
 
 import PointHover from './PointHover';
 import React from 'react';
-import activeArrowSvg from '../assets/arrow-active.svg';
-import arrowSvg from '../assets/arrow.svg';
+import activeArrowSvg from '../../../../../../assets/img/arrow-active.svg';
+import arrowSvg from '../../../../../../assets/img/arrow.svg';
 
 interface PostPointsProps {
   isDownvoted?: boolean;
