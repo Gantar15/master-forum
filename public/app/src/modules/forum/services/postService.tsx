@@ -156,7 +156,17 @@ export class PostService extends BaseAPI implements IPostService {
 
   async getCommentsByUser(username: string): Promise<APIResponse<Comment[]>> {
     try {
-      const response = await this.get('/comments/user', { username });
+      const accessToken = this.authService.getToken('access-token');
+      const isAuthenticated = !!accessToken === true;
+      const auth = {
+        authorization: accessToken
+      };
+
+      const response = await this.get(
+        '/comments/user',
+        { username },
+        isAuthenticated ? auth : null
+      );
 
       return right(
         Result.ok<Comment[]>(

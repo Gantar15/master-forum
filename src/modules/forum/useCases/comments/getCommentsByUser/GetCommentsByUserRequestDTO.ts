@@ -1,3 +1,4 @@
 export interface GetCommentsByUserRequestDTO {
-  username?: string;
+  viewerUserId?: string;
+  authorUsername: string;
 }

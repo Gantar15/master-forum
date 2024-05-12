@@ -20,8 +20,11 @@ export class GetCommentsByUserController extends BaseController {
     res: express.Response
   ): Promise<any> {
     const dto: GetCommentsByUserRequestDTO = {
-      username: req.query.username,
+      authorUsername: req.query.username,
     };
+    if (req.decoded) {
+      dto.viewerUserId = req.decoded.userId;
+    }
 
     try {
       const result = await this.useCase.execute(dto);

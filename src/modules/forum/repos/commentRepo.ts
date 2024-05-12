@@ -10,7 +10,10 @@ export interface ICommentRepo {
     memberId?: MemberId,
     offset?: number
   ): Promise<CommentDetails[]>;
-  getCommentsDetailsByMemberId(memberId: MemberId): Promise<CommentDetails[]>;
+  getCommentsDetailsByMemberId(
+    authorId: MemberId,
+    viewerId?: MemberId
+  ): Promise<CommentDetails[]>;
   getCommentDetailsByCommentId(
     commentId: string,
     memberId?: MemberId

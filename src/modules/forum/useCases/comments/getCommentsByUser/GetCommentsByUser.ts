@@ -7,6 +7,7 @@ import { GetCommentsByUserRequestDTO } from "./GetCommentsByUserRequestDTO";
 import { ICommentRepo } from "../../../repos/commentRepo";
 import { IMemberRepo } from "../../../repos/memberRepo";
 import { Member } from "../../../domain/member";
+import { MemberId } from "../../../domain/memberId";
 import { UseCase } from "../../../../../shared/core/UseCase";
 
 type Response = Either<
@@ -24,25 +25,39 @@ export class GetCommentsByUser implements UseCase<any, Promise<Response>> {
   }
 
   public async execute(req: GetCommentsByUserRequestDTO): Promise<Response> {
-    let member: Member;
+    let authorMember: Member;
+    let viewerMember: Member;
+    let viewerId: MemberId | undefined = undefined;
     let comments: CommentDetails[];
-    const { username } = req;
+    const { authorUsername } = req;
 
     try {
-      member = await this.memberRepo.getMemberByUserName(username);
+      authorMember = await this.memberRepo.getMemberByUserName(authorUsername);
     } catch (err) {
-      return left(new GetCommentsByUserErrors.UserNotFoundError(username));
+      return left(
+        new GetCommentsByUserErrors.UserNotFoundError(authorUsername)
+      );
     }
-    const memberId = member.memberId;
+    const authorId = authorMember.memberId;
 
-    try {
+    if (req.viewerUserId) {
       try {
-        comments = await this.commentRepo.getCommentsDetailsByMemberId(
-          memberId
+        viewerMember = await this.memberRepo.getMemberByUserId(
+          req.viewerUserId
         );
       } catch (err) {
-        return left(new AppError.UnexpectedError(err));
+        return left(
+          new GetCommentsByUserErrors.UserNotFoundError(req.viewerUserId)
+        );
       }
+      viewerId = viewerMember.memberId;
+    }
+
+    try {
+      comments = await this.commentRepo.getCommentsDetailsByMemberId(
+        authorId,
+        viewerId
+      );
 
       return right(Result.ok<CommentDetails[]>(comments));
     } catch (err) {
