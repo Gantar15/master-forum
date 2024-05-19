@@ -180,6 +180,7 @@ class UsersManagmentPage extends React.Component<
   afterSuccessfulBan(prevProps: UsersManagmentPageProps) {
     const currentProps: UsersManagmentPageProps = this.props;
     if (
+      currentProps.users.isBanUserSuccess &&
       currentProps.users.isBanUserSuccess === !prevProps.users.isBanUserSuccess
     ) {
       toast.success(`Done-zo! 🤠`, {
@@ -203,8 +204,9 @@ class UsersManagmentPage extends React.Component<
   afterSuccessfulUnban(prevProps: UsersManagmentPageProps) {
     const currentProps: UsersManagmentPageProps = this.props;
     if (
+      currentProps.users.isUnbanUserSuccess &&
       currentProps.users.isUnbanUserSuccess ===
-      !prevProps.users.isUnbanUserSuccess
+        !prevProps.users.isUnbanUserSuccess
     ) {
       toast.success(`Done-zo! 🤠`, {
         autoClose: 2000

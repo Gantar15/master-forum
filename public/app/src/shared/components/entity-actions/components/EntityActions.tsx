@@ -25,46 +25,57 @@ const EntityActions: React.FC<EntityActionsProps> = ({
   return (
     <div className="entity-actions">
       {actions.includes('edit') && (
-        <img
-          width={width}
-          height={height}
-          src={editIcon}
-          alt="Edit"
-          onClick={() => onAction?.('edit')}
-          data-tip="Edit"
-        />
+        <>
+          <img
+            width={width}
+            height={height}
+            src={editIcon}
+            alt="Edit"
+            onClick={() => onAction?.('edit')}
+            data-tip="Edit"
+          />
+          <Tooltip />
+        </>
       )}
       {actions.includes('unban') && (
-        <img
-          width={width}
-          height={height}
-          src={unbanIcon}
-          alt="Unban"
-          onClick={() => onAction?.('unban')}
-          data-tip="Unban"
-        />
+        <>
+          <img
+            width={width}
+            height={height}
+            src={unbanIcon}
+            alt="Unban"
+            onClick={() => onAction?.('unban')}
+            data-tip="Unban"
+          />
+          <Tooltip />
+        </>
       )}
       {actions.includes('ban') && (
-        <img
-          width={width}
-          height={height}
-          src={banIcon}
-          alt="Ban"
-          onClick={() => onAction?.('ban')}
-          data-tip="Ban"
-        />
+        <>
+          <img
+            width={width}
+            height={height}
+            src={banIcon}
+            alt="Ban"
+            onClick={() => onAction?.('ban')}
+            data-tip="Ban"
+          />
+          <Tooltip />
+        </>
       )}
       {actions.includes('delete') && (
-        <img
-          width={width}
-          height={height}
-          src={deleteIcon}
-          alt="Delete"
-          onClick={() => onAction?.('delete')}
-          data-tip="Delete"
-        />
+        <>
+          <img
+            width={width}
+            height={height}
+            src={deleteIcon}
+            alt="Delete"
+            onClick={() => onAction?.('delete')}
+            data-tip="Delete"
+          />
+          <Tooltip />
+        </>
       )}
-      <Tooltip />
     </div>
   );
 };
