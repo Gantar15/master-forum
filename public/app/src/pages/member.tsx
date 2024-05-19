@@ -3,11 +3,15 @@ import './styles/member.scss';
 import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+
 import { BackNavigation } from '../shared/components/header';
 import { Comment } from '../modules/forum/models/Comment';
+import { ForumState } from '../modules/forum/redux/states';
 import { Layout } from '../shared/layout';
 import { Loader } from '../shared/components/loader';
 import MemberIcon from '../assets/img/member-icon.png';
+import ModalWindow from '../shared/components/modal-window/components/ModalWindow';
 import { Post } from '../modules/forum/models/Post';
 import PostComment from '../modules/forum/components/posts/post/components/PostComment';
 import { PostRow } from '../modules/forum/components/posts/postRow';
@@ -21,24 +25,31 @@ import { VoteRow } from '../modules/forum/components/votes/voteRow';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { postService } from '../modules/forum/services';
+import { toast } from 'react-toastify';
 import withLogoutHandling from '../modules/users/hocs/withLogoutHandling';
 
 interface MemberPageProps
   extends usersOperators.IUserOperators,
-    forumOperators.IForumOperations {
+    forumOperators.IForumOperations,
+    RouteComponentProps {
   match: any;
   users: UsersState;
+  forum: ForumState;
 }
 
 interface MemberPageState {
   posts: Post[];
   votesPosts: Post[];
-  comments: Comment[];
+  groupedComments: { [postTitle: string]: Comment[] };
+  commentToDelete?: Comment;
+  isDeleteCommentModalOpen: boolean;
   isPostsLoading: boolean;
   isVotesLoading: boolean;
   isCommentsLoading: boolean;
   activeUserSection: UserSectionType;
 }
+
+const SECTION_TYPE_KEY = 'section';
 
 export class MemberPage extends React.Component<
   MemberPageProps,
@@ -49,7 +60,9 @@ export class MemberPage extends React.Component<
     this.state = {
       posts: [],
       votesPosts: [],
-      comments: [],
+      groupedComments: {},
+      commentToDelete: undefined,
+      isDeleteCommentModalOpen: false,
       isPostsLoading: false,
       isVotesLoading: false,
       isCommentsLoading: false,
@@ -58,15 +71,24 @@ export class MemberPage extends React.Component<
   }
 
   componentDidMount(): void {
-    this.getUserPosts();
+    const query = new URLSearchParams(window.location.search);
+    const sectionType = query.get(SECTION_TYPE_KEY);
+    if (sectionType) {
+      this.setState({ activeUserSection: sectionType as UserSectionType });
+    }
+    if (sectionType === 'POSTS' || !sectionType) {
+      this.getUserPosts();
+    }
   }
 
   componentDidUpdate(
     prevProps: Readonly<MemberPageProps>,
     prevState: Readonly<MemberPageState>
   ) {
-    this.afterUserChange(prevProps);
     this.afterUserSectionChange(prevState);
+    this.afterUserChange(prevProps);
+    this.afterSuccessfulCommentDelete(prevProps);
+    this.afterFailedCommentDelete(prevProps);
   }
 
   afterUserChange(prevProps: Readonly<MemberPageProps>) {
@@ -89,6 +111,53 @@ export class MemberPage extends React.Component<
       case 'COMMENTS':
         this.getUserComments();
         break;
+    }
+  }
+
+  afterSuccessfulCommentDelete(prevProps: MemberPageProps) {
+    const currentProps: MemberPageProps = this.props;
+    if (
+      currentProps.forum.isDeleteCommentSuccess ===
+      !prevProps.forum.isDeleteCommentSuccess
+    ) {
+      this.getUserComments();
+      this.setState({
+        ...this.state,
+        isDeleteCommentModalOpen: false
+      });
+      toast.success(`Done-zo! 🤠`, {
+        autoClose: 2000
+      });
+    }
+  }
+
+  afterFailedCommentDelete(prevProps: MemberPageProps) {
+    const currentProps: MemberPageProps = this.props;
+    if (
+      currentProps.forum.isDeleteCommentFailure ===
+      !prevProps.forum.isDeleteCommentFailure
+    ) {
+      this.setState({
+        ...this.state,
+        isDeleteCommentModalOpen: false
+      });
+      const error: string = currentProps.forum.error;
+      return toast.error(`Yeahhhhh, ${error} 🤠`, {
+        autoClose: 3000
+      });
+    }
+  }
+
+  onCommentAction(action: string, comment: Comment) {
+    if (action === 'delete') {
+      this.setState((state) => ({
+        ...state,
+        isDeleteCommentModalOpen: !state.isDeleteCommentModalOpen,
+        commentToDelete: comment
+      }));
+    } else if (action === 'edit') {
+      this.props.setEditComment(comment);
+      this.props.history.push(`/comment/${comment.commentId}`);
     }
   }
 
@@ -148,8 +217,15 @@ export class MemberPage extends React.Component<
       }
 
       const comments = response.value.getValue();
+      const groupedComments = comments.reduce((acc, comment) => {
+        if (!acc[comment.postTitle]) {
+          acc[comment.postTitle] = [];
+        }
+        acc[comment.postTitle].push(comment);
+        return acc;
+      }, {} as MemberPageState['groupedComments']);
       this.setState({
-        comments,
+        groupedComments: groupedComments,
         isCommentsLoading: false
       });
     });
@@ -160,6 +236,9 @@ export class MemberPage extends React.Component<
   }
 
   setActiveUserSection(section: UserSectionType) {
+    const newQuery = new URLSearchParams();
+    newQuery.set(SECTION_TYPE_KEY, section);
+    this.props.history.push({ search: newQuery.toString() });
     this.setState({
       ...this.state,
       activeUserSection: section
@@ -170,6 +249,19 @@ export class MemberPage extends React.Component<
     const username = this.getUserName();
     return (
       <Layout>
+        <ModalWindow
+          title="Confirmation!"
+          text="Are you sure you want to delete this comment?"
+          isOpen={this.state.isDeleteCommentModalOpen}
+          onOk={() =>
+            this.props.deleteComment(
+              this.state.commentToDelete!.commentId,
+              this.state.commentToDelete!.postSlug
+            )
+          }
+          onCancel={() => this.setState({ isDeleteCommentModalOpen: false })}
+          okTitle="Yes, delete"
+        />
         <div className="header-container flex flex-row flex-center flex-between">
           <BackNavigation to={`/`} text={'Back to all discussions'} />
           <ProfileButton
@@ -197,17 +289,11 @@ export class MemberPage extends React.Component<
           this.state.isPostsLoading ? (
             <Loader />
           ) : (
-            this.state.posts.map((p) => (
-              <PostRow
-                key={p.slug}
-                isDownvoted={p.wasDownvotedByMe}
-                isUpvoted={p.wasUpvotedByMe}
-                onUpvoteClicked={() => this.props.upvotePost(p.slug)}
-                onDownvoteClicked={() => this.props.downvotePost(p.slug)}
-                isLoggedIn={this.props.users.isAuthenticated}
-                {...p}
-              />
-            ))
+            <div className="member__section">
+              {this.state.posts.map((p) => (
+                <PostRow key={p.slug} {...p} />
+              ))}
+            </div>
           )
         ) : null}
 
@@ -230,24 +316,39 @@ export class MemberPage extends React.Component<
           this.state.isCommentsLoading ? (
             <Loader />
           ) : (
-            <>
+            <div className="member__section">
               <br />
-              {this.state.comments.map((c) => (
-                <PostComment
-                  {...c}
-                  key={c.commentId}
-                  isDownvoted={c.wasDownvotedByMe}
-                  isUpvoted={c.wasUpvotedByMe}
-                  onDownvoteClicked={this.props.downvoteComment}
-                  onUpvoteClicked={this.props.upvoteComment}
-                  loggedInUser={
-                    'username' in this.props.users.user
-                      ? this.props.users.user
-                      : undefined
-                  }
-                />
-              ))}
-            </>
+              {Object.entries(this.state.groupedComments).map(
+                ([postTitle, comments]) => (
+                  <div key={postTitle}>
+                    <div className="member__post-info">
+                      <Link to={`/discuss/${comments[0].postSlug}`}>
+                        Post: {postTitle}
+                      </Link>
+                      <p>{comments.length} comments</p>
+                    </div>
+                    {comments.map((c) => (
+                      <PostComment
+                        {...c}
+                        key={c.commentId}
+                        isDownvoted={c.wasDownvotedByMe}
+                        isUpvoted={c.wasUpvotedByMe}
+                        onDownvoteClicked={this.props.downvoteComment}
+                        onUpvoteClicked={this.props.upvoteComment}
+                        loggedInUser={
+                          'username' in this.props.users.user
+                            ? this.props.users.user
+                            : undefined
+                        }
+                        onAction={(action, comment) =>
+                          this.onCommentAction(action, comment)
+                        }
+                      />
+                    ))}
+                  </div>
+                )
+              )}
+            </div>
           )
         ) : null}
       </Layout>
@@ -265,13 +366,20 @@ function mapActionCreatorsToProps(dispatch: any) {
   );
 }
 
-function mapStateToProps({ users }: { users: UsersState }) {
+function mapStateToProps({
+  users,
+  forum
+}: {
+  users: UsersState;
+  forum: ForumState;
+}) {
   return {
-    users
+    users,
+    forum
   };
 }
 
 export default connect(
   mapStateToProps,
   mapActionCreatorsToProps
-)(withLogoutHandling(MemberPage));
+)(withLogoutHandling(withRouter(MemberPage)));
