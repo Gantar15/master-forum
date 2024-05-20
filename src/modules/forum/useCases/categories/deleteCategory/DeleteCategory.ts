@@ -5,7 +5,6 @@ import { CategoryTitle } from "../../../domain/categoryTitle";
 import { DeleteCategoryDTO } from "./DeleteCategoryDTO";
 import { DeleteCategoryErrors } from "./DeleteCategoryErrors";
 import { ICategoryRepo } from "../../../repos/categoryRepo";
-import { UniqueEntityID } from "../../../../../shared/domain/UniqueEntityID";
 import { UseCase } from "../../../../../shared/core/UseCase";
 
 type Response = Either<

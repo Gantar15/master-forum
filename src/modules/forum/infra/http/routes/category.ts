@@ -2,12 +2,17 @@ import { createCategoryController } from "../../../useCases/categories/createCat
 import { deleteCategoryController } from "../../../useCases/categories/deleteCategory";
 import express from "express";
 import { getCategoriesController } from "../../../useCases/categories/getCategories";
+import { getTopCategoriesController } from "../../../useCases/categories/getTopCategories";
 import { middleware } from "../../../../../shared/infra/http";
 
 const categoryRouter = express.Router();
 
 categoryRouter.get("/", (req, res) =>
   getCategoriesController.execute(req, res)
+);
+
+categoryRouter.get("/top", (req, res) =>
+  getTopCategoriesController.execute(req, res)
 );
 
 categoryRouter.post(

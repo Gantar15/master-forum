@@ -281,6 +281,18 @@ export class PostService extends BaseAPI implements IPostService {
     }
   }
 
+  public async getTopCategories(): Promise<APIResponse<string[]>> {
+    try {
+      const response = await this.get('/categories/top', { count: 5 });
+
+      return right(Result.ok<string[]>(response.data.categories));
+    } catch (err: any) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
+  }
+
   public async createPost(
     title: string,
     type: PostType,

@@ -5,6 +5,7 @@ import { ICategoryRepo } from "../categoryRepo";
 import { IPostRepo } from "../postRepo";
 import { PostId } from "../../domain/postId";
 import { UniqueEntityID } from "../../../../shared/domain/UniqueEntityID";
+import { literal } from "sequelize";
 
 export class CategoryRepo implements ICategoryRepo {
   private models: any;
@@ -52,6 +53,25 @@ export class CategoryRepo implements ICategoryRepo {
     const CategoryModel = this.models.Category;
     const baseQuery = this.createBaseQuery();
     baseQuery.order = [["created_at", "DESC"]];
+    const categoryInstances = await CategoryModel.findAll(baseQuery);
+    return categoryInstances.map(CategoryMap.toDomain);
+  }
+
+  async getTopCategories(count: number): Promise<Category[]> {
+    const CategoryModel = this.models.Category;
+    const baseQuery = this.createBaseDetailsQuery();
+    baseQuery.limit = count;
+    baseQuery.attributes = {
+      include: [
+        [
+          literal(
+            "(SELECT COUNT(*) FROM post WHERE post.category_id = category.category_id)"
+          ),
+          "postCount",
+        ],
+      ],
+    };
+    baseQuery.order = [[literal("postCount"), "DESC"]];
     const categoryInstances = await CategoryModel.findAll(baseQuery);
     return categoryInstances.map(CategoryMap.toDomain);
   }

@@ -1,3 +1,5 @@
+import './styles/index.scss';
+
 import * as forumOperators from '../modules/forum/redux/operators';
 import * as usersOperators from '../modules/users/redux/operators';
 
@@ -8,6 +10,7 @@ import PostFilters, {
 import { ForumState } from '../modules/forum/redux/states';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
+import { Link } from 'react-router-dom';
 import { Post } from '../modules/forum/models/Post';
 import { PostRow } from '../modules/forum/components/posts/postRow';
 import { ProfileButton } from '../modules/users/components/profileButton';
@@ -19,6 +22,7 @@ import { UsersState } from '../modules/users/redux/states';
 import { bindActionCreators } from 'redux';
 //@ts-ignore
 import { connect } from 'react-redux';
+import { postService } from '../modules/forum/services';
 import withLogoutHandling from '../modules/users/hocs/withLogoutHandling';
 import withVoting from '../modules/forum/hocs/withVoting';
 
@@ -33,6 +37,7 @@ interface IndexPageProps
 
 interface IndexPageState {
   activeFilter: PostFilterType;
+  topCategories: string[];
 }
 
 class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
@@ -40,7 +45,8 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
     super(props);
 
     this.state = {
-      activeFilter: 'POPULAR'
+      activeFilter: 'POPULAR',
+      topCategories: []
     };
   }
 
@@ -105,6 +111,13 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
   componentDidMount() {
     this.setActiveFilterOnLoad();
     this.getPosts();
+    postService.getTopCategories().then((res) => {
+      if (res.isRight()) {
+        this.setState({
+          topCategories: res.value.getValue()
+        });
+      }
+    });
   }
 
   render() {
@@ -140,23 +153,40 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
           }
         />
         <br />
+        <div className="main-page-content">
+          <div>
+            <PostFilters
+              activeFilter={activeFilter}
+              onClick={(filter) => this.setActiveFilter(filter)}
+            />
 
-        <PostFilters
-          activeFilter={activeFilter}
-          onClick={(filter) => this.setActiveFilter(filter)}
-        />
-
-        {this.getPostsFromActiveFilterGroup().map((p, i) => (
-          <PostRow
-            key={i}
-            isDownvoted={p.wasDownvotedByMe}
-            isUpvoted={p.wasUpvotedByMe}
-            onUpvoteClicked={() => this.props.upvotePost(p.slug)}
-            onDownvoteClicked={() => this.props.downvotePost(p.slug)}
-            isLoggedIn={this.props.users.isAuthenticated}
-            {...p}
-          />
-        ))}
+            {this.getPostsFromActiveFilterGroup().map((p, i) => (
+              <PostRow
+                key={i}
+                isDownvoted={p.wasDownvotedByMe}
+                isUpvoted={p.wasUpvotedByMe}
+                onUpvoteClicked={() => this.props.upvotePost(p.slug)}
+                onDownvoteClicked={() => this.props.downvotePost(p.slug)}
+                isLoggedIn={this.props.users.isAuthenticated}
+                {...p}
+              />
+            ))}
+          </div>
+          <div className="top-categories">
+            <h3>Top categories</h3>
+            <div className="top-categories__categories">
+              {this.state.topCategories.map((c, i) => (
+                <Link
+                  key={i}
+                  to={`/category/${UriUtil.encodeText(c)}`}
+                  className="top-categories__category"
+                >
+                  {c}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
       </Layout>
     );
   }

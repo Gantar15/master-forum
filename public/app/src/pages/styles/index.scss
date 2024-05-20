@@ -1,0 +1,28 @@
+.main-page-content {
+    display: flex;
+    justify-content: space-between;
+    column-gap: 30px;
+}
+
+.top-categories {
+    height: 100%;
+    border: 2px solid black;
+    padding: 15px;
+
+    &__categories {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        row-gap: 5px;
+    }
+
+    &__category {
+        display: block;
+        width: fit-content;
+    }
+
+    h3 {
+        margin: 0;
+        margin-bottom: 10px;
+    }
+}
