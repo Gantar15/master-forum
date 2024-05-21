@@ -280,10 +280,25 @@ export class MemberPage extends React.Component<
           <h2>{username}</h2>
         </div>
 
-        <UserSections
-          activeFilter={this.state.activeUserSection}
-          onClick={(section) => this.setActiveUserSection(section)}
-        />
+        <div>
+          <UserSections
+            activeFilter={this.state.activeUserSection}
+            onClick={(section) => this.setActiveUserSection(section)}
+          />
+          <span>
+            x
+            {this.state.activeUserSection === 'POSTS'
+              ? this.state.posts.length + ' posts'
+              : null}
+            {this.state.activeUserSection === 'VOTES'
+              ? this.state.votesPosts.length + ' votes'
+              : null}
+            {this.state.activeUserSection === 'COMMENTS'
+              ? Object.values(this.state.groupedComments).flatMap((x) => x)
+                  .length + ' comments'
+              : null}
+          </span>
+        </div>
 
         {this.state.activeUserSection === 'POSTS' ? (
           this.state.isPostsLoading ? (

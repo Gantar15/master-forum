@@ -7,6 +7,7 @@ import PostFilters, {
   PostFilterType
 } from '../modules/forum/components/posts/filters/components/PostFilters';
 
+import { CategoryDTO } from '../modules/forum/dtos/categoryDTO';
 import { ForumState } from '../modules/forum/redux/states';
 import Header from '../shared/components/header/components/Header';
 import { Layout } from '../shared/layout';
@@ -37,7 +38,7 @@ interface IndexPageProps
 
 interface IndexPageState {
   activeFilter: PostFilterType;
-  topCategories: string[];
+  topCategories: CategoryDTO[];
 }
 
 class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
@@ -111,7 +112,7 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
   componentDidMount() {
     this.setActiveFilterOnLoad();
     this.getPosts();
-    postService.getTopCategories().then((res) => {
+    postService.getTopCategories(10).then((res) => {
       if (res.isRight()) {
         this.setState({
           topCategories: res.value.getValue()
@@ -159,7 +160,9 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
               activeFilter={activeFilter}
               onClick={(filter) => this.setActiveFilter(filter)}
             />
-
+            <p style={{ marginTop: '5px' }}>
+              x{this.getPostsFromActiveFilterGroup().length} posts
+            </p>
             {this.getPostsFromActiveFilterGroup().map((p, i) => (
               <PostRow
                 key={i}
@@ -176,13 +179,16 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
             <h3>Top categories</h3>
             <div className="top-categories__categories">
               {this.state.topCategories.map((c, i) => (
-                <Link
-                  key={i}
-                  to={`/category/${UriUtil.encodeText(c)}`}
-                  className="top-categories__category"
-                >
-                  {c}
-                </Link>
+                <div className="flex" style={{ columnGap: '10px' }} key={i}>
+                  <Link
+                    key={i}
+                    to={`/category/${UriUtil.encodeText(c.title)}`}
+                    className="top-categories__category"
+                  >
+                    {c.title}
+                  </Link>
+                  <span>x{c.postsCount}</span>
+                </div>
               ))}
             </div>
           </div>

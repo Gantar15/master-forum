@@ -1,4 +1,5 @@
 import { Category } from "../../domain/category";
+import { CategoryDTO } from "../../dtos/categoryDTO";
 import { CategoryMap } from "../../mappers/categoryMap";
 import { CategoryTitle } from "../../domain/categoryTitle";
 import { ICategoryRepo } from "../categoryRepo";
@@ -57,7 +58,7 @@ export class CategoryRepo implements ICategoryRepo {
     return categoryInstances.map(CategoryMap.toDomain);
   }
 
-  async getTopCategories(count: number): Promise<Category[]> {
+  async getTopCategories(count: number): Promise<CategoryDTO[]> {
     const CategoryModel = this.models.Category;
     const baseQuery = this.createBaseDetailsQuery();
     baseQuery.limit = count;
@@ -67,13 +68,15 @@ export class CategoryRepo implements ICategoryRepo {
           literal(
             "(SELECT COUNT(*) FROM post WHERE post.category_id = category.category_id)"
           ),
-          "postCount",
+          "postsCount",
         ],
       ],
     };
-    baseQuery.order = [[literal("postCount"), "DESC"]];
+    baseQuery.order = [[literal("postsCount"), "DESC"]];
     const categoryInstances = await CategoryModel.findAll(baseQuery);
-    return categoryInstances.map(CategoryMap.toDomain);
+    return categoryInstances.map((categoryInstance) =>
+      CategoryMap.toExtendedDTO(categoryInstance.dataValues)
+    );
   }
 
   async delete(categoryId: UniqueEntityID): Promise<void> {

@@ -3,6 +3,7 @@ import { left, right } from '../../../shared/core/Either';
 
 import { APIResponse } from '../../../shared/infra/services/APIResponse';
 import { BaseAPI } from '../../../shared/infra/services/BaseAPI';
+import { CategoryDTO } from '../dtos/categoryDTO';
 import { Comment } from '../models/Comment';
 import { CommentDTO } from '../dtos/commentDTO';
 import { CommentUtil } from '../utils/CommentUtil';
@@ -281,11 +282,13 @@ export class PostService extends BaseAPI implements IPostService {
     }
   }
 
-  public async getTopCategories(): Promise<APIResponse<string[]>> {
+  public async getTopCategories(
+    count: number
+  ): Promise<APIResponse<CategoryDTO[]>> {
     try {
-      const response = await this.get('/categories/top', { count: 5 });
+      const response = await this.get('/categories/top', { count });
 
-      return right(Result.ok<string[]>(response.data.categories));
+      return right(Result.ok(response.data.categories));
     } catch (err: any) {
       return left(
         err.response ? err.response.data.message : 'Connection failed'

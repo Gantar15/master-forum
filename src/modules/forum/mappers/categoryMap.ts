@@ -1,4 +1,5 @@
 import { Category } from "../domain/category";
+import { CategoryDTO } from "../dtos/categoryDTO";
 import { CategoryTitle } from "../domain/categoryTitle";
 import { Mapper } from "../../../shared/infra/Mapper";
 import { UniqueEntityID } from "../../../shared/domain/UniqueEntityID";
@@ -31,5 +32,12 @@ export class CategoryMap implements Mapper<Category> {
 
   public static toDTO(category: Category): string {
     return category.title.value;
+  }
+
+  public static toExtendedDTO(raw: any): CategoryDTO {
+    return {
+      title: raw.title,
+      postsCount: raw.postsCount,
+    };
   }
 }

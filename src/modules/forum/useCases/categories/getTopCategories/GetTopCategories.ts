@@ -1,12 +1,12 @@
 import { Either, Result, left, right } from "../../../../../shared/core/Result";
 
 import { AppError } from "../../../../../shared/core/AppError";
-import { Category } from "../../../domain/category";
+import { CategoryDTO } from "../../../dtos/categoryDTO";
 import { GetTopCategoriesRequestDTO } from "./GetTopCategoriesRequestDTO";
 import { ICategoryRepo } from "../../../repos/categoryRepo";
 import { UseCase } from "../../../../../shared/core/UseCase";
 
-type Response = Either<AppError.UnexpectedError, Result<Category[]>>;
+type Response = Either<AppError.UnexpectedError, Result<CategoryDTO[]>>;
 
 export class GetTopCategories implements UseCase<undefined, Promise<Response>> {
   private categoryRepo: ICategoryRepo;

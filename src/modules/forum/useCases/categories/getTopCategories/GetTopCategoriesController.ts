@@ -1,7 +1,6 @@
 import * as express from "express";
 
 import { BaseController } from "../../../../../shared/infra/http/models/BaseController";
-import { CategoryMap } from "../../../mappers/categoryMap";
 import { DecodedExpressRequest } from "../../../../users/infra/http/models/decodedRequest";
 import { GetTopCategories } from "./GetTopCategories";
 import { GetTopCategoriesRequestDTO } from "./GetTopCategoriesRequestDTO";
@@ -33,9 +32,7 @@ export class GetTopCategoriesController extends BaseController {
             return this.fail(res, error.getErrorValue().message);
         }
       } else {
-        const categoriesDTO = result.value
-          .getValue()
-          .map((category) => CategoryMap.toDTO(category));
+        const categoriesDTO = result.value.getValue();
         return this.ok<GetTopCategoriesResponseDTO>(res, {
           categories: categoriesDTO,
         });
