@@ -13,6 +13,7 @@ import { oauthGoogleController } from "../../../useCases/oauthGoogle";
 import querystring from "querystring";
 import { refreshAccessTokenController } from "../../../useCases/refreshAccessToken";
 import { unbanUserController } from "../../../useCases/unbanUser";
+import { updateUserController } from "../../../useCases/updateUser";
 import { verifyController } from "../../../useCases/verify";
 
 const userRouter = express.Router();
@@ -67,6 +68,10 @@ userRouter.patch("/ban/:userId", middleware.ensureRole("admin"), (req, res) =>
 
 userRouter.patch("/unban/:userId", middleware.ensureRole("admin"), (req, res) =>
   unbanUserController.execute(req, res)
+);
+
+userRouter.patch("/update", middleware.ensureAuthenticated(), (req, res) =>
+  updateUserController.execute(req, res)
 );
 
 userRouter.post("/logout", middleware.ensureAuthenticated(), (req, res) =>

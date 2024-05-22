@@ -8,6 +8,7 @@ import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import { BackNavigation } from '../shared/components/header';
 import { Comment } from '../modules/forum/models/Comment';
 import { ForumState } from '../modules/forum/redux/states';
+import GearIcon from '../assets/img/gear.png';
 import { Layout } from '../shared/layout';
 import { Loader } from '../shared/components/loader';
 import MemberIcon from '../assets/img/member-icon.png';
@@ -17,6 +18,7 @@ import PostComment from '../modules/forum/components/posts/post/components/PostC
 import { PostRow } from '../modules/forum/components/posts/postRow';
 import { ProfileButton } from '../modules/users/components/profileButton';
 import React from 'react';
+import ReactTooltip from 'react-tooltip';
 import { User } from '../modules/users/models/user';
 import { UserSectionType } from '../modules/users/components/users/filters/components/UserSections';
 import { UserSections } from '../modules/users/components/users/filters';
@@ -281,10 +283,18 @@ export class MemberPage extends React.Component<
         </div>
 
         <div>
-          <UserSections
-            activeFilter={this.state.activeUserSection}
-            onClick={(section) => this.setActiveUserSection(section)}
-          />
+          <div className="member__sections-header">
+            <UserSections
+              activeFilter={this.state.activeUserSection}
+              onClick={(section) => this.setActiveUserSection(section)}
+            />
+            {(this.props.users.user as User).username === username && (
+              <Link to={`/member-settings`}>
+                <img src={GearIcon} alt="member-settings" data-tip="Settings" />
+                <ReactTooltip />
+              </Link>
+            )}
+          </div>
           <span>
             x
             {this.state.activeUserSection === 'POSTS'

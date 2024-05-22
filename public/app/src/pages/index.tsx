@@ -160,7 +160,7 @@ class IndexPage extends React.Component<IndexPageProps, IndexPageState> {
               activeFilter={activeFilter}
               onClick={(filter) => this.setActiveFilter(filter)}
             />
-            <p style={{ marginTop: '5px' }}>
+            <p style={{ margin: 0, marginTop: '5px' }}>
               x{this.getPostsFromActiveFilterGroup().length} posts
             </p>
             {this.getPostsFromActiveFilterGroup().map((p, i) => (

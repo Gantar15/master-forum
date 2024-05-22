@@ -115,7 +115,8 @@ class UsersManagmentPage extends React.Component<
     const currentProps: UsersManagmentPageProps = this.props;
     if (
       currentProps.users.isCreatingUserSuccess ===
-      !prevProps.users.isCreatingUserSuccess
+        !prevProps.users.isCreatingUserSuccess &&
+      currentProps.users.isCreatingUserSuccess === true
     ) {
       this.setState({
         ...this.state,
@@ -131,7 +132,8 @@ class UsersManagmentPage extends React.Component<
     const currentProps: UsersManagmentPageProps = this.props;
     if (
       currentProps.users.isCreatingUserFailure ===
-      !prevProps.users.isCreatingUserFailure
+        !prevProps.users.isCreatingUserFailure &&
+      currentProps.users.isCreatingUserFailure === true
     ) {
       this.setState({
         ...this.state,
@@ -148,7 +150,8 @@ class UsersManagmentPage extends React.Component<
     const currentProps: UsersManagmentPageProps = this.props;
     if (
       currentProps.users.isDeleteUserSuccess ===
-      !prevProps.users.isDeleteUserSuccess
+        !prevProps.users.isDeleteUserSuccess &&
+      currentProps.users.isDeleteUserSuccess === true
     ) {
       this.setState({
         ...this.state,
@@ -164,7 +167,8 @@ class UsersManagmentPage extends React.Component<
     const currentProps: UsersManagmentPageProps = this.props;
     if (
       currentProps.users.isDeleteUserFailure ===
-      !prevProps.users.isDeleteUserFailure
+        !prevProps.users.isDeleteUserFailure &&
+      currentProps.users.isDeleteUserFailure === true
     ) {
       this.setState({
         ...this.state,
@@ -192,6 +196,7 @@ class UsersManagmentPage extends React.Component<
   afterFailedBan(prevProps: UsersManagmentPageProps) {
     const currentProps: UsersManagmentPageProps = this.props;
     if (
+      currentProps.users.isBanUserFailure &&
       currentProps.users.isBanUserFailure === !prevProps.users.isBanUserFailure
     ) {
       const error: string = currentProps.users.error;
@@ -217,8 +222,9 @@ class UsersManagmentPage extends React.Component<
   afterFailedUnban(prevProps: UsersManagmentPageProps) {
     const currentProps: UsersManagmentPageProps = this.props;
     if (
+      currentProps.users.isUnbanUserFailure &&
       currentProps.users.isUnbanUserFailure ===
-      !prevProps.users.isUnbanUserFailure
+        !prevProps.users.isUnbanUserFailure
     ) {
       const error: string = currentProps.users.error;
       return toast.error(`Yeahhhhh, ${error} 🤠`, {

@@ -17,6 +17,21 @@
 
     }
 
+    &__sections-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        a {
+            display: flex;
+            align-items: center;
+        }
+
+        img {
+            width: 30px;
+        }
+    }
+
     &__post-info {
 
         h3,

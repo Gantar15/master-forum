@@ -6,6 +6,7 @@ import { IAuthService } from './authService';
 import { LoginDTO } from '../dtos/loginDTO';
 import { Result } from '../../../shared/core/Result';
 import { User } from '../models/user';
+import { UserUpdateDTO } from '../dtos/userUpdateDto';
 
 export interface IUsersService {
   getCurrentUserProfile(): Promise<User>;
@@ -14,6 +15,7 @@ export interface IUsersService {
     username: string,
     password: string
   ): Promise<APIResponse<User>>;
+  updateUser(user: UserUpdateDTO): Promise<APIResponse<User>>;
   login(username: string, password: string): Promise<APIResponse<LoginDTO>>;
   logout(): Promise<APIResponse<void>>;
 }
@@ -21,6 +23,25 @@ export interface IUsersService {
 export class UsersService extends BaseAPI implements IUsersService {
   constructor(authService: IAuthService) {
     super(authService);
+  }
+  async updateUser(user: UserUpdateDTO): Promise<APIResponse<User>> {
+    try {
+      const response = await this.patch(
+        '/users/update',
+        user,
+        {
+          userId: user.userId
+        },
+        {
+          authorization: this.authService.getToken('access-token')
+        }
+      );
+      return right(Result.ok(response.data));
+    } catch (err) {
+      return left(
+        err.response ? err.response.data.message : 'Connection failed'
+      );
+    }
   }
 
   async getCurrentUserProfile(): Promise<User> {

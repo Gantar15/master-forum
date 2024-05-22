@@ -89,10 +89,7 @@ export default function users(
           const index = users.findIndex(
             (user) => user.userId === action.userId
           );
-          users.splice(index, 1, {
-            ...users[index],
-            isDeleted: true
-          });
+          users.splice(index, 1);
           return users;
         })()
       };

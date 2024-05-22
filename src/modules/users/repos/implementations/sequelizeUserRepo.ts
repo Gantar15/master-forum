@@ -12,14 +12,26 @@ export class SequelizeUserRepo implements IUserRepo {
     this.models = models;
   }
 
-  async exists(userEmail: UserEmail): Promise<boolean> {
+  async exists(userEmailOrId: UserEmail): Promise<boolean>;
+  async exists(userId: UserId): Promise<boolean>;
+  async exists(userEmailOrId: UserEmail | UserId): Promise<boolean> {
     const BaseUserModel = this.models.BaseUser;
-    const baseUser = await BaseUserModel.findOne({
-      where: {
-        user_email: userEmail.value,
-      },
-    });
-    return !!baseUser === true;
+
+    if (userEmailOrId instanceof UserEmail) {
+      const baseUser = await BaseUserModel.findOne({
+        where: {
+          user_email: userEmailOrId.value,
+        },
+      });
+      return !!baseUser === true;
+    } else if (userEmailOrId instanceof UserId) {
+      const baseUser = await BaseUserModel.findOne({
+        where: {
+          base_user_id: userEmailOrId.getStringValue(),
+        },
+      });
+      return !!baseUser === true;
+    }
   }
 
   async getUserByUserName(userName: UserName | string): Promise<User> {
@@ -83,7 +95,7 @@ export class SequelizeUserRepo implements IUserRepo {
 
   async save(user: User): Promise<void> {
     const UserModel = this.models.BaseUser;
-    const exists = await this.exists(user.email);
+    const exists = await this.exists(user.userId);
     const rawSequelizeUser = await UserMap.toPersistence(user);
 
     if (!exists) {

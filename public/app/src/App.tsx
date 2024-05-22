@@ -12,6 +12,7 @@ import IndexPage from './pages';
 import JoinPage from './pages/join';
 import LoginPage from './pages/login';
 import MemberPage from './pages/member';
+import MemberSettingsPage from './pages/member-settings';
 import OauthPulluser from './pages/oauth-pulluser';
 import React from 'react';
 import RolesRoute from './shared/infra/router/RolesRoute';
@@ -25,6 +26,7 @@ const App: React.FC = () => {
       <Route path="/" exact component={IndexPage} />
       <Route path="/discuss/:slug" component={DiscussionPage} />
       <Route path="/comment/:commentId" component={CommentPage} />
+      <Route path="/member-settings" component={MemberSettingsPage} />
       <Route path="/member/:username" component={MemberPage} />
       <Route path="/search/:searchString" component={SearchPage} />
       <Route path="/category/:category" component={CategoryPage} />
