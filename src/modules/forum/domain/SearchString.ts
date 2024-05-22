@@ -1,6 +1,7 @@
 import { Guard } from "../../../shared/core/Guard";
 import { Result } from "../../../shared/core/Result";
 import { ValueObject } from "../../../shared/domain/ValueObject";
+import { removeHTMLTags } from "../utils/removeHTMLTags";
 
 interface SearchStringProps {
   value: string;
@@ -11,7 +12,7 @@ export class SearchString extends ValueObject<SearchStringProps> {
   public static maxLength: number = 100;
 
   get value(): string {
-    return this.props.value;
+    return removeHTMLTags(this.props.value);
   }
 
   private constructor(props: SearchStringProps) {

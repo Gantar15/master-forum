@@ -238,6 +238,8 @@ export class PostRepo implements IPostRepo {
     const detailsQuery = this.createBaseDetailsQuery();
     detailsQuery.where[Op.or] = {
       title: { [Op.like]: `%${searchStringValue}%` },
+      text: { [Op.like]: `%${searchStringValue}%` },
+      link: { [Op.like]: `%${searchStringValue}%` },
     };
 
     if (!!memberId === true) {
