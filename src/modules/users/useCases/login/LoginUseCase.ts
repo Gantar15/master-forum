@@ -41,7 +41,7 @@ export class LoginUserUseCase implements UseCase<LoginDTO, Promise<Response>> {
       const payloadResult = Result.combine([usernameOrError, passwordOrError]);
 
       if (payloadResult.isFailure) {
-        return left(Result.fail<any>(payloadResult.getErrorValue()));
+        return left(new AppError.MessageError(payloadResult.getErrorValue()));
       }
 
       userName = usernameOrError.getValue();
